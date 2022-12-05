@@ -29,10 +29,13 @@ public class GameScreen implements Screen {
         objects = new Array<Renderable>();
         objects.add(new Entity(new Texture("bucket.png")));
         
-        Cook c1 = new Cook();
-        player = new Player(c1);
+        Array<Cook> cooks = new Array<Cook>(new Cook[] {new Cook(0f, 30f), new Cook(4.5f,4.5f), new Cook(1.5f,1.5f)});
+
+        player = new Player(cooks);
         
-        objects.add(c1);
+        for (Cook c : cooks) {
+            objects.add(c);
+        }
     }
 
     @Override
@@ -78,5 +81,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        for (Renderable renderable : objects) {
+            renderable.dispose();
+        }
     }
 }
