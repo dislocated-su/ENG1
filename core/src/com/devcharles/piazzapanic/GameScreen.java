@@ -3,14 +3,19 @@ package com.devcharles.piazzapanic;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.devcharles.piazzapanic.gameobjects.Cook;
-import com.devcharles.piazzapanic.gameobjects.Entity;
 import com.devcharles.piazzapanic.gameobjects.Player;
+import com.devcharles.piazzapanic.gameobjects.Station;
 import com.devcharles.piazzapanic.interfaces.Renderable;
 
 public class GameScreen implements Screen {
+
+    final float VIRTUAL_HEIGHT = 20f;
     
     private Array<Renderable> objects;
     
@@ -19,17 +24,27 @@ public class GameScreen implements Screen {
     OrthographicCamera camera;
 
     private Player player;
-    
+
+    World world = new World(new Vector2(0,0), true);
+
+    Box2DDebugRenderer debugRenderer;
+
     public GameScreen(PiazzaPanic game) {
         this.game = game;
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1280, 720);
+
+        this.debugRenderer = new Box2DDebugRenderer();
 
         objects = new Array<Renderable>();
-        objects.add(new Entity(new Texture("bucket.png")));
+        objects.add(new Station(new Texture("bucket.png")));
         
-        Array<Cook> cooks = new Array<Cook>(new Cook[] {new Cook(0f, 30f), new Cook(4.5f,4.5f), new Cook(1.5f,1.5f)});
+        Array<Cook> cooks = new Array<Cook>(new Cook[] 
+        {
+            new Cook(world, 0f, 10f), 
+            new Cook(world, 4.5f,4.5f), 
+            new Cook(world, 1.5f,1.5f)
+        });
 
         player = new Player(cooks);
         
@@ -57,11 +72,28 @@ public class GameScreen implements Screen {
         game.batch.end();
 
         player.interact();
+
+        debugRenderer.render(world, camera.combined);
+
+        this.doPhysicsStep(delta);
     }
+
+    private float accumulator = 0;
+
+    private void doPhysicsStep(float deltaTime) {
+        float frameTime = Math.min(deltaTime, 0.25f);
+        accumulator += frameTime;
+
+        while (accumulator >= 1/60f) {
+            world.step(1/60f, 6, 2);
+            accumulator -= 1/60f;
+        }
+    }
+    
 
     @Override
     public void resize(int width, int height) {
-
+        camera.setToOrtho(false, VIRTUAL_HEIGHT * width / (float) height, VIRTUAL_HEIGHT);
     }
 
     @Override

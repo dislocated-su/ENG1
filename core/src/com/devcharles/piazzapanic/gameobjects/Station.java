@@ -4,35 +4,34 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.devcharles.piazzapanic.interfaces.Renderable;
-/**
- * An entity is a base class that can move.
- */
-public abstract class Entity implements Renderable {
 
-    Vector2 size = new Vector2(1,1);
+/**
+ * A station is a base class that does not need to move
+ */
+public class Station implements Renderable  {
 
     Texture texture;
 
     Sprite sprite;
 
-    Body body;
+    public Vector2 pos = new Vector2(1,1);
+    public Vector2 size = new Vector2(1,1);
     
-    public Entity(Texture texture) {
+    public Station(Texture texture) {
         this.texture = texture;
         this.sprite = new Sprite(texture);
     }
-    
+
+    @Override
     public void render(SpriteBatch batch) {
-        Vector2 pos = body.getPosition();
-        // Draw in the middle of the position instead of top-left
-        batch.draw(sprite, pos.x - (size.x / 2), pos.y - (size.y / 2), size.x, size.y);
+        // TODO Auto-generated method stub
+        batch.draw(sprite, pos.x, pos.y, size.x, size.y);
     }
 
     @Override
     public void dispose() {
-        this.texture.dispose();   
+        // TODO Auto-generated method stub
+        
     }
-
 }

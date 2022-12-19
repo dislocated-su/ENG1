@@ -49,10 +49,17 @@ public class Player {
             v.add(0, -1);
         }
 
+        // Normalise vector (make length 1). This ensures player moves at the same speed in all directions.
+        // e.g. if player wants to go left and up at the same time, the vector is (1,1) and length (speed) is sqrt(2)
+        // but we need length to be 1
         v = v.nor();
 
-        currentCook.drawX += v.x * 600 * Gdx.graphics.getDeltaTime();
-        currentCook.drawY += v.y * 600 * Gdx.graphics.getDeltaTime();
+        // This is temporary, I'm not sure how player movement is implemented correctly.
+        currentCook.body.applyLinearImpulse(v.mulAdd(v, 10), currentCook.body.getPosition(), true);
+        
+        if (v.len() != 0) {
+            currentCook.body.setTransform(currentCook.body.getPosition(),v.angleRad());
+        }
         
     }
 }
