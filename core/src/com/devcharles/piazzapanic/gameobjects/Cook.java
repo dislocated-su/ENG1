@@ -24,12 +24,12 @@ public class Cook extends Entity{
 
         // Create a circle shape and set its radius to 1
         CircleShape circle = new CircleShape();
-        circle.setRadius(1f);
+        circle.setRadius(0.75f);
 
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
-        fixtureDef.density = 10f;
+        fixtureDef.density = 20f;
         fixtureDef.friction = 0.4f;
         fixtureDef.restitution = 0.6f; // Make it bounce a little bit
 

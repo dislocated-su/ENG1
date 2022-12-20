@@ -22,12 +22,20 @@ public abstract class Entity implements Renderable {
     public Entity(Texture texture) {
         this.texture = texture;
         this.sprite = new Sprite(texture);
+        sprite.setOriginCenter();
+        sprite.setColor(255, 0, 0, 255);
     }
     
     public void render(SpriteBatch batch) {
         Vector2 pos = body.getPosition();
         // Draw in the middle of the position instead of top-left
-        batch.draw(sprite, pos.x - (size.x / 2), pos.y - (size.y / 2), size.x, size.y);
+        
+        sprite.setRotation((float)Math.toDegrees(body.getAngle()));
+
+        sprite.setBounds(pos.x - (size.x / 2), pos.y - (size.y / 2), size.x, size.y);
+        sprite.setOrigin(size.x / 2, size.y / 2);
+
+        sprite.draw(batch);
     }
 
     @Override

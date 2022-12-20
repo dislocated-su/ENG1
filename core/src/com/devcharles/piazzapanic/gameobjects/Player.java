@@ -34,31 +34,33 @@ public class Player {
         }
         
         currentCook = availableCooks.items[cookID];
-        
-        Vector2 v = new Vector2(0, 0);
+
+        Vector2 direction = new Vector2(0, 0);
+
         if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-            v.add(-1, 0);
+            direction.add(-1, 0);
         }
         if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-            v.add(1, 0);
+            direction.add(1, 0);
         }
         if (Gdx.input.isKeyPressed(Keys.UP)) {
-            v.add(0, 1);
+            direction.add(0, 1);
         }
         if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-            v.add(0, -1);
+            direction.add(0, -1);
         }
 
         // Normalise vector (make length 1). This ensures player moves at the same speed in all directions.
         // e.g. if player wants to go left and up at the same time, the vector is (1,1) and length (speed) is sqrt(2)
         // but we need length to be 1
-        v = v.nor();
+        direction = direction.nor();
 
         // This is temporary, I'm not sure how player movement is implemented correctly.
-        currentCook.body.applyLinearImpulse(v.mulAdd(v, 10), currentCook.body.getPosition(), true);
+        currentCook.body.applyLinearImpulse(direction.mulAdd(direction, 10), currentCook.body.getPosition(), true);
         
-        if (v.len() != 0) {
-            currentCook.body.setTransform(currentCook.body.getPosition(),v.angleRad());
+        // Turn the box2d shape in the movement direction
+        if (direction.len() != 0) {
+            currentCook.body.setTransform(currentCook.body.getPosition(), direction.angleRad());
         }
         
     }
