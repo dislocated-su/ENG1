@@ -16,16 +16,16 @@ import com.devcharles.piazzapanic.interfaces.Renderable;
 public class GameScreen implements Screen {
 
     final float VIRTUAL_HEIGHT = 20f;
-    
+
     private Array<Renderable> objects;
-    
+
     final PiazzaPanic game;
-    
+
     OrthographicCamera camera;
 
     private Player player;
 
-    World world = new World(new Vector2(0,0), true);
+    World world = new World(new Vector2(0, 0), true);
 
     Box2DDebugRenderer debugRenderer;
 
@@ -37,17 +37,16 @@ public class GameScreen implements Screen {
         this.debugRenderer = new Box2DDebugRenderer();
 
         objects = new Array<Renderable>();
-        objects.add(new Station(new Texture("bucket.png")));
-        
-        Array<Cook> cooks = new Array<Cook>(new Cook[] 
-        {
-            new Cook(world, 0f, 10f), 
-            new Cook(world, 4.5f,4.5f), 
-            new Cook(world, 1.5f,1.5f)
+        objects.add(new Station(new Texture("bucket.png"), world, 1f, 1f));
+
+        Array<Cook> cooks = new Array<Cook>(new Cook[] {
+                new Cook(world, 0f, 10f),
+                new Cook(world, 4.5f, 4.5f),
+                new Cook(world, 1.5f, 1.5f)
         });
 
         player = new Player(cooks);
-        
+
         for (Cook c : cooks) {
             objects.add(c);
         }
@@ -61,11 +60,11 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
-        
+
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        
+
         for (Renderable r : objects) {
             r.render(game.batch);
         }
@@ -84,12 +83,11 @@ public class GameScreen implements Screen {
         float frameTime = Math.min(deltaTime, 0.25f);
         accumulator += frameTime;
 
-        while (accumulator >= 1/60f) {
-            world.step(1/60f, 6, 2);
-            accumulator -= 1/60f;
+        while (accumulator >= 1 / 60f) {
+            world.step(1 / 60f, 6, 2);
+            accumulator -= 1 / 60f;
         }
     }
-    
 
     @Override
     public void resize(int width, int height) {
