@@ -15,6 +15,7 @@ public class Player {
     
     public Player(Array<Cook> cooks) {
         this.availableCooks = cooks;
+        this.currentCook = this.availableCooks.items[cookID];
     }
 
     public void interact() {
@@ -32,8 +33,9 @@ public class Player {
                 cookID += 1;
             }
         }
-        
+        currentCook.isControlled = false;
         currentCook = availableCooks.items[cookID];
+        currentCook.isControlled = true;
 
         Vector2 direction = new Vector2(0, 0);
 
@@ -53,15 +55,17 @@ public class Player {
         // Normalise vector (make length 1). This ensures player moves at the same speed in all directions.
         // e.g. if player wants to go left and up at the same time, the vector is (1,1) and length (speed) is sqrt(2)
         // but we need length to be 1
-        direction = direction.nor();
+        direction.nor();
 
-        // This is temporary, I'm not sure how player movement is implemented correctly.
-        currentCook.body.applyLinearImpulse(direction.mulAdd(direction, 10), currentCook.body.getPosition(), true);
+        Vector2 directionDiff = direction.cpy().sub(currentCook.body.getLinearVelocity().nor());
+
+        Vector2 finalV = direction.cpy().scl(10).mulAdd(directionDiff, 20);
         
-        // Turn the box2d shape in the movement direction
+        // Rotate the box2d shape in the movement direction
         if (direction.len() != 0) {
             currentCook.body.setTransform(currentCook.body.getPosition(), direction.angleRad());
         }
-        
+
+        currentCook.body.applyLinearImpulse(finalV,currentCook.body.getPosition(), true);    
     }
 }

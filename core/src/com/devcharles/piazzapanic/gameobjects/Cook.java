@@ -1,13 +1,15 @@
 package com.devcharles.piazzapanic.gameobjects;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.devcharles.piazzapanic.interfaces.Simulated;
 
-public class Cook extends Entity{
+public class Cook extends Entity implements Simulated{
 
     public Cook(World world, float x, float y) {
         super(new Texture("droplet.png"));
@@ -31,12 +33,27 @@ public class Cook extends Entity{
         fixtureDef.shape = circle;
         fixtureDef.density = 20f;
         fixtureDef.friction = 0.4f;
-        fixtureDef.restitution = 0.6f; // Make it bounce a little bit
 
         // Create our fixture and attach it to the body
         body.createFixture(fixtureDef);
 
         // BodyDef and FixtureDef don't need disposing, but shapes do.
         circle.dispose();
+    }
+
+    public boolean isControlled = false;
+
+    public void simulate() {
+        if (isControlled) {
+            return;
+        }
+
+        Vector2 velocity = this.body.getLinearVelocity();
+
+        if (velocity.isZero(0.1f)) {
+            return;
+        }
+
+        this.body.applyLinearImpulse(velocity.scl(-1), this.body.getPosition(), true);
     }
 }

@@ -12,12 +12,15 @@ import com.devcharles.piazzapanic.gameobjects.Cook;
 import com.devcharles.piazzapanic.gameobjects.Player;
 import com.devcharles.piazzapanic.gameobjects.Station;
 import com.devcharles.piazzapanic.interfaces.Renderable;
+import com.devcharles.piazzapanic.interfaces.Simulated;
 
 public class GameScreen implements Screen {
 
     final float VIRTUAL_HEIGHT = 20f;
 
     private Array<Renderable> objects;
+
+    private Array<Simulated> simulatedObjects;
 
     final PiazzaPanic game;
 
@@ -47,8 +50,11 @@ public class GameScreen implements Screen {
 
         player = new Player(cooks);
 
+        simulatedObjects = new Array<Simulated>();
+
         for (Cook c : cooks) {
             objects.add(c);
+            simulatedObjects.add(c);
         }
     }
 
@@ -86,6 +92,10 @@ public class GameScreen implements Screen {
         while (accumulator >= 1 / 60f) {
             world.step(1 / 60f, 6, 2);
             accumulator -= 1 / 60f;
+        }
+
+        for (Simulated s : simulatedObjects) {
+            s.simulate();
         }
     }
 
