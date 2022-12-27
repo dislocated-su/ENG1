@@ -54,6 +54,6 @@ public class Cook extends Entity implements Simulated{
             return;
         }
 
-        this.body.applyLinearImpulse(velocity.scl(-1), this.body.getPosition(), true);
+        this.body.applyLinearImpulse(velocity.scl(-2), this.body.getPosition(), true);
     }
 }
