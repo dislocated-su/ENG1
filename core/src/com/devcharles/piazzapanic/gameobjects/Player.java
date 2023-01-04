@@ -59,12 +59,12 @@ public class Player {
 
         Vector2 directionDiff = direction.cpy().sub(currentCook.body.getLinearVelocity().nor());
 
-        directionDiff = directionDiff.isZero(0.1f) ? directionDiff.set(0, 0) : directionDiff.scl(20);
+        directionDiff = directionDiff.isZero(0.7f) ? directionDiff.set(0, 0) : directionDiff.scl(20);
 
         Vector2 finalV = direction.cpy().scl(10).add(directionDiff);
         
         // Rotate the box2d shape in the movement direction
-        if (!direction.isZero(0.1f)) {
+        if (!direction.isZero(0.7f)) {
             currentCook.body.setTransform(currentCook.body.getPosition(), direction.angleRad());
         }
 

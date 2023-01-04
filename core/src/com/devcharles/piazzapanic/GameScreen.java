@@ -41,9 +41,11 @@ public class GameScreen implements Screen {
         this.debugRenderer = new Box2DDebugRenderer();
 
         objects = new Array<Renderable>();
+
+        objects.add(new GameWorld(world, camera, game.batch));
+
         objects.add(new Station(new Texture("bucket.png"), world, 1f, 1f));
 
-        objects.add(new GameWorld(new Texture("bucket.png"), world, 1f, 1f, camera));
         Array<Cook> cooks = new Array<Cook>(new Cook[] {
                 new Cook(world, 1f, 10f),
                 new Cook(world, 4.5f, 4.5f),
@@ -69,6 +71,12 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
+
+        Vector2 playerPos = player.currentCook.body.getPosition();
+        
+        camera.position.set(playerPos, 0);
+        
+        camera.update();
 
         game.batch.setProjectionMatrix(camera.combined);
 

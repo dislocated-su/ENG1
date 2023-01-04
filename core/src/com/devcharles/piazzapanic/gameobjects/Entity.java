@@ -17,7 +17,7 @@ public abstract class Entity implements Renderable {
 
     Sprite sprite;
 
-    Body body;
+    public Body body;
     
     public Entity(Texture texture) {
         this.texture = texture;
