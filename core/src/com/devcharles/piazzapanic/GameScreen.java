@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.devcharles.piazzapanic.gameobjects.Cook;
+import com.devcharles.piazzapanic.gameobjects.GameWorld;
 import com.devcharles.piazzapanic.gameobjects.Player;
 import com.devcharles.piazzapanic.gameobjects.Station;
 import com.devcharles.piazzapanic.interfaces.Renderable;
@@ -42,8 +43,9 @@ public class GameScreen implements Screen {
         objects = new Array<Renderable>();
         objects.add(new Station(new Texture("bucket.png"), world, 1f, 1f));
 
+        objects.add(new GameWorld(new Texture("bucket.png"), world, 1f, 1f));
         Array<Cook> cooks = new Array<Cook>(new Cook[] {
-                new Cook(world, 0f, 10f),
+                new Cook(world, 1f, 10f),
                 new Cook(world, 4.5f, 4.5f),
                 new Cook(world, 1.5f, 1.5f)
         });
@@ -56,6 +58,7 @@ public class GameScreen implements Screen {
             objects.add(c);
             simulatedObjects.add(c);
         }
+
     }
 
     @Override
