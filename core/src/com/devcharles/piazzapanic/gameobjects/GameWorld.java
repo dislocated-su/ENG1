@@ -27,13 +27,8 @@ public class GameWorld implements Renderable {
     public Vector2[] pos = { new Vector2(0f, 0f), new Vector2(35f, 0f), new Vector2(0f, 20f), new Vector2(0f, 0f), };
     public Vector2[] size = { new Vector2(0f, 20f), new Vector2(0f, 20f), new Vector2(35f, 0f), new Vector2(35f, 0f) };
 
-    public GameWorld(Texture texture, World world, float x, float y) {
-
-        /**
-         * Tile Map Creation to be added, prioritised physics walls
-         */
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1280, 720);
+    public GameWorld(Texture texture, World world, float x, float y, OrthographicCamera mainCamera) {
+        this.camera = mainCamera;
 
         map = new TmxMapLoader().load("temp.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);

@@ -43,7 +43,7 @@ public class GameScreen implements Screen {
         objects = new Array<Renderable>();
         objects.add(new Station(new Texture("bucket.png"), world, 1f, 1f));
 
-        objects.add(new GameWorld(new Texture("bucket.png"), world, 1f, 1f));
+        objects.add(new GameWorld(new Texture("bucket.png"), world, 1f, 1f, camera));
         Array<Cook> cooks = new Array<Cook>(new Cook[] {
                 new Cook(world, 1f, 10f),
                 new Cook(world, 4.5f, 4.5f),
