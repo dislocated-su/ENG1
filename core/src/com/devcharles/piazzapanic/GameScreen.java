@@ -4,6 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -73,9 +74,9 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
 
         Vector2 playerPos = player.currentCook.body.getPosition();
-        
-        camera.position.set(playerPos, 0);
-        
+
+        camera.position.set(camera.position.lerp(new Vector3(playerPos, 0), 0.05f));
+
         camera.update();
 
         game.batch.setProjectionMatrix(camera.combined);
