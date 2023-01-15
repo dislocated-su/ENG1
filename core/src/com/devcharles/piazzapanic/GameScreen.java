@@ -88,7 +88,7 @@ public class GameScreen implements Screen {
         }
         game.batch.end();
 
-        player.interact();
+        player.interact(delta);
 
         debugRenderer.render(world, camera.combined);
 

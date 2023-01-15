@@ -16,7 +16,7 @@ public class Cook extends Entity implements Simulated{
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DynamicBody;
-        bodyDef.linearDamping = 2f;
+        bodyDef.linearDamping = 10f;
         bodyDef.fixedRotation = true;
         bodyDef.awake = true;
 

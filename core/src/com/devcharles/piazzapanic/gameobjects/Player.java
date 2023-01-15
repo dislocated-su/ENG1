@@ -18,7 +18,7 @@ public class Player {
         this.currentCook = this.availableCooks.items[cookID];
     }
 
-    public void interact() {
+    public void interact(float deltaTime) {
 
         if (Gdx.input.isKeyJustPressed(Keys.Q)) {
             if(cookID == 0) {
@@ -57,11 +57,7 @@ public class Player {
         // but we need length to be 1
         direction.nor();
 
-        Vector2 directionDiff = direction.cpy().sub(currentCook.body.getLinearVelocity().nor());
-
-        directionDiff = directionDiff.isZero(0.7f) ? directionDiff.set(0, 0) : directionDiff.scl(20);
-
-        Vector2 finalV = direction.cpy().scl(10).add(directionDiff);
+        Vector2 finalV = direction.cpy().scl(2000 * deltaTime);
         
         // Rotate the box2d shape in the movement direction
         if (!direction.isZero(0.7f)) {
