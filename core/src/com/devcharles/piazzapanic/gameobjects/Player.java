@@ -12,7 +12,7 @@ public class Player {
     public Array<Cook> availableCooks;
 
     private int cookID = 0;
-    
+
     public Player(Array<Cook> cooks) {
         this.availableCooks = cooks;
         this.currentCook = this.availableCooks.items[cookID];
@@ -21,7 +21,7 @@ public class Player {
     public void interact(float deltaTime) {
 
         if (Gdx.input.isKeyJustPressed(Keys.Q)) {
-            if(cookID == 0) {
+            if (cookID == 0) {
                 cookID = availableCooks.size - 1;
             } else {
                 cookID -= 1;
@@ -29,13 +29,17 @@ public class Player {
         } else if (Gdx.input.isKeyJustPressed(Keys.E)) {
             if (cookID == availableCooks.size - 1) {
                 cookID = 0;
-            }else {
+            } else {
                 cookID += 1;
             }
         }
         currentCook.isControlled = false;
         currentCook = availableCooks.items[cookID];
         currentCook.isControlled = true;
+
+        if (Gdx.input.isKeyJustPressed(Keys.F) && currentCook.currentStation != null) {
+            currentCook.currentStation.interactStation();
+        }
 
         Vector2 direction = new Vector2(0, 0);
 
@@ -52,18 +56,20 @@ public class Player {
             direction.add(0, -1);
         }
 
-        // Normalise vector (make length 1). This ensures player moves at the same speed in all directions.
-        // e.g. if player wants to go left and up at the same time, the vector is (1,1) and length (speed) is sqrt(2)
+        // Normalise vector (make length 1). This ensures player moves at the same speed
+        // in all directions.
+        // e.g. if player wants to go left and up at the same time, the vector is (1,1)
+        // and length (speed) is sqrt(2)
         // but we need length to be 1
         direction.nor();
 
         Vector2 finalV = direction.cpy().scl(2000 * deltaTime);
-        
+
         // Rotate the box2d shape in the movement direction
         if (!direction.isZero(0.7f)) {
             currentCook.body.setTransform(currentCook.body.getPosition(), direction.angleRad());
         }
 
-        currentCook.body.applyLinearImpulse(finalV,currentCook.body.getPosition(), true);    
+        currentCook.body.applyLinearImpulse(finalV, currentCook.body.getPosition(), true);
     }
 }

@@ -42,7 +42,7 @@ public class Station implements Renderable {
         PolygonShape stationBox = new PolygonShape();
         stationBox.setAsBox(1f, 1f);
         fixtureDef.shape = stationBox;
-        stationBody.createFixture(fixtureDef).setUserData("station");
+        stationBody.createFixture(fixtureDef).setUserData(this);
         stationBox.dispose();
     }
 
@@ -61,6 +61,6 @@ public class Station implements Renderable {
     }
 
     public void interactStation() {
-        Gdx.app.log("Station Collision", "");
+        Gdx.app.log("Station Interaction", "");
     }
 }

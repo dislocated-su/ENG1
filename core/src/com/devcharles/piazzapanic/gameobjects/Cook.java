@@ -12,6 +12,8 @@ import com.devcharles.piazzapanic.interfaces.Simulated;
 
 public class Cook extends Entity implements Simulated {
 
+    public Station currentStation = null;
+
     public Cook(World world, float x, float y) {
         super(new Texture("droplet.png"));
 
