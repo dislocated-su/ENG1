@@ -1,11 +1,14 @@
 package com.devcharles.piazzapanic.gameobjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.interfaces.Renderable;
@@ -18,6 +21,8 @@ public class Station implements Renderable {
     Texture texture;
 
     Sprite sprite;
+
+    Fixture fixture;
 
     public Vector2 pos = new Vector2(10, 10);
     public Vector2 size = new Vector2(2, 2);
@@ -32,9 +37,12 @@ public class Station implements Renderable {
 
         Body stationBody = world.createBody(stationBodyDef);
 
+        FixtureDef fixtureDef = new FixtureDef();
+
         PolygonShape stationBox = new PolygonShape();
         stationBox.setAsBox(1f, 1f);
-        stationBody.createFixture(stationBox, 0f);
+        fixtureDef.shape = stationBox;
+        stationBody.createFixture(fixtureDef).setUserData("station");
         stationBox.dispose();
     }
 
@@ -50,5 +58,9 @@ public class Station implements Renderable {
     @Override
     public void dispose() {
 
+    }
+
+    public void interactStation() {
+        Gdx.app.log("Station Collision", "");
     }
 }

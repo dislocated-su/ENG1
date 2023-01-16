@@ -15,6 +15,7 @@ import com.devcharles.piazzapanic.gameobjects.Player;
 import com.devcharles.piazzapanic.gameobjects.Station;
 import com.devcharles.piazzapanic.interfaces.Renderable;
 import com.devcharles.piazzapanic.interfaces.Simulated;
+import com.devcharles.piazzapanic.utility.WorldContactListener;
 
 public class GameScreen implements Screen {
 
@@ -62,6 +63,7 @@ public class GameScreen implements Screen {
             simulatedObjects.add(c);
         }
 
+        world.setContactListener(new WorldContactListener());
     }
 
     @Override

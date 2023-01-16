@@ -1,5 +1,6 @@
 package com.devcharles.piazzapanic.gameobjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -9,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.devcharles.piazzapanic.interfaces.Simulated;
 
-public class Cook extends Entity implements Simulated{
+public class Cook extends Entity implements Simulated {
 
     public Cook(World world, float x, float y) {
         super(new Texture("droplet.png"));
@@ -35,7 +36,7 @@ public class Cook extends Entity implements Simulated{
         fixtureDef.friction = 0.4f;
 
         // Create our fixture and attach it to the body
-        body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef).setUserData(this);
 
         // BodyDef and FixtureDef don't need disposing, but shapes do.
         circle.dispose();
@@ -55,5 +56,9 @@ public class Cook extends Entity implements Simulated{
         }
 
         this.body.applyLinearImpulse(velocity.scl(-2), this.body.getPosition(), true);
+    }
+
+    public void interactStation() {
+        Gdx.app.log("Station Collision", "");
     }
 }
