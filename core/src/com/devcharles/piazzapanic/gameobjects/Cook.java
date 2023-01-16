@@ -1,5 +1,7 @@
 package com.devcharles.piazzapanic.gameobjects;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +15,8 @@ import com.devcharles.piazzapanic.interfaces.Simulated;
 public class Cook extends Entity implements Simulated {
 
     public Station currentStation = null;
+
+    public ArrayList<Food> carryingFood = new ArrayList<Food>();
 
     public Cook(World world, float x, float y) {
         super(new Texture("droplet.png"));
@@ -58,6 +62,10 @@ public class Cook extends Entity implements Simulated {
         }
 
         this.body.applyLinearImpulse(velocity.scl(-2), this.body.getPosition(), true);
+    }
+
+    public Food getTopFood() {
+        return carryingFood.get(carryingFood.size() - 1);
     }
 
     public void interactStation() {

@@ -1,6 +1,5 @@
 package com.devcharles.piazzapanic.gameobjects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,10 +12,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.interfaces.Renderable;
 
-/**
- * A station is a base class that does not need to move
- */
-public class Station implements Renderable {
+public class Food implements Renderable {
+    public String name;
 
     Texture texture;
 
@@ -27,7 +24,7 @@ public class Station implements Renderable {
     public Vector2 pos = new Vector2();
     public Vector2 size = new Vector2(2, 2);
 
-    public Station(Texture texture, World world, float x, float y) {
+    public Food(Texture texture, World world, float x, float y) {
         this.texture = texture;
         this.sprite = new Sprite(texture);
         this.sprite.setOriginCenter();
@@ -35,18 +32,18 @@ public class Station implements Renderable {
         pos.x = x;
         pos.y = y;
 
-        BodyDef stationBodyDef = new BodyDef();
-        stationBodyDef.position.set(pos.x, pos.y);
+        BodyDef foodBodyDef = new BodyDef();
+        foodBodyDef.position.set(pos.x, pos.y);
 
-        Body stationBody = world.createBody(stationBodyDef);
+        Body foodBody = world.createBody(foodBodyDef);
 
         FixtureDef fixtureDef = new FixtureDef();
 
-        PolygonShape stationBox = new PolygonShape();
-        stationBox.setAsBox(size.x / 2, size.y / 2);
-        fixtureDef.shape = stationBox;
-        stationBody.createFixture(fixtureDef).setUserData(this);
-        stationBox.dispose();
+        PolygonShape foodBox = new PolygonShape();
+        foodBox.setAsBox(size.x / 2, size.y / 2);
+        fixtureDef.shape = foodBox;
+        foodBody.createFixture(fixtureDef).setUserData(this);
+        foodBox.dispose();
     }
 
     @Override
@@ -55,7 +52,6 @@ public class Station implements Renderable {
         sprite.setBounds(pos.x - (size.x / 2), pos.y - (size.y / 2), size.x, size.y);
         sprite.setOrigin(size.x / 2, size.y / 2);
         sprite.draw(batch);
-
     }
 
     @Override
@@ -63,7 +59,4 @@ public class Station implements Renderable {
         texture.dispose();
     }
 
-    public void interactStation(Cook cook) {
-        Gdx.app.log("Station Interaction", "");
-    }
 }

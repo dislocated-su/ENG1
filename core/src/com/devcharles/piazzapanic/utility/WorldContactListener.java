@@ -51,6 +51,10 @@ public class WorldContactListener implements ContactListener {
         Object objA = fixA.getUserData();
         Object objB = fixB.getUserData();
 
+        if (objA == null || objB == null) {
+            return null;
+        }
+
         boolean objAvalid = Station.class.isAssignableFrom(objA.getClass());
         boolean objBvalid = Station.class.isAssignableFrom(objB.getClass());
 
