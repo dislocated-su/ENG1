@@ -51,12 +51,12 @@ public class WorldContactListener implements ContactListener {
         Object objA = fixA.getUserData();
         Object objB = fixB.getUserData();
 
-        boolean objAvalid = Station.class.isAssignableFrom(objA.getClass());
-        boolean objBvalid = Station.class.isAssignableFrom(objB.getClass());
-
         if (objA == null || objB == null) {
             return null;
         }
+
+        boolean objAvalid = Station.class.isAssignableFrom(objA.getClass());
+        boolean objBvalid = Station.class.isAssignableFrom(objB.getClass());
 
 
         if (objAvalid || objBvalid) {
