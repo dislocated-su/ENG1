@@ -46,6 +46,8 @@ public class Cook extends Entity implements Simulated {
 
         // BodyDef and FixtureDef don't need disposing, but shapes do.
         circle.dispose();
+
+        this.sprite.setColor(255, 0, 0, 255);
     }
 
     public boolean isControlled = false;

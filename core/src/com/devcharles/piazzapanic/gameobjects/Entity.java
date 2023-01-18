@@ -23,7 +23,6 @@ public abstract class Entity implements Renderable {
         this.texture = texture;
         this.sprite = new Sprite(texture);
         sprite.setOriginCenter();
-        sprite.setColor(255, 0, 0, 255);
     }
     
     public void render(SpriteBatch batch) {

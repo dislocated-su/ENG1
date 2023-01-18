@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.devcharles.piazzapanic.gameobjects.Cook;
 import com.devcharles.piazzapanic.gameobjects.Food;
+import com.devcharles.piazzapanic.gameobjects.Customer;
 import com.devcharles.piazzapanic.gameobjects.GameWorld;
 import com.devcharles.piazzapanic.gameobjects.Pantry;
 import com.devcharles.piazzapanic.gameobjects.Player;
@@ -56,6 +57,10 @@ public class GameScreen implements Screen {
                 new Cook(world, 1.5f, 1.5f)
         });
 
+        Array<Customer> customersArray = new Array<Customer>(new Customer[] {
+            new Customer(world, 5, 5)
+        });
+
         player = new Player(cooks);
 
         simulatedObjects = new Array<Simulated>();
@@ -63,6 +68,10 @@ public class GameScreen implements Screen {
         for (Cook c : cooks) {
             objects.add(c);
             simulatedObjects.add(c);
+        }
+
+        for (Customer c : customersArray) {
+            objects.add(c);
         }
 
         world.setContactListener(new WorldContactListener());
