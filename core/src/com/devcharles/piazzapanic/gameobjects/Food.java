@@ -22,7 +22,7 @@ public class Food implements Renderable {
     Fixture fixture;
 
     public Vector2 pos = new Vector2();
-    public Vector2 size = new Vector2(2, 2);
+    public Vector2 size = new Vector2(1, 1);
 
     public Food(Texture texture, World world, float x, float y) {
         this.texture = texture;

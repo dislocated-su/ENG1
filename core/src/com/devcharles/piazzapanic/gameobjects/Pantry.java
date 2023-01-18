@@ -1,5 +1,6 @@
 package com.devcharles.piazzapanic.gameobjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -15,5 +16,6 @@ public class Pantry extends Station {
     @Override
     public void interactStation(Cook cook) {
         cook.carryingFood.add(foodType);
+        Gdx.app.log("Pantry Interaction", "");
     }
 }

@@ -48,7 +48,7 @@ public class GameScreen implements Screen {
         objects.add(new GameWorld(world, camera, game.batch));
 
         objects.add(new Pantry(new Texture("bucket.png"), world, 10f, 10f,
-                new Food(new Texture("droplet.png"), world, 1f, 1f)));
+                new Food(new Texture("droplet.png"), world, 3f, 3f)));
 
         Array<Cook> cooks = new Array<Cook>(new Cook[] {
                 new Cook(world, 1f, 10f),
