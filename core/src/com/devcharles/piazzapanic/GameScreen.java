@@ -10,10 +10,11 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.devcharles.piazzapanic.gameobjects.Cook;
+import com.devcharles.piazzapanic.gameobjects.Food;
 import com.devcharles.piazzapanic.gameobjects.Customer;
 import com.devcharles.piazzapanic.gameobjects.GameWorld;
+import com.devcharles.piazzapanic.gameobjects.Pantry;
 import com.devcharles.piazzapanic.gameobjects.Player;
-import com.devcharles.piazzapanic.gameobjects.Station;
 import com.devcharles.piazzapanic.interfaces.Renderable;
 import com.devcharles.piazzapanic.interfaces.Simulated;
 import com.devcharles.piazzapanic.utility.WorldContactListener;
@@ -47,7 +48,8 @@ public class GameScreen implements Screen {
 
         objects.add(new GameWorld(world, camera, game.batch));
 
-        objects.add(new Station(new Texture("bucket.png"), world, 1f, 1f));
+        objects.add(new Pantry(new Texture("bucket.png"), world, 10f, 10f,
+                new Food(new Texture("droplet.png"), world, 3f, 3f)));
 
         Array<Cook> cooks = new Array<Cook>(new Cook[] {
                 new Cook(world, 1f, 10f),

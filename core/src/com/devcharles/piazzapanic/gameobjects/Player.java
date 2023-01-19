@@ -38,7 +38,7 @@ public class Player {
         currentCook.isControlled = true;
 
         if (Gdx.input.isKeyJustPressed(Keys.F) && currentCook.currentStation != null) {
-            currentCook.currentStation.interactStation();
+            currentCook.currentStation.interactStation(currentCook);
         }
 
         Vector2 direction = new Vector2(0, 0);
