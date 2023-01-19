@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
-import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 
 public class EntityCreator {
@@ -21,14 +21,18 @@ public class EntityCreator {
         this.world = world;
     }
 
-    public void createPlayer(int x, int y) {
+    /**
+     * Creates an controllable entity, and adds it to the engine.
+     * @return Reference to the entity.
+     */
+    public Entity createCook(int x, int y) {
         Entity entity = engine.createEntity();
 
         B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
 
         TransformComponent transform = engine.createComponent(TransformComponent.class);
 
-        PlayerComponent player = engine.createComponent(PlayerComponent.class);
+        ControllableComponent controllable = engine.createComponent(ControllableComponent.class);
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DynamicBody;
@@ -58,9 +62,10 @@ public class EntityCreator {
 
         entity.add(b2dBody);
         entity.add(transform);
-        entity.add(player);
+        entity.add(controllable);
 
         engine.addEntity(entity);
 
+        return entity;
     }
 }

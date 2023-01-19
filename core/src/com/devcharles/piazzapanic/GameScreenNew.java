@@ -4,10 +4,10 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
@@ -25,6 +25,8 @@ public class GameScreenNew implements Screen {
     private OrthographicCamera camera;
 
     private PiazzaPanic game;
+
+    public int total_cooks = 3;
 
 
     public GameScreenNew(PiazzaPanic game) {
@@ -44,7 +46,11 @@ public class GameScreenNew implements Screen {
 
         EntityCreator creator = new EntityCreator(engine, world);
 
-        creator.createPlayer(1, 1);
+        creator.createCook(1, 1).add(new PlayerComponent());
+
+        for (int i = 0; i < total_cooks - 1; i++) {
+            creator.createCook(2*(i+1), 2*(i+1));
+        }
         
         // set the input processor
         Gdx.input.setInputProcessor(kbInput);
@@ -64,7 +70,6 @@ public class GameScreenNew implements Screen {
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, game.VIRTUAL_HEIGHT * width / (float) height, game.VIRTUAL_HEIGHT);
-        
     }
 
     @Override

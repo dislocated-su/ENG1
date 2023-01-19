@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector2;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
+import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.StateComponent;
 import com.devcharles.piazzapanic.input.KeyboardInput;
@@ -15,21 +16,47 @@ public class PlayerControlSystem extends IteratingSystem {
     ComponentMapper<PlayerComponent> playerMapper;
     ComponentMapper<B2dBodyComponent> bodyMapper;
 	ComponentMapper<StateComponent> stateMapper; 
+    ComponentMapper<ControllableComponent> controlMapper;
 
     KeyboardInput input;
 
+    boolean changingCooks = false;
+    PlayerComponent playerComponent;
+
     public PlayerControlSystem(KeyboardInput input) {
-        super(Family.all(PlayerComponent.class).get());
+        super(Family.all(ControllableComponent.class).get());
         
         playerMapper = ComponentMapper.getFor(PlayerComponent.class); 
 		bodyMapper = ComponentMapper.getFor(B2dBodyComponent.class);
 		stateMapper = ComponentMapper.getFor(StateComponent.class);
+        controlMapper = ComponentMapper.getFor(ControllableComponent.class);
 
         this.input = input;
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+
+        if (this.changingCooks) {
+            this.changingCooks = false;
+            entity.add(this.playerComponent);
+        }
+
+        if (!playerMapper.has(entity)) {
+            return;
+        }
+
+        if (input.changeCooks) {
+            input.changeCooks = false;
+            
+            this.changingCooks = true; // Next cook in the queue will get playercomponent
+            this.playerComponent = entity.getComponent(PlayerComponent.class);
+            entity.remove(PlayerComponent.class);
+            return;
+        }
+
+
+
         B2dBodyComponent b2body = bodyMapper.get(entity);
 
         Vector2 direction = new Vector2(0, 0);
@@ -60,9 +87,8 @@ public class PlayerControlSystem extends IteratingSystem {
         // Rotate the box2d shape in the movement direction
         if (!direction.isZero(0.7f)) {
             b2body.body.setTransform(b2body.body.getPosition(), direction.angleRad());
+            b2body.body.applyLinearImpulse(finalV, b2body.body.getPosition(), true);
         }
-
-        b2body.body.applyLinearImpulse(finalV, b2body.body.getPosition(), true);
     }
     
 }

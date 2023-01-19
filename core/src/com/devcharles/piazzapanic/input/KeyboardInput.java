@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input.Keys;
 public class KeyboardInput implements InputProcessor {
 
     public boolean left, right, up, down;
+    public boolean changeCooks;
 
     @Override
     public boolean keyDown(int keycode) {
@@ -55,7 +56,16 @@ public class KeyboardInput implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
-        return false;
+        boolean processed = true;
+        switch (character) 
+        {
+            case 'e':
+                changeCooks = true;
+                break;
+            default:
+                processed = false;
+        }
+        return processed;
     }
 
     @Override
