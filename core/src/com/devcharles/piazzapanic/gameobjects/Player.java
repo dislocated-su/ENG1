@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.devcharles.piazzapanic.input.KeyboardInput;
 
 public class Player {
 
@@ -13,9 +14,12 @@ public class Player {
 
     private int cookID = 0;
 
-    public Player(Array<Cook> cooks) {
+    private KeyboardInput kbInput;
+
+    public Player(Array<Cook> cooks, KeyboardInput kbInput) {
         this.availableCooks = cooks;
         this.currentCook = this.availableCooks.items[cookID];
+        this.kbInput = kbInput;
     }
 
     public void interact(float deltaTime) {
@@ -43,16 +47,16 @@ public class Player {
 
         Vector2 direction = new Vector2(0, 0);
 
-        if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+        if (kbInput.left) {
             direction.add(-1, 0);
         }
-        if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+        if (kbInput.right) {
             direction.add(1, 0);
         }
-        if (Gdx.input.isKeyPressed(Keys.UP)) {
+        if (kbInput.up) {
             direction.add(0, 1);
         }
-        if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+        if (kbInput.down) {
             direction.add(0, -1);
         }
 

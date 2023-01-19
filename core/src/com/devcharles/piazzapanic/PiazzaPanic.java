@@ -10,6 +10,8 @@ public class PiazzaPanic extends Game {
 	public static final int VIEWPORT_HEIGHT = 30;
 	public static final int VIEWPORT_WIDTH = 30;
 
+	public static final float VIRTUAL_HEIGHT = 20f;
+
 	public SpriteBatch batch;
 	public BitmapFont font;
 

@@ -1,5 +1,6 @@
 package com.devcharles.piazzapanic;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,6 +16,7 @@ import com.devcharles.piazzapanic.gameobjects.Customer;
 import com.devcharles.piazzapanic.gameobjects.GameWorld;
 import com.devcharles.piazzapanic.gameobjects.Pantry;
 import com.devcharles.piazzapanic.gameobjects.Player;
+import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.interfaces.Renderable;
 import com.devcharles.piazzapanic.interfaces.Simulated;
 import com.devcharles.piazzapanic.utility.WorldContactListener;
@@ -37,8 +39,12 @@ public class GameScreen implements Screen {
 
     Box2DDebugRenderer debugRenderer;
 
+    KeyboardInput kbInput;
+
     public GameScreen(PiazzaPanic game) {
         this.game = game;
+
+        kbInput = new KeyboardInput();
 
         camera = new OrthographicCamera();
 
@@ -61,7 +67,7 @@ public class GameScreen implements Screen {
             new Customer(world, 5, 5)
         });
 
-        player = new Player(cooks);
+        player = new Player(cooks, kbInput);
 
         simulatedObjects = new Array<Simulated>();
 
@@ -75,6 +81,8 @@ public class GameScreen implements Screen {
         }
 
         world.setContactListener(new WorldContactListener());
+
+        Gdx.input.setInputProcessor(kbInput);
     }
 
     @Override
