@@ -11,8 +11,9 @@ import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
+import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
-import com.devcharles.piazzapanic.utility.EntityCreator;
+import com.devcharles.piazzapanic.utility.EntityFactory;
 
 public class GameScreenNew implements Screen {
 
@@ -41,10 +42,12 @@ public class GameScreenNew implements Screen {
         engine = new PooledEngine();
 
         engine.addSystem(new PhysicsSystem(world));
+        engine.addSystem(new RenderingSystem(game.batch, camera));
         engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
 
-        EntityCreator creator = new EntityCreator(engine, world);
+
+        EntityFactory creator = new EntityFactory(engine, world);
 
         creator.createCook(1, 1).add(new PlayerComponent());
 

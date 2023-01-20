@@ -2,6 +2,8 @@ package com.devcharles.piazzapanic.utility;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -9,14 +11,15 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 
-public class EntityCreator {
+public class EntityFactory {
 
     private PooledEngine engine;
     private World world;
     
-    public EntityCreator(PooledEngine engine, World world) {
+    public EntityFactory(PooledEngine engine, World world) {
         this.engine = engine;
         this.world = world;
     }
@@ -34,9 +37,16 @@ public class EntityCreator {
 
         ControllableComponent controllable = engine.createComponent(ControllableComponent.class);
 
+        TextureComponent texture = engine.createComponent(TextureComponent.class);
+
+        // Texture
+        texture.region = new TextureRegion(new Texture("droplet.png"));
+        texture.scale.set(0.02f, 0.02f);
+
+        // Box2d body
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DynamicBody;
-        bodyDef.linearDamping = 10f;
+        bodyDef.linearDamping = 20f;
         bodyDef.fixedRotation = true;
         bodyDef.awake = true;
 
@@ -63,6 +73,7 @@ public class EntityCreator {
         entity.add(b2dBody);
         entity.add(transform);
         entity.add(controllable);
+        entity.add(texture);
 
         engine.addEntity(entity);
 
