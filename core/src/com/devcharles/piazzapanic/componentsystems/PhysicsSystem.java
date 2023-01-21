@@ -56,6 +56,7 @@ public class PhysicsSystem extends IteratingSystem {
                 bodyTransform.position.x = position.x;
                 bodyTransform.position.y = position.y;
                 bodyTransform.rotation = bodyC.body.getAngle() * MathUtils.radiansToDegrees;
+                bodyTransform.isMoving = !bodyC.body.getLinearVelocity().isZero(0.1f);
             }
 
         }

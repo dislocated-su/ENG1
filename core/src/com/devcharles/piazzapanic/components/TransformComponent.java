@@ -9,4 +9,5 @@ public class TransformComponent implements Component {
     public final Vector2 scale = new Vector2(1,1);
     public float rotation = 0.0f;
     public boolean isHidden = false;
+    public boolean isMoving = false;
 }

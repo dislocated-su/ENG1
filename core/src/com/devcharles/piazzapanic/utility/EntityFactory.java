@@ -9,10 +9,12 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.devcharles.piazzapanic.components.AnimationComponent;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
 
 public class EntityFactory {
 
@@ -39,9 +41,16 @@ public class EntityFactory {
 
         TextureComponent texture = engine.createComponent(TextureComponent.class);
 
+        AnimationComponent an = engine.createComponent(AnimationComponent.class);
+
+        WalkingAnimationComponent animation = engine.createComponent(WalkingAnimationComponent.class);
+
+        animation.animator = new CookAnimator();
         // Texture
-        texture.region = new TextureRegion(new Texture("droplet.png"));
-        texture.scale.set(0.02f, 0.02f);
+        TextureRegion[][] tempRegions = TextureRegion.split(new Texture("v2/chef_a.png"), 32, 32);
+
+        texture.region = tempRegions[0][0];
+        texture.scale.set(0.1f, 0.1f);
 
         // Box2d body
         BodyDef bodyDef = new BodyDef();
@@ -74,6 +83,8 @@ public class EntityFactory {
         entity.add(transform);
         entity.add(controllable);
         entity.add(texture);
+        entity.add(an);
+        entity.add(animation);
 
         engine.addEntity(entity);
 

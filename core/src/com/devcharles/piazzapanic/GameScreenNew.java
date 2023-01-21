@@ -27,7 +27,7 @@ public class GameScreenNew implements Screen {
 
     private PiazzaPanic game;
 
-    public int total_cooks = 3;
+    public int total_cooks = 2;
 
 
     public GameScreenNew(PiazzaPanic game) {
