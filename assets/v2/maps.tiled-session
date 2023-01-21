@@ -1,0 +1,52 @@
+{
+    "activeFile": "map.tmx",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "b_kitchen.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
+        "kitchen.tmx": {
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 37,
+                "y": 312.66666666666663
+            }
+        },
+        "kitchen.tmx#b_kitchen": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "map.tmx": {
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 385.3333333333333,
+                "y": 961.3333333333333
+            }
+        },
+        "tileset_32.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "tileset_321.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        }
+    },
+    "openFiles": [
+        "tileset_32.tsx",
+        "map.tmx"
+    ],
+    "recentFiles": [
+        "tileset_32.tsx",
+        "map.tmx",
+        "tileset_321.tsx",
+        "b_kitchen.tsx",
+        "kitchen.tmx"
+    ]
+}

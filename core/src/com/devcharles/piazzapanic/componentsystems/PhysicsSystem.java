@@ -20,7 +20,7 @@ public class PhysicsSystem extends IteratingSystem {
     private ComponentMapper<B2dBodyComponent> bodyMap = ComponentMapper.getFor(B2dBodyComponent.class);
     private ComponentMapper<TransformComponent> transformMap = ComponentMapper.getFor(TransformComponent.class);
 
-    private static final float MAX_FRAMETIME = 1/60f;
+    private static final float MAX_FRAMETIME = 1 / 60f;
     private static float accumulator = 0f;
 
     public PhysicsSystem(World world) {
@@ -46,7 +46,7 @@ public class PhysicsSystem extends IteratingSystem {
             world.step(MAX_FRAMETIME, 6, 2);
             accumulator -= MAX_FRAMETIME;
 
-            for (Entity entity: bodies) {
+            for (Entity entity : bodies) {
                 TransformComponent bodyTransform = transformMap.get(entity);
                 B2dBodyComponent bodyC = bodyMap.get(entity);
 
@@ -59,7 +59,8 @@ public class PhysicsSystem extends IteratingSystem {
                 bodyTransform.isMoving = !bodyC.body.getLinearVelocity().isZero(0.1f);
             }
 
+            bodies.clear();
         }
     }
-    
+
 }

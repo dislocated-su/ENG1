@@ -8,14 +8,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.components.StateComponent;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 
 public class PlayerControlSystem extends IteratingSystem {
 
     ComponentMapper<PlayerComponent> playerMapper;
     ComponentMapper<B2dBodyComponent> bodyMapper;
-	ComponentMapper<StateComponent> stateMapper; 
     ComponentMapper<ControllableComponent> controlMapper;
 
     KeyboardInput input;
@@ -25,10 +23,9 @@ public class PlayerControlSystem extends IteratingSystem {
 
     public PlayerControlSystem(KeyboardInput input) {
         super(Family.all(ControllableComponent.class).get());
-        
-        playerMapper = ComponentMapper.getFor(PlayerComponent.class); 
-		bodyMapper = ComponentMapper.getFor(B2dBodyComponent.class);
-		stateMapper = ComponentMapper.getFor(StateComponent.class);
+
+        playerMapper = ComponentMapper.getFor(PlayerComponent.class);
+        bodyMapper = ComponentMapper.getFor(B2dBodyComponent.class);
         controlMapper = ComponentMapper.getFor(ControllableComponent.class);
 
         this.input = input;
@@ -48,14 +45,12 @@ public class PlayerControlSystem extends IteratingSystem {
 
         if (input.changeCooks) {
             input.changeCooks = false;
-            
+
             this.changingCooks = true; // Next cook in the queue will get playercomponent
             this.playerComponent = entity.getComponent(PlayerComponent.class);
             entity.remove(PlayerComponent.class);
             return;
         }
-
-
 
         B2dBodyComponent b2body = bodyMapper.get(entity);
 
@@ -90,5 +85,5 @@ public class PlayerControlSystem extends IteratingSystem {
             b2body.body.applyLinearImpulse(finalV, b2body.body.getPosition(), true);
         }
     }
-    
+
 }

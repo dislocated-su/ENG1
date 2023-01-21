@@ -10,9 +10,8 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.devcharles.piazzapanic.interfaces.Simulated;
 
-public class Cook extends Entity implements Simulated {
+public class Cook extends Entity {
 
     public Station currentStation = null;
 

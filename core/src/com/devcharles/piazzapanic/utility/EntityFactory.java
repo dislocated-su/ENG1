@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -20,7 +21,7 @@ public class EntityFactory {
 
     private PooledEngine engine;
     private World world;
-    
+
     public EntityFactory(PooledEngine engine, World world) {
         this.engine = engine;
         this.world = world;
@@ -28,6 +29,7 @@ public class EntityFactory {
 
     /**
      * Creates an controllable entity, and adds it to the engine.
+     * 
      * @return Reference to the entity.
      */
     public Entity createCook(int x, int y) {
@@ -50,6 +52,7 @@ public class EntityFactory {
         TextureRegion[][] tempRegions = TextureRegion.split(new Texture("v2/chef_a.png"), 32, 32);
 
         texture.region = tempRegions[0][0];
+        // TODO: Set size in viewport units instead of scale
         texture.scale.set(0.1f, 0.1f);
 
         // Box2d body
@@ -65,8 +68,7 @@ public class EntityFactory {
 
         // Create a circle shape and set its radius to 1
         CircleShape circle = new CircleShape();
-        circle.setRadius(0.75f);
-
+        circle.setRadius(0.5f);
         // Create a fixture definition to apply our shape to
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
