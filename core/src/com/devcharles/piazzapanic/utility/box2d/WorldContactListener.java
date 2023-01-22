@@ -1,4 +1,4 @@
-package com.devcharles.piazzapanic.utility;
+package com.devcharles.piazzapanic.utility.box2d;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.devcharles.piazzapanic.gameobjects.Cook;
 import com.devcharles.piazzapanic.gameobjects.Station;
+import com.devcharles.piazzapanic.utility.Pair;
 
 public class WorldContactListener implements ContactListener {
 

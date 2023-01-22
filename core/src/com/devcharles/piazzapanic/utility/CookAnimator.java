@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class CookAnimator extends WalkAnimator {
 
-    private static final int COLS = 8, ROWS = 1;
+    private static final int COLS = 10, ROWS = 1;
 
     CookAnimator() {
         // Load the sprite sheet as a Texture
@@ -27,8 +27,8 @@ public class CookAnimator extends WalkAnimator {
         }
 
         walkDown = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 0, 3));
-        walkUp = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 3, 5));
-        walkSide = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 5, 8));
+        walkUp = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 3, 6));
+        walkSide = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 6, 10));
     }
 
     @Override

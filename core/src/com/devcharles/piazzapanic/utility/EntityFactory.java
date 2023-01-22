@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -16,6 +17,7 @@ import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
+import com.devcharles.piazzapanic.utility.box2d.CollisionCategory;
 
 public class EntityFactory {
 
@@ -74,6 +76,8 @@ public class EntityFactory {
         fixtureDef.shape = circle;
         fixtureDef.density = 20f;
         fixtureDef.friction = 0.4f;
+        fixtureDef.filter.categoryBits = CollisionCategory.ENTITY.getValue();
+        fixtureDef.filter.maskBits =(short)(CollisionCategory.BOUNDARY.getValue() | CollisionCategory.ENTITY.getValue());
 
         // Create our fixture and attach it to the body
         b2dBody.body.createFixture(fixtureDef).setUserData(this);
