@@ -13,7 +13,6 @@ public class ZComparator implements Comparator<Entity> {
 
     public ZComparator() {
         transformMap = ComponentMapper.getFor(TransformComponent.class);
-        // TODO: compare moving entities in terms of Y
         controllableMap = ComponentMapper.getFor(ControllableComponent.class);
     }
 

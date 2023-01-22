@@ -9,12 +9,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
+import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
-import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
 
 public class GameScreenNew implements Screen {
 
@@ -28,10 +28,11 @@ public class GameScreenNew implements Screen {
 
     private PiazzaPanic game;
 
-    public int total_cooks = 2;
+    public int total_cooks;
 
-    public GameScreenNew(PiazzaPanic game) {
+    public GameScreenNew(PiazzaPanic game, int total_cooks) {
         this.game = game;
+        this.total_cooks = total_cooks;
 
         kbInput = new KeyboardInput();
 
@@ -43,6 +44,7 @@ public class GameScreenNew implements Screen {
 
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new RenderingSystem(world, game.batch, camera));
+        engine.addSystem(new LightingSystem(world, camera));
         engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
 
