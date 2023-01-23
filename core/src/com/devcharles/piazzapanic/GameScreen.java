@@ -1,80 +1,69 @@
 package com.devcharles.piazzapanic;
 
+import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.devcharles.piazzapanic.gameobjects.Cook;
-import com.devcharles.piazzapanic.gameobjects.Food;
-import com.devcharles.piazzapanic.gameobjects.Customer;
-import com.devcharles.piazzapanic.gameobjects.GameWorld;
-import com.devcharles.piazzapanic.gameobjects.Pantry;
-import com.devcharles.piazzapanic.gameobjects.Player;
-import com.devcharles.piazzapanic.interfaces.Renderable;
-import com.devcharles.piazzapanic.interfaces.Simulated;
-import com.devcharles.piazzapanic.utility.WorldContactListener;
+import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.componentsystems.CollisionSystem;
+import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
+import com.devcharles.piazzapanic.componentsystems.LightingSystem;
+import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
+import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
+import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
+import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 
 public class GameScreen implements Screen {
 
-    final float VIRTUAL_HEIGHT = 20f;
+    private PooledEngine engine;
 
-    private Array<Renderable> objects;
+    private KeyboardInput kbInput;
 
-    private Array<Simulated> simulatedObjects;
+    private World world;
 
-    final PiazzaPanic game;
+    private OrthographicCamera camera;
 
-    OrthographicCamera camera;
+    private PiazzaPanic game;
 
-    private Player player;
+    public int total_cooks;
 
-    World world = new World(new Vector2(0, 0), true);
-
-    Box2DDebugRenderer debugRenderer;
-
-    public GameScreen(PiazzaPanic game) {
+    public GameScreen(PiazzaPanic game, int total_cooks) {
         this.game = game;
+        this.total_cooks = total_cooks;
+
+        kbInput = new KeyboardInput();
+
+        world = new World(new Vector2(0, 0), true);
 
         camera = new OrthographicCamera();
 
-        this.debugRenderer = new Box2DDebugRenderer();
+        engine = new PooledEngine();
 
-        objects = new Array<Renderable>();
+        engine.addSystem(new PhysicsSystem(world));
+        engine.addSystem(new RenderingSystem(world, game.batch, camera));
+        engine.addSystem(new LightingSystem(world, camera));
+        engine.addSystem(new DebugRendererSystem(world, camera));
+        engine.addSystem(new PlayerControlSystem(kbInput));
+        engine.addSystem(new CollisionSystem(kbInput));
 
-        objects.add(new GameWorld(world, camera, game.batch));
+        EntityFactory creator = new EntityFactory(engine, world);
 
-        objects.add(new Pantry(new Texture("bucket.png"), world, 10f, 10f,
-                new Food(new Texture("droplet.png"), world, 3f, 3f)));
+        creator.createCook(10, 10).add(new PlayerComponent());
 
-        Array<Cook> cooks = new Array<Cook>(new Cook[] {
-                new Cook(world, 1f, 10f),
-                new Cook(world, 4.5f, 4.5f),
-                new Cook(world, 1.5f, 1.5f)
-        });
-
-        Array<Customer> customersArray = new Array<Customer>(new Customer[] {
-            new Customer(world, 5, 5)
-        });
-
-        player = new Player(cooks);
-
-        simulatedObjects = new Array<Simulated>();
-
-        for (Cook c : cooks) {
-            objects.add(c);
-            simulatedObjects.add(c);
+        for (int i = 0; i < total_cooks - 1; i++) {
+            creator.createCook(2 * (i + 4), 2 * (i + 4));
         }
 
-        for (Customer c : customersArray) {
-            objects.add(c);
-        }
+        creator.createStation(9f, 10f);
 
         world.setContactListener(new WorldContactListener());
+        // set the input processor
+        Gdx.input.setInputProcessor(kbInput);
     }
 
     @Override
@@ -84,70 +73,40 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        Vector2 playerPos = player.currentCook.body.getPosition();
-
-        camera.position.set(camera.position.lerp(new Vector3(playerPos, 0), 0.05f));
-
-        camera.update();
-
-        game.batch.setProjectionMatrix(camera.combined);
-
-        game.batch.begin();
-
-        for (Renderable r : objects) {
-            r.render(game.batch);
-        }
-        game.batch.end();
-
-        player.interact(delta);
-
-        debugRenderer.render(world, camera.combined);
-
-        this.doPhysicsStep(delta);
-    }
-
-    private float accumulator = 0;
-
-    private void doPhysicsStep(float deltaTime) {
-        float frameTime = Math.min(deltaTime, 0.25f);
-        accumulator += frameTime;
-
-        while (accumulator >= 1 / 60f) {
-            world.step(1 / 60f, 6, 2);
-            accumulator -= 1 / 60f;
-        }
-
-        for (Simulated s : simulatedObjects) {
-            s.simulate();
-        }
+        engine.update(delta);
     }
 
     @Override
     public void resize(int width, int height) {
-        camera.setToOrtho(false, VIRTUAL_HEIGHT * width / (float) height, VIRTUAL_HEIGHT);
+        camera.setToOrtho(false, game.VIRTUAL_HEIGHT * width / (float) height, game.VIRTUAL_HEIGHT);
     }
 
     @Override
     public void pause() {
+        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void resume() {
+        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void hide() {
+        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void dispose() {
-        for (Renderable renderable : objects) {
-            renderable.dispose();
-        }
+        // TODO Auto-generated method stub
+
     }
+
 }
