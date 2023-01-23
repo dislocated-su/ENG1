@@ -7,12 +7,12 @@ public class KeyboardInput implements InputProcessor {
 
     public boolean left, right, up, down;
     public boolean changeCooks;
+    public boolean interactStation = false;
 
     @Override
     public boolean keyDown(int keycode) {
         boolean processed = true;
-        switch (keycode) 
-        {
+        switch (keycode) {
             case Keys.LEFT:
                 left = true;
                 break;
@@ -34,8 +34,7 @@ public class KeyboardInput implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         boolean processed = true;
-        switch (keycode) 
-        {
+        switch (keycode) {
             case Keys.LEFT:
                 left = false;
                 break;
@@ -57,10 +56,12 @@ public class KeyboardInput implements InputProcessor {
     @Override
     public boolean keyTyped(char character) {
         boolean processed = true;
-        switch (character) 
-        {
+        switch (character) {
             case 'e':
                 changeCooks = true;
+                break;
+            case 'f':
+                interactStation = true;
                 break;
             default:
                 processed = false;
@@ -92,5 +93,5 @@ public class KeyboardInput implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
-    
+
 }

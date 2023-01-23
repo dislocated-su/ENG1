@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.componentsystems.CollisionSystem;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
@@ -15,6 +16,7 @@ import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.WorldContactListener;
 
 public class GameScreenNew implements Screen {
 
@@ -44,9 +46,10 @@ public class GameScreenNew implements Screen {
 
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new RenderingSystem(world, game.batch, camera));
-        engine.addSystem(new LightingSystem(world, camera));
+        // engine.addSystem(new LightingSystem(world, camera));
         engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
+        engine.addSystem(new CollisionSystem(kbInput));
 
         EntityFactory creator = new EntityFactory(engine, world);
 
@@ -56,6 +59,9 @@ public class GameScreenNew implements Screen {
             creator.createCook(2 * (i + 4), 2 * (i + 4));
         }
 
+        creator.createStation(9f, 10f);
+
+        world.setContactListener(new WorldContactListener());
         // set the input processor
         Gdx.input.setInputProcessor(kbInput);
     }
