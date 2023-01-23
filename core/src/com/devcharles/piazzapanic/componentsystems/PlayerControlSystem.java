@@ -1,6 +1,5 @@
 package com.devcharles.piazzapanic.componentsystems;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -9,12 +8,9 @@ import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.utility.Mappers;
 
 public class PlayerControlSystem extends IteratingSystem {
-
-    ComponentMapper<PlayerComponent> playerMapper;
-    ComponentMapper<B2dBodyComponent> bodyMapper;
-    ComponentMapper<ControllableComponent> controlMapper;
 
     KeyboardInput input;
 
@@ -23,10 +19,6 @@ public class PlayerControlSystem extends IteratingSystem {
 
     public PlayerControlSystem(KeyboardInput input) {
         super(Family.all(ControllableComponent.class).get());
-
-        playerMapper = ComponentMapper.getFor(PlayerComponent.class);
-        bodyMapper = ComponentMapper.getFor(B2dBodyComponent.class);
-        controlMapper = ComponentMapper.getFor(ControllableComponent.class);
 
         this.input = input;
     }
@@ -39,7 +31,7 @@ public class PlayerControlSystem extends IteratingSystem {
             entity.add(this.playerComponent);
         }
 
-        if (!playerMapper.has(entity)) {
+        if (!Mappers.player.has(entity)) {
             return;
         }
 
@@ -47,12 +39,17 @@ public class PlayerControlSystem extends IteratingSystem {
             input.changeCooks = false;
 
             this.changingCooks = true; // Next cook in the queue will get playercomponent
-            this.playerComponent = entity.getComponent(PlayerComponent.class);
+            this.playerComponent = Mappers.player.get(entity);
             entity.remove(PlayerComponent.class);
             return;
         }
 
-        B2dBodyComponent b2body = bodyMapper.get(entity);
+        if (input.interact) {
+            input.interact = false;
+            Mappers.player.get(entity).interacting = true;
+        }
+
+        B2dBodyComponent b2body = Mappers.b2body.get(entity);
 
         Vector2 direction = new Vector2(0, 0);
 

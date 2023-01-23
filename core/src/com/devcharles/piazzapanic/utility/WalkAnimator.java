@@ -10,7 +10,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public abstract class WalkAnimator {
     Texture walkSheet;
 
-    Animation<TextureRegion> walkSide;
+    Animation<TextureRegion> walkRight;
+    Animation<TextureRegion> walkLeft;
     Animation<TextureRegion> walkUp;
     Animation<TextureRegion> walkDown;
 
@@ -28,7 +29,7 @@ public abstract class WalkAnimator {
      * @return A texture region to draw, and a rotation used for rendering the
      *         region.
      */
-    public abstract Pair<TextureRegion, Float> getFrame(float rotation, boolean isMoving, float frameTime);
+    public abstract TextureRegion getFrame(float rotation, boolean isMoving, float frameTime);
 
     HashMap<Integer, Direction> directionMap = new HashMap<Integer, Direction>() {
         {

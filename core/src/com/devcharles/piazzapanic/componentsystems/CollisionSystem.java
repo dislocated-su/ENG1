@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.utility.Mappers;
 
 public class CollisionSystem extends IteratingSystem {
 
@@ -22,13 +23,16 @@ public class CollisionSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         // Gdx.app.log("", "");
-
-        if (input.interactStation && entity.getComponent(StationComponent.class).interactable) {
-            if (entity.getComponent(StationComponent.class).interactingCook
-                    .getComponent(PlayerComponent.class) != null) {
-
-                input.interactStation = false;
-
+        StationComponent stationComponent = Mappers.station.get(entity);
+        
+        if (stationComponent.interactable) {
+            
+            PlayerComponent player = Mappers.player.get(stationComponent.interactingCook);
+            
+            if (player != null && player.interacting) {
+                
+                player.interacting = false;
+                
                 Gdx.app.log("correct", "");
 
                 Gdx.app.log("test", "");

@@ -17,6 +17,7 @@ import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
+import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Pair;
 import com.devcharles.piazzapanic.utility.WalkAnimator;
 import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
@@ -28,13 +29,7 @@ public class RenderingSystem extends IteratingSystem {
     private Array<Entity> entities;
     private OrthographicCamera camera;
 
-    private ComponentMapper<TextureComponent> teMap;
-    private ComponentMapper<TransformComponent> trMap;
-    private ComponentMapper<AnimationComponent> anMap;
-    private ComponentMapper<PlayerComponent> plMap;
-
     private Comparator<Entity> comparator;
-    private ComponentMapper<WalkingAnimationComponent> waMap;
 
     private float renderingAccumulator = 0f;
 
@@ -47,12 +42,6 @@ public class RenderingSystem extends IteratingSystem {
         this.camera = camera;
         this.comparator = new ZComparator();
         this.mapRenderer = new WorldTilemapRenderer(world, camera, batch);
-
-        teMap = ComponentMapper.getFor(TextureComponent.class);
-        trMap = ComponentMapper.getFor(TransformComponent.class);
-        anMap = ComponentMapper.getFor(AnimationComponent.class);
-        plMap = ComponentMapper.getFor(PlayerComponent.class);
-        waMap = ComponentMapper.getFor(WalkingAnimationComponent.class);
         
         entities = new Array<Entity>(32);
     }
@@ -73,31 +62,27 @@ public class RenderingSystem extends IteratingSystem {
         mapRenderer.renderBackground();
 
         for (Entity entity : entities) {
-            TextureComponent texture = teMap.get(entity);
-            TransformComponent transform = trMap.get(entity);
+            TextureComponent texture = Mappers.texture.get(entity);
+            TransformComponent transform = Mappers.transform.get(entity);
 
             TextureRegion toRender = texture.region;
             Float rotation = null;
             boolean flip = false;
 
             // If this is the player, update the camera position.
-            if (plMap.has(entity)) {
+            if (Mappers.player.has(entity)) {
                 camera.position.lerp(new Vector3(transform.position.x, transform.position.y, 0), 0.1f);
                 camera.position.x = (float) Math.round(camera.position.x * 1000f) / 1000f;
                 camera.position.y = (float) Math.round(camera.position.y * 1000f) / 1000f;
-                
             }
-            if (anMap.has(entity)) {
+            if (Mappers.animation.has(entity)) {
                 // Handle animation logic here
-                if (waMap.has(entity)) {
-                    WalkAnimator walkAnimator = waMap.get(entity).animator;
-                    Pair<TextureRegion, Float> animationData = walkAnimator.getFrame(transform.rotation,
-                            transform.isMoving, renderingAccumulator);
+                if (Mappers.walkingAnimation.has(entity)) {
+                    // Animation for walking have the correct orientation already.
+                    rotation = 0f;
+                    WalkAnimator walkAnimator = Mappers.walkingAnimation.get(entity).animator;
+                    toRender = walkAnimator.getFrame(transform.rotation, transform.isMoving, renderingAccumulator);
 
-                    toRender = animationData.first;
-                    rotation = animationData.second;
-                    flip = (animationData.second == 180);
-                    rotation = flip ? 0 : rotation;
                 } else {
                     // Animation<TextureRegion> animation = anMap.get(entity).animation;
                     continue;

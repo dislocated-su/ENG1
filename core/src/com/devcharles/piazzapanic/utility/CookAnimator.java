@@ -28,11 +28,21 @@ public class CookAnimator extends WalkAnimator {
 
         walkDown = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 0, 3));
         walkUp = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 3, 6));
-        walkSide = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 6, 10));
+        walkRight = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 6, 10));
+
+        TextureRegion[] toCopy = walkRight.getKeyFrames();
+        TextureRegion[] flippedRegions = new TextureRegion[toCopy.length];
+        
+        for (int i = 0; i < flippedRegions.length; i++) {
+            flippedRegions[i] = new TextureRegion(toCopy[i]);
+            flippedRegions[i].flip(true, false);
+        }
+
+        walkLeft = new Animation<TextureRegion>(0.1f, flippedRegions);
     }
 
     @Override
-    public Pair<TextureRegion, Float> getFrame(float rotation, boolean isMoving, float frameTime) {
+    public TextureRegion getFrame(float rotation, boolean isMoving, float frameTime) {
         Animation<TextureRegion> currentAnimation = walkDown;
 
         if (!isMoving) {
@@ -41,7 +51,6 @@ public class CookAnimator extends WalkAnimator {
 
         Direction dir = rotationToDirection(rotation);
 
-        rotation = 0;
         switch (dir) {
             case up:
                 currentAnimation = walkUp;
@@ -50,14 +59,13 @@ public class CookAnimator extends WalkAnimator {
                 currentAnimation = walkDown;
                 break;
             case left:
-                currentAnimation = walkSide;
-                rotation = 180;
+                currentAnimation = walkLeft;
                 break;
             case right:
-                currentAnimation = walkSide;
+                currentAnimation = walkRight;
                 break;
         }
 
-        return new Pair<TextureRegion, Float>(currentAnimation.getKeyFrame(frameTime, true), rotation);
+        return currentAnimation.getKeyFrame(frameTime, true);
     }
 }

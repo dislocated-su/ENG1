@@ -16,9 +16,9 @@ import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
-import com.devcharles.piazzapanic.utility.WorldContactListener;
+import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 
-public class GameScreenNew implements Screen {
+public class GameScreen implements Screen {
 
     private PooledEngine engine;
 
@@ -32,7 +32,7 @@ public class GameScreenNew implements Screen {
 
     public int total_cooks;
 
-    public GameScreenNew(PiazzaPanic game, int total_cooks) {
+    public GameScreen(PiazzaPanic game, int total_cooks) {
         this.game = game;
         this.total_cooks = total_cooks;
 
@@ -46,7 +46,7 @@ public class GameScreenNew implements Screen {
 
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new RenderingSystem(world, game.batch, camera));
-        // engine.addSystem(new LightingSystem(world, camera));
+        engine.addSystem(new LightingSystem(world, camera));
         engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new CollisionSystem(kbInput));

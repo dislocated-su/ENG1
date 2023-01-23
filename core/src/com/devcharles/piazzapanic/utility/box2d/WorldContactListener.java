@@ -1,15 +1,14 @@
-package com.devcharles.piazzapanic.utility;
+package com.devcharles.piazzapanic.utility.box2d;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.utility.Mappers;
+import com.devcharles.piazzapanic.utility.Pair;
 
 public class WorldContactListener implements ContactListener {
 
@@ -39,42 +38,37 @@ public class WorldContactListener implements ContactListener {
         pair.first.interactingCook = null;
     }
 
-    @Override
-    public void preSolve(Contact contact, Manifold oldManifold) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {
-        // TODO Auto-generated method stub
-
-    }
-
     private Pair<StationComponent, Entity> stationInteractResolver(Contact contact) {
-        Fixture fixA = contact.getFixtureA();
-        Fixture fixB = contact.getFixtureB();
-
-        Object objA = fixA.getUserData();
-        Object objB = fixB.getUserData();
+        Object objA = contact.getFixtureA().getUserData();
+        Object objB = contact.getFixtureB().getUserData();
 
         if (objA == null || objB == null) {
             return null;
         }
 
-        boolean objAvalid = (StationComponent.class.isAssignableFrom(objA.getClass()));
-        boolean objBvalid = (StationComponent.class.isAssignableFrom(objB.getClass()));
+        boolean objAStation = (StationComponent.class.isAssignableFrom(objA.getClass()));
+        boolean objBStation = (StationComponent.class.isAssignableFrom(objB.getClass()));
 
-        if (objAvalid || objBvalid) {
-            Object station = objAvalid ? objA : objB;
+        if (objAStation || objBStation) {
+            Object station = objAStation ? objA : objB;
             Entity cook = station == objA ? ((Entity) objB) : ((Entity) objA);
 
-            if (cook != null && cook.getComponent(PlayerComponent.class) != null) {
-                // Gdx.app.log("cook-station contact", "");
+            PlayerComponent player = Mappers.player.get(cook);
+
+            if (cook != null && player != null) {
+                player.interacting = false;
                 return new Pair<StationComponent, Entity>((StationComponent) station, cook);
             }
         }
         return null;
+    }
+
+    @Override
+    public void preSolve(Contact contact, Manifold oldManifold) {
+    }
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {
     }
 
 }
