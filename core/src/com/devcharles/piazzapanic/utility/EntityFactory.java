@@ -164,4 +164,39 @@ public class EntityFactory {
         return entity;
     }
 
+    public Entity createCustomer(float x, float y) {
+        Entity entity = engine.createEntity();
+
+        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
+
+        TextureComponent texture = engine.createComponent(TextureComponent.class);
+
+        TransformComponent transform = engine.createComponent(TransformComponent.class);
+
+        AnimationComponent an = engine.createComponent(AnimationComponent.class);
+
+        WalkingAnimationComponent walkingAnimaton = engine.createComponent(WalkingAnimationComponent.class);
+
+        walkingAnimaton.animator = new CookAnimator();
+
+        // Reuse existing body definition
+        movingBodyDef.position.set(x,y);
+        b2dBody.body = world.createBody(movingBodyDef);
+        b2dBody.body.createFixture(movingFixtureDef).setUserData(entity);
+        
+        texture.region = new TextureRegion(new Texture("droplet.png"));
+        texture.scale.set(0.05f, 0.05f);
+
+        transform.isHidden = false;
+
+        entity.add(b2dBody);
+        entity.add(transform);
+        entity.add(texture);
+        entity.add(an);
+        entity.add(walkingAnimaton);
+        engine.addEntity(entity);
+
+        return entity;
+    }
+
 }

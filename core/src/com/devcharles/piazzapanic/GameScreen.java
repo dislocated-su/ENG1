@@ -61,6 +61,8 @@ public class GameScreen implements Screen {
 
         creator.createStation(9f, 10f);
 
+        creator.createCustomer(15, 10);
+
         world.setContactListener(new WorldContactListener());
         // set the input processor
         Gdx.input.setInputProcessor(kbInput);
