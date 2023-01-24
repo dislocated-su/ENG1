@@ -27,10 +27,45 @@ public class EntityFactory {
     private PooledEngine engine;
     private World world;
 
+    private FixtureDef movingFixtureDef;
+    private BodyDef movingBodyDef;
+    private CircleShape circleShape;
+
     public EntityFactory(PooledEngine engine, World world) {
         this.engine = engine;
         this.world = world;
+
+        createDefinitions();
     }
+
+    /**
+     * Create reusable definitions for bodies and fixtures. These can be then be used while creating the bodies for entities.
+     */
+    private void createDefinitions() {
+        
+        // Moving bodies
+
+        // Bodydef
+        movingBodyDef = new BodyDef();
+        
+        movingBodyDef.type = BodyType.DynamicBody;
+        movingBodyDef.linearDamping = 20f;
+        movingBodyDef.fixedRotation = true;
+
+        // Shape - needs to be disposed
+        circleShape = new CircleShape();
+        circleShape.setRadius(0.5f);
+
+        // FixtureDef
+        movingFixtureDef = new FixtureDef();
+        movingFixtureDef.shape = circleShape;
+        movingFixtureDef.density = 20f;
+        movingFixtureDef.friction = 0.4f;
+        movingFixtureDef.filter.categoryBits = CollisionCategory.ENTITY.getValue();
+        movingFixtureDef.filter.maskBits = (short) (CollisionCategory.BOUNDARY.getValue()
+                | CollisionCategory.ENTITY.getValue());
+    }
+
 
     /**
      * Creates an controllable entity, and adds it to the engine.
@@ -60,34 +95,10 @@ public class EntityFactory {
         // TODO: Set size in viewport units instead of scale
         texture.scale.set(0.1f, 0.1f);
 
-        // Box2d body
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyType.DynamicBody;
-        bodyDef.linearDamping = 20f;
-        bodyDef.fixedRotation = true;
-        bodyDef.awake = true;
-
-        bodyDef.position.set(x, y);
-
-        b2dBody.body = world.createBody(bodyDef);
-
-        // Create a circle shape and set its radius to 1
-        CircleShape circle = new CircleShape();
-        circle.setRadius(0.5f);
-        // Create a fixture definition to apply our shape to
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circle;
-        fixtureDef.density = 20f;
-        fixtureDef.friction = 0.4f;
-        fixtureDef.filter.categoryBits = CollisionCategory.ENTITY.getValue();
-        fixtureDef.filter.maskBits = (short) (CollisionCategory.BOUNDARY.getValue()
-                | CollisionCategory.ENTITY.getValue());
-
-        // Create our fixture and attach it to the body
-        b2dBody.body.createFixture(fixtureDef).setUserData(entity);
-
-        // BodyDef and FixtureDef don't need disposing, but shapes do.
-        circle.dispose();
+        // Reuse existing body definition
+        movingBodyDef.position.set(x,y);
+        b2dBody.body = world.createBody(movingBodyDef);
+        b2dBody.body.createFixture(movingFixtureDef).setUserData(entity);
 
         entity.add(b2dBody);
         entity.add(transform);
