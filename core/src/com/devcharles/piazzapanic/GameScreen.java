@@ -8,10 +8,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.components.StationComponent.StationType;
-import com.devcharles.piazzapanic.componentsystems.CollisionSystem;
+import com.devcharles.piazzapanic.componentsystems.InteractSystem;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
-import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
@@ -50,7 +48,7 @@ public class GameScreen implements Screen {
         // engine.addSystem(new LightingSystem(world, camera));
         engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
-        engine.addSystem(new CollisionSystem(kbInput));
+        engine.addSystem(new InteractSystem(kbInput));
 
         EntityFactory creator = new EntityFactory(engine, world);
 

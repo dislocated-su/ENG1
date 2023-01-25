@@ -32,7 +32,7 @@ public class CookAnimator extends WalkAnimator {
 
         TextureRegion[] toCopy = walkRight.getKeyFrames();
         TextureRegion[] flippedRegions = new TextureRegion[toCopy.length];
-        
+
         for (int i = 0; i < flippedRegions.length; i++) {
             flippedRegions[i] = new TextureRegion(toCopy[i]);
             flippedRegions[i].flip(true, false);

@@ -32,9 +32,13 @@
             "scale": 2,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 240.25,
-                "y": 914
+                "x": 253,
+                "y": 934.5
             }
+        },
+        "stations.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "stations2.tsx": {
             "scaleInDock": 1,
@@ -55,15 +59,15 @@
     "map.lastUsedExportFilter": "All Files (*)",
     "openFiles": [
         "map.tmx",
-        "C:/Users/rossh/OneDrive/My Documents/ENG1/stations.tsx",
-        "stations2.tsx"
+        "stations.tsx"
     ],
     "project": "maps.tiled-project",
     "property.type": "int",
     "recentFiles": [
+        "stations.tsx",
+        "map.tmx",
         "C:/Users/rossh/OneDrive/My Documents/ENG1/stations.tsx",
         "stations2.tsx",
-        "map.tmx",
         "tileset_32.tsx",
         "tileset_321.tsx",
         "b_kitchen.tsx",

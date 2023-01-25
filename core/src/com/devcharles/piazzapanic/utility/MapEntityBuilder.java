@@ -2,8 +2,6 @@ package com.devcharles.piazzapanic.utility;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -14,9 +12,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
+import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 
 public class MapEntityBuilder {
 
@@ -40,7 +40,7 @@ public class MapEntityBuilder {
                 if (currentCell != null) {
                     Object object = currentCell.getTile().getProperties().get(tileIDProperty);
                     if (object != null && object instanceof Integer) {
-                        StationComponent.StationType stationType = StationComponent.StationType.from((int) object);
+                        Station.StationType stationType = Station.StationType.from((int) object);
                         createStation(stationType, new Vector2((i * 2) + 1, (j * 2) + 1), engine, world);
                     }
                 }
@@ -48,7 +48,7 @@ public class MapEntityBuilder {
         }
     }
 
-    private static void createStation(StationComponent.StationType type, Vector2 position, Engine engine, World world) {
+    private static void createStation(Station.StationType type, Vector2 position, Engine engine, World world) {
         Entity entity = engine.createEntity();
 
         float[] size = { 1f, 1f };
@@ -62,6 +62,11 @@ public class MapEntityBuilder {
         StationComponent station = engine.createComponent(StationComponent.class);
         station.type = type;
 
+        if (type == Station.StationType.ingredient) {
+            station.food = new Entity();
+            station.food.add(engine.createComponent(FoodComponent.class));
+            Mappers.food.get(station.food).type = FoodType.formedPatty;
+        }
         // Box2d body
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.StaticBody;

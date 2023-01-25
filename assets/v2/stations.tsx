@@ -26,6 +26,11 @@
    <property name="id" type="int" value="1"/>
   </properties>
  </tile>
+ <tile id="6">
+  <properties>
+   <property name="id" type="int" value="6"/>
+  </properties>
+ </tile>
  <tile id="16">
   <properties>
    <property name="id" type="int" value="2"/>
