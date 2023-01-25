@@ -1,12 +1,21 @@
 package com.devcharles.piazzapanic;
 
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.componentsystems.CollisionSystem;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
@@ -17,8 +26,9 @@ import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
+import scene2d.Hud;
 
-public class GameScreen implements Screen {
+public class GameScreen extends ApplicationAdapter implements Screen {
 
     private PooledEngine engine;
 
@@ -31,6 +41,9 @@ public class GameScreen implements Screen {
     private PiazzaPanic game;
 
     public int total_cooks;
+    private Hud hud;
+    private Skin skin;
+    private Stage stage;
 
     public GameScreen(PiazzaPanic game, int total_cooks) {
         this.game = game;
@@ -62,8 +75,15 @@ public class GameScreen implements Screen {
         creator.createStation(9f, 10f);
 
         world.setContactListener(new WorldContactListener());
+
+        hud = new Hud(game.batch, game);
         // set the input processor
-        Gdx.input.setInputProcessor(kbInput);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(kbInput);
+        multiplexer.addProcessor(hud.gameStage);
+
+        Gdx.input.setInputProcessor(multiplexer);
+
     }
 
     @Override
@@ -78,6 +98,11 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         engine.update(delta);
+        game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
+        hud.update(delta);
+
+
+
     }
 
     @Override

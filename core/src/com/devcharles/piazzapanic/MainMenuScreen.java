@@ -46,11 +46,11 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
         stage.addActor(root);
 
         //Begin layout
-        TextButton textButton = new TextButton("Start game", skin);
-        root.add(textButton).width(140).height(60);
+        TextButton startGameButton = new TextButton("Start game", skin);
+        root.add(startGameButton).width(140).height(60);
 
         //Checks if button is clicked
-        textButton.addListener(new ClickListener(){
+        startGameButton.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new GameScreen(game,2));
                 dispose();
