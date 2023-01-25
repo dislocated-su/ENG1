@@ -20,7 +20,6 @@ public class CustomerAISystem extends IteratingSystem {
         TransformComponent transform = Mappers.transform.get(entity);
 
         aiAgent.steeringBody.update(deltaTime);
-        transform.isMoving = aiAgent.steeringBody.getBody().isAwake();
     }
     
 }

@@ -44,7 +44,7 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
     }
 
     public boolean isIndependentFacing() {
-       return true;
+       return independentFacing;
     }
 
     public void setIndependentFacing(boolean independentFacing) {
@@ -132,6 +132,7 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
         if (!steeringOutput.linear.isZero()) {
             // this method internally scales the force by deltaTime
             body.applyForceToCenter(steeringOutput.linear.cpy().scl(2), true);
+            body.setTransform(getPosition(), (float)(vectorToAngle(steering.linear) + Math.PI));
             anyAccelerations = true;
         }
 
@@ -143,15 +144,7 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
                 anyAccelerations = true;
             }
         } else {
-            // If we haven't got any velocity, then we can do nothing.
-            Vector2 linVel = getLinearVelocity();
-            if (!linVel.isZero(getZeroLinearSpeedThreshold())) {
-                float newOrientation = vectorToAngle(linVel);
-                body.setAngularVelocity((newOrientation - getAngularVelocity()) * deltaTime); // this is superfluous if
-                                                                                              // independentFacing is
-                                                                                              // always true
-                body.setTransform(body.getPosition(), newOrientation);
-            }
+
         }
 
         if (anyAccelerations) {
