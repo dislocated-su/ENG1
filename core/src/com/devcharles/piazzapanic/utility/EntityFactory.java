@@ -2,9 +2,11 @@ package com.devcharles.piazzapanic.utility;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.ai.steer.behaviors.Arrive;
+import com.badlogic.gdx.ai.utils.Location;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-//import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 //import com.badlogic.gdx.physics.box2d.Filter;
@@ -13,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.AnimationComponent;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
@@ -20,6 +23,8 @@ import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
+import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
+import com.devcharles.piazzapanic.utility.box2d.Box2dSteeringBody;
 import com.devcharles.piazzapanic.utility.box2d.CollisionCategory;
 
 public class EntityFactory {
@@ -177,6 +182,8 @@ public class EntityFactory {
 
         WalkingAnimationComponent walkingAnimaton = engine.createComponent(WalkingAnimationComponent.class);
 
+        AIAgentComponent aiAgent = engine.createComponent(AIAgentComponent.class);
+
         walkingAnimaton.animator = new CookAnimator();
 
         // Reuse existing body definition
@@ -189,11 +196,24 @@ public class EntityFactory {
 
         transform.isHidden = false;
 
+        // Ai agent setup
+        aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, true, 0.5f);
+        
+        Box2dLocation target = new Box2dLocation(new Vector2(25, 10), 0);
+
+        Arrive<Vector2> arriveSb = new Arrive<Vector2>(aiAgent.steeringBody, target)
+            .setTimeToTarget(0.1f)
+            .setArrivalTolerance(1f)
+            .setDecelerationRadius(1);
+
+        aiAgent.steeringBody.setSteeringBehavior(arriveSb);
+
         entity.add(b2dBody);
         entity.add(transform);
         entity.add(texture);
         entity.add(an);
         entity.add(walkingAnimaton);
+        entity.add(aiAgent);
         engine.addEntity(entity);
 
         return entity;
