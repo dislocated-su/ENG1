@@ -1,9 +1,16 @@
 {
     "activeFile": "map.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
     "fileStates": {
         "": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "C:/Users/rossh/OneDrive/My Documents/ENG1/stations.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
         },
         "b_kitchen.tsx": {
             "scaleInDock": 1,
@@ -22,12 +29,16 @@
             "scaleInDock": 1
         },
         "map.tmx": {
-            "scale": 3,
-            "selectedLayer": 1,
+            "scale": 2,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 385.3333333333333,
-                "y": 961.3333333333333
+                "x": 240.25,
+                "y": 914
             }
+        },
+        "stations2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
         },
         "tileset_32.tsx": {
             "scaleInDock": 1,
@@ -38,15 +49,28 @@
             "scaleInEditor": 2
         }
     },
+    "last.exportedFilePath": "C:/Users/rossh/OneDrive/My Documents/GitHub/ENG1/assets/v2",
+    "last.externalTilesetPath": "C:/Users/rossh/OneDrive/My Documents/GitHub/ENG1/assets/v2",
+    "last.imagePath": "C:/Users/rossh/OneDrive/My Documents/GitHub/ENG1/assets/v2",
+    "map.lastUsedExportFilter": "All Files (*)",
     "openFiles": [
-        "tileset_32.tsx",
-        "map.tmx"
-    ],
-    "recentFiles": [
-        "tileset_32.tsx",
         "map.tmx",
+        "C:/Users/rossh/OneDrive/My Documents/ENG1/stations.tsx",
+        "stations2.tsx"
+    ],
+    "project": "maps.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "C:/Users/rossh/OneDrive/My Documents/ENG1/stations.tsx",
+        "stations2.tsx",
+        "map.tmx",
+        "tileset_32.tsx",
         "tileset_321.tsx",
         "b_kitchen.tsx",
         "kitchen.tmx"
-    ]
+    ],
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 2,
+    "tileset.spacing": 4
 }

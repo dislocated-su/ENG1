@@ -3,12 +3,15 @@ package com.devcharles.piazzapanic.componentsystems;
 import java.util.Comparator;
 
 import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -17,6 +20,7 @@ import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
+import com.devcharles.piazzapanic.utility.MapEntityBuilder;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Pair;
 import com.devcharles.piazzapanic.utility.WalkAnimator;
@@ -35,14 +39,18 @@ public class RenderingSystem extends IteratingSystem {
 
     private WorldTilemapRenderer mapRenderer;
 
+    private World world;
+    private SpriteBatch batch;
+
     public RenderingSystem(World world, SpriteBatch batch, OrthographicCamera camera) {
         super(Family.all(TransformComponent.class, TextureComponent.class).get());
         // set up reuired objects
         this.sb = batch;
         this.camera = camera;
         this.comparator = new ZComparator();
-        this.mapRenderer = new WorldTilemapRenderer(world, camera, batch);
-        
+        this.world = world;
+        this.batch = batch;
+
         entities = new Array<Entity>(32);
     }
 
@@ -57,7 +65,6 @@ public class RenderingSystem extends IteratingSystem {
         sb.setProjectionMatrix(camera.combined);
         camera.update();
         sb.begin();
-        
 
         mapRenderer.renderBackground();
 
@@ -118,4 +125,9 @@ public class RenderingSystem extends IteratingSystem {
         entities.add(entity);
     }
 
+    @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        this.mapRenderer = new WorldTilemapRenderer(engine, world, camera, batch);
+    }
 }

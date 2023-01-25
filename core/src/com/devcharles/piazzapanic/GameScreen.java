@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.StationComponent.StationType;
 import com.devcharles.piazzapanic.componentsystems.CollisionSystem;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
@@ -46,7 +47,7 @@ public class GameScreen implements Screen {
 
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new RenderingSystem(world, game.batch, camera));
-        engine.addSystem(new LightingSystem(world, camera));
+        // engine.addSystem(new LightingSystem(world, camera));
         engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new CollisionSystem(kbInput));
@@ -59,9 +60,12 @@ public class GameScreen implements Screen {
             creator.createCook(2 * (i + 4), 2 * (i + 4));
         }
 
-        creator.createStation(9f, 10f);
+        // creator.createStation(9f, 13f, StationType.oven);
+        // creator.createStation(11f, 13f, StationType.grill);
+        // creator.createStation(9f, 11f, StationType.grill);
 
         world.setContactListener(new WorldContactListener());
+
         // set the input processor
         Gdx.input.setInputProcessor(kbInput);
     }
