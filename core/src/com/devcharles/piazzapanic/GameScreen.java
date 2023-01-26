@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.componentsystems.CollisionSystem;
+import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
@@ -49,6 +50,7 @@ public class GameScreen implements Screen {
         engine.addSystem(new LightingSystem(world, camera));
         engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
+        engine.addSystem(new CustomerAISystem());
         engine.addSystem(new CollisionSystem(kbInput));
 
         EntityFactory creator = new EntityFactory(engine, world);
@@ -60,6 +62,8 @@ public class GameScreen implements Screen {
         }
 
         creator.createStation(9f, 10f);
+
+        creator.createCustomer(15, 10);
 
         world.setContactListener(new WorldContactListener());
         // set the input processor
@@ -106,7 +110,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         // TODO Auto-generated method stub
-
+        world.dispose();
     }
 
 }
