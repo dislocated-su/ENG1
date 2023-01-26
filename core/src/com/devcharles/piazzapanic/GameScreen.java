@@ -9,13 +9,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.componentsystems.CollisionSystem;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
@@ -26,7 +19,7 @@ import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
-import scene2d.Hud;
+import com.devcharles.piazzapanic.scene2d.Hud;
 
 public class GameScreen extends ApplicationAdapter implements Screen {
 
@@ -41,9 +34,9 @@ public class GameScreen extends ApplicationAdapter implements Screen {
     private PiazzaPanic game;
 
     public int total_cooks;
+    
     private Hud hud;
-    private Skin skin;
-    private Stage stage;
+    private InputMultiplexer multiplexer;
 
     public GameScreen(PiazzaPanic game, int total_cooks) {
         this.game = game;
@@ -76,9 +69,9 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
         world.setContactListener(new WorldContactListener());
 
-        hud = new Hud(game.batch, game);
+        hud = new Hud(game.batch, this, game);
         // set the input processor
-        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.gameStage);
 
@@ -88,7 +81,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(this.multiplexer);
     }
 
     @Override

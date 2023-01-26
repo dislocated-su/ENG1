@@ -1,4 +1,4 @@
-package scene2d;
+package com.devcharles.piazzapanic.scene2d;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
@@ -32,7 +32,7 @@ public class Hud extends ApplicationAdapter {
     Label reputationLabel;
     Label reputationNameLabel;
 
-    public Hud (SpriteBatch spriteBatch, final Game game) {
+    public Hud (SpriteBatch spriteBatch, final GameScreen savedGame,final Game game ) {
         customerTimer = 000;
         timeCounter = 0;
         reputation = 3;
@@ -59,12 +59,11 @@ public class Hud extends ApplicationAdapter {
         gameTable.row();
         TextButton recipeBookButton = new TextButton("Recipe Book", skin);
         gameTable.add(recipeBookButton).width(80).height(40).left().top();
-        gameStage.addActor(gameTable);;
+        gameStage.addActor(gameTable);
 
         recipeBookButton.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y) {
-                        game.setScreen(new recipeBook(0, game));
-                dispose();
+                        game.setScreen(new recipeBook(0, savedGame, game));
             }
         });
 

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.devcharles.piazzapanic.scene2d.Tutorial;
 import jdk.javadoc.internal.tool.Start;
 
 
@@ -52,7 +53,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
         //Checks if button is clicked
         startGameButton.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game,2));
+                game.setScreen(new Tutorial(game,0));
                 dispose();
             }
         });

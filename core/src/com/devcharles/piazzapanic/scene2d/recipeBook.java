@@ -1,4 +1,4 @@
-package scene2d;
+package com.devcharles.piazzapanic.scene2d;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.GameScreen;
-import com.devcharles.piazzapanic.PiazzaPanic;
 
 public class recipeBook implements Screen {
     OrthographicCamera camera;
@@ -33,7 +32,7 @@ public class recipeBook implements Screen {
 
 
 
-    public recipeBook(final Integer currentPage, final Game game) {
+    public recipeBook(final Integer currentPage, final GameScreen savedGame, final Game game) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         batch = new SpriteBatch();
@@ -45,9 +44,21 @@ public class recipeBook implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         Table root = new Table();
-        root.bottom();
+        root.top();
         root.setFillParent(true);
         stage.addActor(root);
+
+
+        TextButton exitButtonToGame = new TextButton("Exit back to game", skin);
+        root.add(exitButtonToGame).width(140).height(60).expandX().left();
+        exitButtonToGame.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(savedGame);
+                dispose();
+            }
+        });
+
+        root.row();
 
         //Begin layout
         if(currentPage == 0){
@@ -56,6 +67,7 @@ public class recipeBook implements Screen {
         else if(completeBook.length - 1 == currentPage){
             rightButtonOn = 0;
         }
+
         if(leftButtonOn == 1){
             TextButton leftRecipeButton = new TextButton("Page Left", skin);
             root.add(leftRecipeButton).width(140).height(60).expandX().left();
@@ -63,7 +75,7 @@ public class recipeBook implements Screen {
             leftRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     newPageNumber = currentPage - 1;
-                    game.setScreen(new recipeBook(newPageNumber, game));
+                    game.setScreen(new recipeBook(newPageNumber, savedGame, game));
                     dispose();
                 }
             });
@@ -76,29 +88,11 @@ public class recipeBook implements Screen {
                 public void clicked(InputEvent event, float x, float y) {
                     newPageNumber = currentPage + 1;
 
-                    game.setScreen(new recipeBook(newPageNumber, game));
+                    game.setScreen(new recipeBook(newPageNumber, savedGame, game));
                     dispose();
                 }
             });
         }
-        Table exit = new Table();
-        exit.top();
-        root.setFillParent(true);
-        stage.addActor(exit);
-
-        TextButton exitButtonToGame = new TextButton("Exit back to game", skin);
-        root.add(exitButtonToGame).width(140).height(60).expandX().right();
-        exitButtonToGame.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen((PiazzaPanic) game,2));
-                dispose();
-            }
-        });
-
-
-
-
-
     }
 
     @Override
