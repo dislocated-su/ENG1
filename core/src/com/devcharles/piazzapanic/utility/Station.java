@@ -10,24 +10,29 @@ public class Station {
 
     public StationType type;
 
-    public static HashMap<FoodType, FoodType> grillRecipes = new HashMap<FoodType, FoodType>() {
+    public static HashMap<Object, FoodType> grillRecipes = new HashMap<Object, FoodType>() {
         {
             put(FoodType.formedPatty, FoodType.grilledPatty);
             put(FoodType.buns, FoodType.toastedBuns);
         }
     };
 
-    public static HashMap<FoodType, FoodType> cuttingBoardRecipes = new HashMap<FoodType, FoodType>() {
+    public static HashMap<Object, FoodType> cuttingBoardRecipes = new HashMap<Object, FoodType>() {
         {
             put(FoodType.tomato, FoodType.slicedTomato);
             put(FoodType.lettuce, FoodType.slicedLettuce);
         }
     };
-    public static Map<StationType, HashMap<FoodType, FoodType>> recipeMap = new HashMap<StationType, HashMap<FoodType, FoodType>>() {
+
+    public static HashMap<Object, FoodType> serveRecipes = new HashMap<Object, FoodType>() {
+        {
+            
+        }
+    };
+    public static Map<StationType, HashMap<Object, FoodType>> recipeMap = new HashMap<StationType, HashMap<Object, FoodType>>() {
         {
             put(StationType.grill, grillRecipes);
             put(StationType.cutting_board, cuttingBoardRecipes);
-
         }
     };
 
@@ -37,12 +42,13 @@ public class Station {
         cutting_board(3),
         sink(4),
         bin(5),
-        ingredient(6);
+        ingredient(6),
+        serve(7);
 
         private int value;
 
-        StationType(int v) {
-            this.value = v;
+        StationType(int id) {
+            this.value = id;
         }
 
         public int getValue() {

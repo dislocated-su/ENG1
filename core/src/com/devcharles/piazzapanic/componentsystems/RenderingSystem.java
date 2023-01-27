@@ -20,7 +20,6 @@ import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
-import com.devcharles.piazzapanic.utility.MapEntityBuilder;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Pair;
 import com.devcharles.piazzapanic.utility.WalkAnimator;
@@ -39,17 +38,13 @@ public class RenderingSystem extends IteratingSystem {
 
     private WorldTilemapRenderer mapRenderer;
 
-    private World world;
-    private SpriteBatch batch;
-
-    public RenderingSystem(World world, SpriteBatch batch, OrthographicCamera camera) {
+    public RenderingSystem(TiledMap map, SpriteBatch batch, OrthographicCamera camera) {
         super(Family.all(TransformComponent.class, TextureComponent.class).get());
         // set up reuired objects
         this.sb = batch;
         this.camera = camera;
+        this.mapRenderer = new WorldTilemapRenderer(map, camera, batch);
         this.comparator = new ZComparator();
-        this.world = world;
-        this.batch = batch;
 
         entities = new Array<Entity>(32);
     }
@@ -128,6 +123,5 @@ public class RenderingSystem extends IteratingSystem {
     @Override
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
-        this.mapRenderer = new WorldTilemapRenderer(engine, world, camera, batch);
     }
 }

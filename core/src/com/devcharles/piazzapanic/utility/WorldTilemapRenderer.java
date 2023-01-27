@@ -10,6 +10,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.utility.box2d.MapBodyBuilder;
 
+import box2dLight.RayHandler;
+
 public class WorldTilemapRenderer {
 
     private TiledMap map;
@@ -20,28 +22,23 @@ public class WorldTilemapRenderer {
 
     final int ppt = 16;
 
-    final int scale = 32 / ppt;
-
     private TiledMapTileLayer floor;
-
-    private TiledMapTileLayer wall;
-
+    private TiledMapTileLayer front_wall;
     private TiledMapTileLayer station;
     private TiledMapTileLayer countertop;
+    private TiledMapTileLayer back_wall;
 
-    public WorldTilemapRenderer(Engine engine, World world, OrthographicCamera mainCamera, SpriteBatch batch) {
+    public WorldTilemapRenderer(TiledMap map, OrthographicCamera mainCamera, SpriteBatch batch) {
         this.camera = mainCamera;
+        this.map = map;
 
-        map = new TmxMapLoader().load("./v2/map.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1f / ppt, batch);
 
-        MapBodyBuilder.buildShapes(map, ppt, world);
-        MapEntityBuilder.buildStations(engine, map, world);
-
         floor = (TiledMapTileLayer) map.getLayers().get("floor");
-        wall = (TiledMapTileLayer) map.getLayers().get("wall");
+        front_wall = (TiledMapTileLayer) map.getLayers().get("wall_f");
+        back_wall = (TiledMapTileLayer) map.getLayers().get("wall_b");
 
-        // Station-related getLayers
+        // Station-related layers
         station = (TiledMapTileLayer) map.getLayers().get("station");
         countertop = (TiledMapTileLayer) map.getLayers().get("countertop");
 
@@ -50,13 +47,14 @@ public class WorldTilemapRenderer {
     public void renderBackground() {
         renderer.setView(camera);
         renderer.renderTileLayer(floor);
+        renderer.renderTileLayer(back_wall);
         renderer.renderTileLayer(countertop);
         renderer.renderTileLayer(station);
     }
 
     public void renderForeground() {
         renderer.setView(camera);
-        renderer.renderTileLayer(wall);
+        renderer.renderTileLayer(front_wall);
     }
 
     public void dispose() {

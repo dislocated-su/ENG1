@@ -16,6 +16,8 @@ public class FoodComponent implements Component {
         formedPatty,
         grilledPatty,
         buns,
-        toastedBuns
+        toastedBuns,
+        burger,
+        salad
     }
 }

@@ -1,5 +1,7 @@
 package com.devcharles.piazzapanic.componentsystems;
 
+import java.util.HashMap;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -52,15 +54,22 @@ public class InteractSystem extends IteratingSystem {
                     // Food processing stations
                     FoodComponent food = Mappers.food.get(controllable.currentFood.peek());
 
-                    FoodType result = Station.recipeMap.get(stationComponent.type).get(food.type);
+                    HashMap<Object, FoodType> recipes = Station.recipeMap.get(stationComponent.type);
 
-                    if (result != null) {
-                        // success
-                        Gdx.app.log("Food processed", String.format("%s turned into %s", food.type, result));
-                        Mappers.food.get(controllable.currentFood.peek()).type = result;
+                    if (recipes == null) {
+                        return;
                     }
+                    
+                    FoodType result = recipes.get(food.type);
+
+                    if (result == null) {
+                        return;
+                    }
+
+                    // success
+                    Gdx.app.log("Food processed", String.format("%s turned into %s", food.type, result));
+                    Mappers.food.get(controllable.currentFood.peek()).type = result;
                     // TODO: check if we have any food to pick up from any processing station
-                    Gdx.app.log(stationComponent.type + " interact", "");
                 }
             }
         }

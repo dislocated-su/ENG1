@@ -1,12 +1,15 @@
 package com.devcharles.piazzapanic.utility;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.devcharles.piazzapanic.components.AnimationComponent;
@@ -17,6 +20,7 @@ import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.utility.box2d.CollisionCategory;
 
 public class EntityFactory {
@@ -126,6 +130,55 @@ public class EntityFactory {
         engine.addEntity(entity);
 
         return entity;
+    }
+
+    public void createStation(Station.StationType type, Vector2 position) {
+        Entity entity = engine.createEntity();
+
+        float[] size = { 1f, 1f };
+
+        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
+
+        TextureComponent texture = engine.createComponent(TextureComponent.class);
+
+        TransformComponent transform = engine.createComponent(TransformComponent.class);
+
+        StationComponent station = engine.createComponent(StationComponent.class);
+        station.type = type;
+
+        if (type == Station.StationType.ingredient) {
+            station.food = new Entity();
+            station.food.add(engine.createComponent(FoodComponent.class));
+            Mappers.food.get(station.food).type = FoodType.formedPatty;
+        }
+        // Box2d body
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyType.StaticBody;
+        bodyDef.position.set(position.x, position.y);
+
+        b2dBody.body = world.createBody(bodyDef);
+
+        // Create a PolygonShape and set it to be a box of 1x1
+        PolygonShape stationBox = new PolygonShape();
+        stationBox.setAsBox(size[0], size[1]);
+
+        // Create our fixture and attach it to the body
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = stationBox;
+        fixtureDef.isSensor = true;
+        b2dBody.body.createFixture(fixtureDef).setUserData(station);
+
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+        stationBox.dispose();
+
+        // add components to the entity
+        entity.add(b2dBody);
+        entity.add(transform);
+        entity.add(texture);
+        entity.add(station);
+
+        engine.addEntity(entity);
+
     }
 
 }

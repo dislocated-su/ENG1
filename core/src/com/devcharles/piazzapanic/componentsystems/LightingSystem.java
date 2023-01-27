@@ -14,12 +14,9 @@ public class LightingSystem extends EntitySystem {
     private RayHandler rayHandler;
     private OrthographicCamera camera;
 
-    public LightingSystem(World world, OrthographicCamera camera) {
-        this.rayHandler = new RayHandler(world);
+    public LightingSystem(RayHandler rayHandler, OrthographicCamera camera) {
+        this.rayHandler = rayHandler;
         this.camera = camera;
-
-        LightBuilder.createPointLight(rayHandler, 10, 10, Color.CYAN, 15);
-        LightBuilder.createPointLight(rayHandler, 20, 10, Color.MAGENTA, 15);
     }
 
     @Override
@@ -27,11 +24,5 @@ public class LightingSystem extends EntitySystem {
         super.update(deltaTime);
         rayHandler.setCombinedMatrix(camera);
         rayHandler.updateAndRender();
-    }
-
-    @Override
-    public void removedFromEngine(Engine engine) {
-        // TODO Auto-generated method stub
-        rayHandler.dispose();
     }
  }
