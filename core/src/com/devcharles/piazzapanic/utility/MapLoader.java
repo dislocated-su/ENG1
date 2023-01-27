@@ -87,7 +87,9 @@ public class MapLoader {
                                     7.5f);
                             break;
                         case 2:
-                        LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.2f), 25);
+                            LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TEAL.cpy().sub(0, 0, 0, 0.2f),
+                                    20);
+                            break;
                     }
 
                 } else if (properties.containsKey(cookSpawnPoint)) {
@@ -111,7 +113,7 @@ public class MapLoader {
 
     public void buildStations(Engine engine, World world) {
         TiledMapTileLayer stations = (TiledMapTileLayer) (map.getLayers().get(stationLayer));
-        TiledMapTileLayer countertops = (TiledMapTileLayer) (map.getLayers().get(counterTopLayer));
+        TiledMapTileLayer stations_f = (TiledMapTileLayer) (map.getLayers().get(stationLayer + "_f"));
 
         int columns = stations.getWidth();
         int rows = stations.getHeight();
@@ -120,7 +122,7 @@ public class MapLoader {
 
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
-                currentCell = stations.getCell(i, j);
+                currentCell = stations.getCell(i, j) != null ? stations.getCell(i, j) : stations_f.getCell(i, j);
                 if (currentCell != null) {
                     Object object = currentCell.getTile().getProperties().get(stationIdProperty);
                     if (object != null && object instanceof Integer) {

@@ -28,6 +28,10 @@ public class WorldTilemapRenderer {
     private TiledMapTileLayer countertop;
     private TiledMapTileLayer back_wall;
 
+    private TiledMapTileLayer countertop_f;
+
+    private TiledMapTileLayer station_f;
+
     public WorldTilemapRenderer(TiledMap map, OrthographicCamera mainCamera, SpriteBatch batch) {
         this.camera = mainCamera;
         this.map = map;
@@ -40,7 +44,9 @@ public class WorldTilemapRenderer {
 
         // Station-related layers
         station = (TiledMapTileLayer) map.getLayers().get("station");
+        station_f = (TiledMapTileLayer) map.getLayers().get("station_f");
         countertop = (TiledMapTileLayer) map.getLayers().get("countertop");
+        countertop_f = (TiledMapTileLayer) map.getLayers().get("countertop_f");
 
     }
 
@@ -54,6 +60,8 @@ public class WorldTilemapRenderer {
 
     public void renderForeground() {
         renderer.setView(camera);
+        renderer.renderTileLayer(countertop_f);
+        renderer.renderTileLayer(station_f);
         renderer.renderTileLayer(front_wall);
     }
 

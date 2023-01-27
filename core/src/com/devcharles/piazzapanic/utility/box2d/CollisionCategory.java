@@ -1,7 +1,7 @@
 package com.devcharles.piazzapanic.utility.box2d;
 
 public enum CollisionCategory {
-    BOUNDARY((short)0x0001), ENTITY((short)0x0002), LIGHTS((short)0x0010);
+    BOUNDARY((short)0x0001),  NO_SHADOWBOUNDARY((short)0x0002), ENTITY((short)0x0004), LIGHTS((short)0x0010);
 
     private short value;
 

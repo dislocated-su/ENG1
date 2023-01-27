@@ -24,11 +24,11 @@
             "scaleInDock": 1
         },
         "map.tmx": {
-            "scale": 3,
+            "scale": 2,
             "selectedLayer": 6,
             "viewCenter": {
-                "x": 963.6666666666667,
-                "y": 774.3333333333333
+                "x": 661,
+                "y": 795.5
             }
         },
         "objects.tsx": {
@@ -56,9 +56,9 @@
     "project": "",
     "property.type": "int",
     "recentFiles": [
+        "map.tmx",
         "tileset_32.tsx",
         "objects.tsx",
-        "map.tmx",
         "tileset_321.tsx",
         "b_kitchen.tsx",
         "kitchen.tmx"

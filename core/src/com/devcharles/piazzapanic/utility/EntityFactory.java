@@ -82,6 +82,7 @@ public class EntityFactory {
         fixtureDef.friction = 0.4f;
         fixtureDef.filter.categoryBits = CollisionCategory.ENTITY.getValue();
         fixtureDef.filter.maskBits = (short) (CollisionCategory.BOUNDARY.getValue()
+                | CollisionCategory.NO_SHADOWBOUNDARY.getValue()
                 | CollisionCategory.ENTITY.getValue());
 
         // Create our fixture and attach it to the body
@@ -166,6 +167,8 @@ public class EntityFactory {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = stationBox;
         fixtureDef.isSensor = true;
+        fixtureDef.filter.categoryBits = CollisionCategory.NO_SHADOWBOUNDARY.getValue();
+        fixtureDef.filter.maskBits = CollisionCategory.ENTITY.getValue();
         b2dBody.body.createFixture(fixtureDef).setUserData(station);
 
         // BodyDef and FixtureDef don't need disposing, but shapes do.
