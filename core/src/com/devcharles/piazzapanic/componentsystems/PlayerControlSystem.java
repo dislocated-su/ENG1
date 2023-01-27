@@ -44,9 +44,14 @@ public class PlayerControlSystem extends IteratingSystem {
             return;
         }
 
+
         if (input.interact) {
             input.interact = false;
-            Mappers.player.get(entity).interacting = true;
+            Mappers.player.get(entity).putDown = true;
+        }
+        if (input.pickUp) {
+            input.pickUp = false;
+            Mappers.player.get(entity).pickUp = true;
         }
 
         B2dBodyComponent b2body = Mappers.b2body.get(entity);

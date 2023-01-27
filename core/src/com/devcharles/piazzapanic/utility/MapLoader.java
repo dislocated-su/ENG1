@@ -17,6 +17,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.utility.Station.StationType;
 import com.devcharles.piazzapanic.utility.box2d.LightBuilder;
 import com.devcharles.piazzapanic.utility.box2d.MapBodyBuilder;
 
@@ -31,19 +33,20 @@ public class MapLoader {
     private EntityFactory factory;
 
     // Object properties
-    static String lightIdProperty = "lightID";
-    static String cookSpawnPoint = "cookspawnpoint";
-    static String aiSpawnPoint = "aispawnpoint";
-    static String aiObjective = "aiobjective";
+    static final String lightIdProperty = "lightID";
+    static final String cookSpawnPoint = "cookspawnpoint";
+    static final String aiSpawnPoint = "aispawnpoint";
+    static final String aiObjective = "aiobjective";
 
     // Layers relevant to loading the map
-    static String objectLayer = "MapObjects";
-    static String collisionLayer = "Obstacles";
-    static String stationLayer = "station";
-    static String counterTopLayer = "countertop";
+    static final String objectLayer = "MapObjects";
+    static final String collisionLayer = "Obstacles";
+    static final String stationLayer = "station";
+    static final String counterTopLayer = "countertop";
 
     // Tile properties
-    static String stationIdProperty = "stationID";
+    static final String stationIdProperty = "stationID";
+    static final String ingredientTypeProperty = "ingredientType";
 
     public MapLoader(String path, Integer ppt, EntityFactory factory) {
         if (ppt != null) {
@@ -52,7 +55,7 @@ public class MapLoader {
         if (path != null) {
             map = new TmxMapLoader().load(path);
         } else {
-            map = new TmxMapLoader().load("./v2/map.tmx");
+            map = new TmxMapLoader().load("v2/map.tmx");
         }
 
         this.factory = factory;
@@ -126,8 +129,16 @@ public class MapLoader {
                 if (currentCell != null) {
                     Object object = currentCell.getTile().getProperties().get(stationIdProperty);
                     if (object != null && object instanceof Integer) {
-                        Station.StationType stationType = Station.StationType.from((int) object);
-                        factory.createStation(stationType, new Vector2((i * 2) + 1, (j * 2) + 1));
+                        StationType stationType = StationType.from((int) object);
+
+                        FoodType ingredientType = null;
+
+                        if (stationType == StationType.ingredient) {
+                            ingredientType = FoodType
+                                    .from((Integer) currentCell.getTile().getProperties().get(ingredientTypeProperty));
+                        }
+
+                        factory.createStation(stationType, new Vector2((i * 2) + 1, (j * 2) + 1), ingredientType);
                     }
                 }
             }

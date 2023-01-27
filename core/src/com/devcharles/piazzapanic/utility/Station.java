@@ -1,35 +1,50 @@
 package com.devcharles.piazzapanic.utility;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Station {
 
     public StationType type;
 
-    public static HashMap<Object, FoodType> grillRecipes = new HashMap<Object, FoodType>() {
+    public static HashMap<FoodType, FoodType> grillRecipes = new HashMap<FoodType, FoodType>() {
         {
             put(FoodType.formedPatty, FoodType.grilledPatty);
             put(FoodType.buns, FoodType.toastedBuns);
         }
     };
 
-    public static HashMap<Object, FoodType> cuttingBoardRecipes = new HashMap<Object, FoodType>() {
+    public static HashMap<FoodType, FoodType> cuttingBoardRecipes = new HashMap<FoodType, FoodType>() {
         {
             put(FoodType.tomato, FoodType.slicedTomato);
             put(FoodType.lettuce, FoodType.slicedLettuce);
+            put(FoodType.unformedPatty, FoodType.formedPatty);
         }
     };
 
-    public static HashMap<Object, FoodType> serveRecipes = new HashMap<Object, FoodType>() {
+    public static HashMap<Set<FoodType>, FoodType> serveRecipes = new HashMap<Set<FoodType>, FoodType>() {
         {
-            
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.toastedBuns);
+                    add(FoodType.grilledPatty);
+                }
+            }, FoodType.burger);
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.slicedLettuce);
+                    add(FoodType.slicedOnion);
+                    add(FoodType.slicedTomato);
+                }
+            }, FoodType.salad);
         }
     };
-    public static Map<StationType, HashMap<Object, FoodType>> recipeMap = new HashMap<StationType, HashMap<Object, FoodType>>() {
+    public static Map<StationType, HashMap<FoodType, FoodType>> recipeMap = new HashMap<StationType, HashMap<FoodType, FoodType>>() {
         {
             put(StationType.grill, grillRecipes);
             put(StationType.cutting_board, cuttingBoardRecipes);
@@ -72,9 +87,4 @@ public class Station {
             return _map.get(value);
         }
     }
-
-    public Station() {
-
-    }
-
 }

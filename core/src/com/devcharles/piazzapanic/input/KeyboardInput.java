@@ -11,6 +11,8 @@ public class KeyboardInput implements InputProcessor {
 
     public boolean interact;
 
+    public boolean pickUp;
+
 
     @Override
     public boolean keyDown(int keycode) {
@@ -33,6 +35,9 @@ public class KeyboardInput implements InputProcessor {
                 break;
             case Keys.E:
                 changeCooks = true;
+                break;
+            case Keys.Q:
+                pickUp = true;
                 break;
             default:
                 processed = false;
@@ -60,6 +65,9 @@ public class KeyboardInput implements InputProcessor {
                 changeCooks = false;
             case Keys.F:
                 interact = false;
+                break;
+            case Keys.Q:
+                pickUp = false;
                 break;
             default:
                 processed = false;

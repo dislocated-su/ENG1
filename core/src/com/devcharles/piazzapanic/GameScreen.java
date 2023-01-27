@@ -5,13 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.componentsystems.InteractSystem;
+import com.devcharles.piazzapanic.componentsystems.StationSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
-import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
@@ -60,19 +57,13 @@ public class GameScreen implements Screen {
         mapLoader.buildCollisions(world);
         mapLoader.buildFromObjects(engine, rayhandler);
         mapLoader.buildStations(engine, world);
-        
+
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera));
         engine.addSystem(new LightingSystem(rayhandler, camera));
-        //engine.addSystem(new DebugRendererSystem(world, camera));
+        // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
-        engine.addSystem(new InteractSystem(kbInput));
-        
-        //factory.createCook(60, 25).add(new PlayerComponent());
-
-        //for (int i = 0; i < total_cooks - 1; i++) {
-        //    factory.createCook(60 + 2*(i+1), 25+2*(i+1));
-        //}
+        engine.addSystem(new StationSystem(kbInput, factory));
 
         world.setContactListener(new WorldContactListener());
 

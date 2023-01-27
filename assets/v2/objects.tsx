@@ -73,31 +73,31 @@
  </tile>
  <tile id="28">
   <properties>
-   <property name="ingredientType" type="int" value="0"/>
+   <property name="ingredientType" type="int" value="2"/>
    <property name="stationID" type="int" value="6"/>
   </properties>
  </tile>
  <tile id="29">
   <properties>
-   <property name="ingredientType" type="int" value="0"/>
+   <property name="ingredientType" type="int" value="1"/>
    <property name="stationID" type="int" value="6"/>
   </properties>
  </tile>
  <tile id="30">
   <properties>
-   <property name="ingredientType" type="int" value="0"/>
+   <property name="ingredientType" type="int" value="3"/>
    <property name="stationID" type="int" value="6"/>
   </properties>
  </tile>
  <tile id="31">
   <properties>
-   <property name="ingredientType" type="int" value="0"/>
+   <property name="ingredientType" type="int" value="5"/>
    <property name="stationID" type="int" value="6"/>
   </properties>
  </tile>
  <tile id="32">
   <properties>
-   <property name="ingredientType" type="int" value="0"/>
+   <property name="ingredientType" type="int" value="4"/>
    <property name="stationID" type="int" value="6"/>
   </properties>
  </tile>

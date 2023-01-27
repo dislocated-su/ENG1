@@ -20,8 +20,6 @@ public class WorldContactListener implements ContactListener {
         if (pair == null) {
             return;
         }
-
-        pair.first.interactable = true;
         pair.first.interactingCook = pair.second;
     }
 
@@ -34,7 +32,6 @@ public class WorldContactListener implements ContactListener {
             return;
         }
 
-        pair.first.interactable = false;
         pair.first.interactingCook = null;
     }
 
@@ -56,7 +53,7 @@ public class WorldContactListener implements ContactListener {
             PlayerComponent player = Mappers.player.get(cook);
 
             if (cook != null && player != null) {
-                player.interacting = false;
+                player.putDown = false;
                 return new Pair<StationComponent, Entity>((StationComponent) station, cook);
             }
         }

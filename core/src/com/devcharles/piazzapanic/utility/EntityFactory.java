@@ -103,7 +103,7 @@ public class EntityFactory {
         return entity;
     }
 
-    public Entity createFood(FoodType type) {
+    public Entity createFood(FoodType foodType) {
         Entity entity = engine.createEntity();
 
         TextureComponent texture = engine.createComponent(TextureComponent.class);
@@ -121,7 +121,7 @@ public class EntityFactory {
         texture.scale.set(0.15f, 0.15f);
 
         // food creation
-        food.type = type;
+        food.type = foodType;
 
         // add components to the entity
         entity.add(transform);
@@ -133,7 +133,7 @@ public class EntityFactory {
         return entity;
     }
 
-    public void createStation(Station.StationType type, Vector2 position) {
+    public void createStation(Station.StationType type, Vector2 position, FoodType ingredientType) {
         Entity entity = engine.createEntity();
 
         float[] size = { 1f, 1f };
@@ -148,9 +148,7 @@ public class EntityFactory {
         station.type = type;
 
         if (type == Station.StationType.ingredient) {
-            station.food = new Entity();
-            station.food.add(engine.createComponent(FoodComponent.class));
-            Mappers.food.get(station.food).type = FoodType.formedPatty;
+            station.ingredient = ingredientType;
         }
         // Box2d body
         BodyDef bodyDef = new BodyDef();
