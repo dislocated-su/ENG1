@@ -87,7 +87,7 @@ public class MapLoader {
                                     7.5f);
                             break;
                         case 2:
-                            LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TEAL.cpy().sub(0, 0, 0, 0.2f),
+                            LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.2f),
                                     20);
                             break;
                     }

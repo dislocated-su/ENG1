@@ -18,8 +18,9 @@ public class LightBuilder {
 
     public static PointLight createRoomLight(RayHandler rayHandler, float x, float y, Color c, float dist) {
         PointLight pl = new PointLight(rayHandler, rays, c, dist, x, y);
-        pl.setContactFilter(CollisionCategory.LIGHTS.getValue(), (short)0, CollisionCategory.BOUNDARY.getValue());
-        pl.setXray(true);
+        pl.setContactFilter(CollisionCategory.LIGHTS.getValue(), (short)0, (short) (CollisionCategory.BOUNDARY.getValue() | CollisionCategory.LIGHTS.getValue()));
+        pl.setSoftnessLength(15f);
+        pl.setXray(false);
         return pl;
     }
 }
