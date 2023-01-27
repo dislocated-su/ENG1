@@ -80,15 +80,15 @@ public class MapLoader {
                     switch (lightID) {
                         case 0:
                             LightBuilder.createPointLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.1f),
-                                    5);
+                                    5, true);
                             break;
                         case 1:
-                            LightBuilder.createPointLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.4f),
-                                    7.5f);
+                            LightBuilder.createPointLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.5f),
+                                    0.8f, false);
                             break;
                         case 2:
-                            LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.2f),
-                                    20);
+                            LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.25f),
+                                    25);
                             break;
                     }
 

@@ -7,10 +7,11 @@ import box2dLight.RayHandler;
 
 public class LightBuilder {
 
-    private static final int rays = 1000;
-    public static PointLight createPointLight(RayHandler rayHandler, float x, float y, Color c, float dist) {
+    private static final int rays = 500;
+    public static PointLight createPointLight(RayHandler rayHandler, float x, float y, Color c, float dist, boolean soft) {
         PointLight pl = new PointLight(rayHandler, rays, c, dist, x, y);
         pl.setContactFilter(CollisionCategory.LIGHTS.getValue(), (short)0, CollisionCategory.BOUNDARY.getValue());
+        pl.setSoft(soft);
         pl.setSoftnessLength(8f);
         pl.setXray(false);
         return pl;
@@ -20,7 +21,7 @@ public class LightBuilder {
         PointLight pl = new PointLight(rayHandler, rays, c, dist, x, y);
         pl.setContactFilter(CollisionCategory.LIGHTS.getValue(), (short)0, (short) (CollisionCategory.BOUNDARY.getValue() | CollisionCategory.LIGHTS.getValue()));
         pl.setSoftnessLength(15f);
-        pl.setXray(false);
+        pl.setXray(true);
         return pl;
     }
 }
