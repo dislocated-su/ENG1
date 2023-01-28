@@ -35,7 +35,7 @@ public class Tutorial extends ApplicationAdapter implements Screen {
 
 
 
-    public Tutorial(final Game game, final Integer currentPage) {
+    public Tutorial( final Integer currentPage, final GameScreen savedGame, final Game game, final Integer launchNewGame) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         batch = new SpriteBatch();
@@ -52,12 +52,17 @@ public class Tutorial extends ApplicationAdapter implements Screen {
         stage.addActor(root);
 
 
-        TextButton exitButtonToGame = new TextButton("Exit the tutorial to go to the game", skin);
-        root.add(exitButtonToGame).width(240).height(40).expandX().left();
+        TextButton exitButtonToGame = new TextButton("Exit back to game", skin);
+        root.add(exitButtonToGame).width(180).height(60).expandX().left();
         exitButtonToGame.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen((PiazzaPanic) game,2));
-                dispose();
+                if (launchNewGame == 1){
+                    game.setScreen(new GameScreen((PiazzaPanic) game,2));
+                    dispose();
+                } else {
+                    game.setScreen(savedGame);
+                    dispose();
+                }
             }
         });
 
@@ -73,30 +78,31 @@ public class Tutorial extends ApplicationAdapter implements Screen {
 
         if(leftButtonOn == 1){
             TextButton leftRecipeButton = new TextButton("Page Left", skin);
-            root.add(leftRecipeButton).width(140).height(60).expandX().left();
+            root.add(leftRecipeButton).width(120).height(60).expandX().left();
             //Checks if button is clicked
             leftRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     newPageNumber = currentPage - 1;
-                    game.setScreen(new Tutorial(game, newPageNumber));
+                    game.setScreen(new Tutorial(newPageNumber, savedGame, game, launchNewGame));
                     dispose();
                 }
             });
         }
         if(rightButtonOn == 1){
             TextButton rightRecipeButton = new TextButton("Page Right", skin);
-            root.add(rightRecipeButton).width(140).height(60).expandX().right();
+            root.add(rightRecipeButton).width(120).height(60).expandX().right();
             //Checks if button is clicked
             rightRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     newPageNumber = currentPage + 1;
 
-                    game.setScreen(new Tutorial(game, newPageNumber));
+                    game.setScreen(new Tutorial(newPageNumber, savedGame, game, launchNewGame));
                     dispose();
                 }
             });
         }
     }
+
 
     @Override
     public void show() {

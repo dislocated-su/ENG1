@@ -17,6 +17,7 @@ import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.scene2d.CookCarryHud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 import com.devcharles.piazzapanic.scene2d.Hud;
@@ -36,6 +37,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
     public int total_cooks;
     
     private Hud hud;
+    private CookCarryHud cookCarryHud;
     private InputMultiplexer multiplexer;
 
     public GameScreen(PiazzaPanic game, int total_cooks) {
@@ -70,6 +72,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
         world.setContactListener(new WorldContactListener());
 
         hud = new Hud(game.batch, this, game);
+        cookCarryHud = new CookCarryHud(game.batch);
         // set the input processor
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
@@ -93,6 +96,7 @@ public class GameScreen extends ApplicationAdapter implements Screen {
         engine.update(delta);
         game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
         hud.update(delta);
+        cookCarryHud.update(delta);
 
 
 

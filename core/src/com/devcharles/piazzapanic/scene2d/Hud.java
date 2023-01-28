@@ -9,11 +9,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.devcharles.piazzapanic.GameScreen;
@@ -59,11 +57,18 @@ public class Hud extends ApplicationAdapter {
         gameTable.row();
         TextButton recipeBookButton = new TextButton("Recipe Book", skin);
         gameTable.add(recipeBookButton).width(80).height(40).left().top();
+        TextButton tutorialButton = new TextButton("Tutorial", skin);
+        gameTable.add(tutorialButton).width(80).height(40).right().top();
         gameStage.addActor(gameTable);
 
         recipeBookButton.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y) {
                         game.setScreen(new recipeBook(0, savedGame, game));
+            }
+        });
+        tutorialButton.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new Tutorial(0, savedGame, game, 0));
             }
         });
 

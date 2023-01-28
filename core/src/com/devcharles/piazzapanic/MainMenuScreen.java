@@ -53,7 +53,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
         //Checks if button is clicked
         startGameButton.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new Tutorial(game,0));
+                game.setScreen(new Tutorial(0, null, game, 1));
                 dispose();
             }
         });
