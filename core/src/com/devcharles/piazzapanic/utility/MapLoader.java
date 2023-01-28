@@ -1,5 +1,7 @@
 package com.devcharles.piazzapanic.utility;
 
+import java.util.ArrayList;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
@@ -68,6 +70,9 @@ public class MapLoader {
     public void buildFromObjects(Engine engine, RayHandler rayHandler) {
         MapObjects objects = map.getLayers().get(objectLayer).getObjects();
 
+        Vector2 aiSpawn = new Vector2();
+        ArrayList<Vector2> aiObjectives = new ArrayList<Vector2>();
+
         for (MapObject mapObject : objects) {
 
             if (mapObject instanceof RectangleMapObject) {
@@ -109,13 +114,17 @@ public class MapLoader {
 
                 } else if (properties.containsKey(aiSpawnPoint)) {
                     Gdx.app.log("map parsing", String.format("Ai spawn point at x:%.2f y:%.2f", pos.x, pos.y));
+                    aiSpawn.set(pos.x, pos.y);
                 } else if (properties.containsKey(aiObjective)) {
                     int objective = (int) properties.get(aiObjective);
+                    aiObjectives.add(new Vector2(pos.x, pos.y));
                     Gdx.app.log("map parsing",
                             String.format("Ai objective %d at x:%.2f y:%.2f", objective, pos.x, pos.y));
                 }
             }
         }
+
+        factory.createCustomer(aiSpawn, aiObjectives.get(0));
     }
 
     public void buildStations(Engine engine, World world) {

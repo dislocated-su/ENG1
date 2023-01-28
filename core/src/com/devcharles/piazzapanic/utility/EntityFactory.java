@@ -256,7 +256,7 @@ public class EntityFactory {
         return foodTextures.get(type);
     }
 
-    public Entity createCustomer(float x, float y) {
+    public Entity createCustomer(Vector2 position, Vector2 target) {
         Entity entity = engine.createEntity();
 
         B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
@@ -274,7 +274,7 @@ public class EntityFactory {
         walkingAnimaton.animator = new CustomerAnimator();
 
         // Reuse existing body definition
-        movingBodyDef.position.set(x,y);
+        movingBodyDef.position.set(position.x, position.y);
         b2dBody.body = world.createBody(movingBodyDef);
         b2dBody.body.createFixture(movingFixtureDef).setUserData(entity);
         
@@ -286,9 +286,9 @@ public class EntityFactory {
         // Ai agent setup
         aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, false, 0.5f);
         
-        Box2dLocation target = new Box2dLocation(new Vector2(10, 8), 180);
+        Box2dLocation targetLocation = new Box2dLocation(target, 180);
 
-        Arrive<Vector2> arriveSb = new Arrive<Vector2>(aiAgent.steeringBody, target)
+        Arrive<Vector2> arriveSb = new Arrive<Vector2>(aiAgent.steeringBody, targetLocation)
             .setTimeToTarget(0.1f)
             .setArrivalTolerance(0.5f)
             .setDecelerationRadius(2);

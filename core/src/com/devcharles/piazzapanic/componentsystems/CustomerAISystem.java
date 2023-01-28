@@ -15,7 +15,6 @@ public class CustomerAISystem extends IteratingSystem {
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        // TODO Auto-generated method stub
         AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
         TransformComponent transform = Mappers.transform.get(entity);
 
