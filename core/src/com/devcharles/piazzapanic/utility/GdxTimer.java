@@ -4,7 +4,7 @@
 package com.devcharles.piazzapanic.utility;
 
 public class GdxTimer {
-    
+
     private int delay;
     private int elapsed;
     private boolean running;
@@ -15,10 +15,9 @@ public class GdxTimer {
     }
 
     public boolean tick(float delta) {
-        if(running) {
+        if (running) {
             elapsed += delta * 1000;
-            if(elapsed > delay) {
-                elapsed = elapsed - delay;
+            if (elapsed > delay) {
                 return true;
             }
         }

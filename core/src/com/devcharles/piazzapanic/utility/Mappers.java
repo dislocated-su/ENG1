@@ -7,9 +7,11 @@ import com.devcharles.piazzapanic.components.CollisionComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
+import com.devcharles.piazzapanic.components.ItemComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
+import com.devcharles.piazzapanic.components.TintComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
 
@@ -25,4 +27,6 @@ public class Mappers {
     public static final ComponentMapper<StationComponent> station = ComponentMapper.getFor(StationComponent.class);
     public static final ComponentMapper<FoodComponent> food = ComponentMapper.getFor(FoodComponent.class);
     public static final ComponentMapper<CookingComponent> cooking = ComponentMapper.getFor(CookingComponent.class);
+    public static final ComponentMapper<ItemComponent> item = ComponentMapper.getFor(ItemComponent.class);
+    public static final ComponentMapper<TintComponent> tint = ComponentMapper.getFor(TintComponent.class);
 }

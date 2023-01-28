@@ -24,11 +24,11 @@
             "scaleInDock": 1
         },
         "map.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 8,
+            "scale": 1.5,
+            "selectedLayer": 6,
             "viewCenter": {
-                "x": 1280.6666666666665,
-                "y": 1019.3333333333333
+                "x": 834.3333333333333,
+                "y": 771.3333333333333
             }
         },
         "objects.tsx": {

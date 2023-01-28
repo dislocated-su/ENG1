@@ -4,14 +4,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.components.TintComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.input.KeyboardInput;
@@ -28,6 +31,9 @@ public class StationSystem extends IteratingSystem {
 
     EntityFactory factory;
 
+    private TintComponent readyTint;
+    private float tickAccumulator = 0;
+
     public StationSystem(KeyboardInput input, EntityFactory factory) {
         super(Family.all(StationComponent.class).get());
         this.input = input;
@@ -35,8 +41,16 @@ public class StationSystem extends IteratingSystem {
     }
 
     @Override
+    public void update(float deltaTime) {
+        tickAccumulator += deltaTime;
+        super.update(deltaTime);
+        if (tickAccumulator > 0.5f) {
+            tickAccumulator -= 0.5f;
+        }
+    }
+
+    @Override
     protected void processEntity(Entity entity, float deltaTime) {
-        // Gdx.app.log("", "");
         StationComponent station = Mappers.station.get(entity);
 
         stationTick(station, deltaTime);
@@ -54,14 +68,15 @@ public class StationSystem extends IteratingSystem {
 
                     switch (station.type) {
                         case ingredient:
-                            controllable.currentFood.push(factory.createFood(station.ingredient));
+                            controllable.currentFood.pushItem(factory.createFood(station.ingredient),
+                                    station.interactingCook);
                             break;
                         case bin:
                             processBin(controllable);
                             break;
 
                         case serve:
-                            processServe(controllable);
+                            processServe(station.interactingCook);
                             break;
 
                         default:
@@ -75,7 +90,8 @@ public class StationSystem extends IteratingSystem {
 
                     switch (station.type) {
                         case ingredient:
-                            controllable.currentFood.push(factory.createFood(station.ingredient));
+                            controllable.currentFood.pushItem(factory.createFood(station.ingredient),
+                                    station.interactingCook);
                             break;
                         case bin:
                         case serve:
@@ -84,6 +100,9 @@ public class StationSystem extends IteratingSystem {
                             stationPickup(station, controllable);
                             break;
                     }
+                } else if (player.interact) {
+                    player.interact = false;
+                    interactStation(station);
                 }
             }
         }
@@ -133,7 +152,29 @@ public class StationSystem extends IteratingSystem {
 
     }
 
-    private void processServe(ControllableComponent controllable) {
+    private void interactStation(StationComponent station) {
+        for (Entity food : station.food) {
+            if (food == null || !Mappers.cooking.has(food)) {
+                continue;
+            }
+
+            CookingComponent cooking = Mappers.cooking.get(food);
+
+            // Check if it's ready without ticking the timer
+            boolean ready = cooking.timer.tick(0);
+
+            if (ready && !cooking.processed) {
+                food.remove(TintComponent.class);
+                cooking.processed = true;
+                cooking.timer.reset();
+                return;
+            }
+        }
+    }
+
+    private void processServe(Entity cook) {
+        ControllableComponent controllable = Mappers.controllable.get(cook);
+
         if (controllable.currentFood.size() < 2) {
             return;
         }
@@ -142,7 +183,7 @@ public class StationSystem extends IteratingSystem {
         FoodType result = tryServe(controllable, count);
 
         if (result == null) {
-            result = tryServe(controllable, count++);
+            result = tryServe(controllable, ++count);
             if (result == null) {
                 return;
             }
@@ -153,14 +194,14 @@ public class StationSystem extends IteratingSystem {
             getEngine().removeEntity(e);
         }
 
-        controllable.currentFood.push(factory.createFood(result));
+        controllable.currentFood.pushItem(factory.createFood(result), cook);
 
     }
 
     private FoodType tryServe(ControllableComponent controllable, int count) {
         Set<FoodType> ingredients = new HashSet<FoodType>();
 
-        for (Entity foodEntity : controllable.currentFood.subList(0, 2)) {
+        for (Entity foodEntity : controllable.currentFood.subList(0, count)) {
             ingredients.add(Mappers.food.get(foodEntity).type);
         }
 
@@ -179,9 +220,10 @@ public class StationSystem extends IteratingSystem {
     private void stationPickup(StationComponent station, ControllableComponent controllable) {
         for (Entity foodEntity : station.food) {
             if (foodEntity != null && !Mappers.cooking.has(foodEntity)) {
-                controllable.currentFood.push(foodEntity);
+                controllable.currentFood.pushItem(foodEntity, station.interactingCook);
                 station.food.set(station.food.indexOf(foodEntity), null);
-                Gdx.app.log("test", "");
+                Mappers.transform.get(foodEntity).scale.set(1, 1);
+                Gdx.app.log("picked up", foodEntity.toString());
                 return;
             }
         }
@@ -202,14 +244,37 @@ public class StationSystem extends IteratingSystem {
 
             boolean ready = cooking.timer.tick(deltaTime);
 
-            if (ready) {
+            if (ready && cooking.processed) {
                 cooking.timer.stop();
                 cooking.timer.reset();
+
                 FoodComponent food = Mappers.food.get(foodEntity);
+                // Process the food into it's next form
                 food.type = Station.recipeMap.get(station.type).get(food.type);
+                Mappers.texture.get(foodEntity).region = factory.getFoodTexture(food.type);
                 foodEntity.remove(CookingComponent.class);
                 Gdx.app.log("Food ready", food.type.name());
+            } else if (ready) {
+
+                if (tickAccumulator > 0.5f) {
+
+                    if (!Mappers.tint.has(foodEntity)) {
+                        foodEntity.add(readyTint);
+                    } else {
+                        foodEntity.remove(TintComponent.class);
+                    }
+                }
+
             }
+
         }
     }
+
+    @Override
+    public void addedToEngine(Engine engine) {
+        super.addedToEngine(engine);
+        readyTint = getEngine().createComponent(TintComponent.class);
+        readyTint.tint = Color.YELLOW;
+    }
+
 }

@@ -82,8 +82,8 @@ public class MapLoader {
                             String.format("Light typeid %d at x:%.2f y:%.2f", lightID, pos.x, pos.y));
                     switch (lightID) {
                         case 0:
-                            LightBuilder.createPointLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.1f),
-                                    5, true);
+                            LightBuilder.createPointLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.25f),
+                                    10, true);
                             break;
                         case 1:
                             LightBuilder.createPointLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.5f),
@@ -91,7 +91,11 @@ public class MapLoader {
                             break;
                         case 2:
                             LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.25f),
-                                    25);
+                                    25, true);
+                            break;
+                        case 3:
+                            LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.25f),
+                                    25, false);
                             break;
                     }
 

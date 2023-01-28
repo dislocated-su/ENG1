@@ -24,6 +24,7 @@ public class Station {
             put(FoodType.tomato, FoodType.slicedTomato);
             put(FoodType.lettuce, FoodType.slicedLettuce);
             put(FoodType.unformedPatty, FoodType.formedPatty);
+            put(FoodType.onion, FoodType.slicedOnion);
         }
     };
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.9" tiledversion="1.9.2" name="background" tilewidth="32" tileheight="32" spacing="4" margin="2" tilecount="42" columns="6">
- <image source="background.png" width="216" height="252"/>
+ <image source="background_padded.png" width="216" height="252"/>
  <tile id="0">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="32">

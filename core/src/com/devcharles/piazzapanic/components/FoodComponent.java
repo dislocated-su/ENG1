@@ -9,18 +9,18 @@ public class FoodComponent implements Component {
     public FoodType type;
 
     public enum FoodType {
-        lettuce(1),
-        tomato(2),
-        onion(3),
-        unformedPatty(4),
-        buns(5),
-        slicedLettuce(6),
-        slicedTomato(7),
-        slicedOnion(8),
-        formedPatty(9),
-        grilledPatty(10),
-        toastedBuns(11),
-        burger(12),
+        unformedPatty(1),
+        formedPatty(2),
+        grilledPatty(3),
+        buns(4),
+        toastedBuns(5),
+        burger(6),
+        lettuce(7),
+        slicedLettuce(8),
+        tomato(9),
+        slicedTomato(10),
+        onion(11),
+        slicedOnion(12),
         salad(13);
 
         

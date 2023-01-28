@@ -1,6 +1,8 @@
 package com.devcharles.piazzapanic.utility;
 
-import com.badlogic.ashley.core.Engine;
+import java.util.Map;
+import java.util.HashMap;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.Texture;
@@ -33,6 +35,8 @@ public class EntityFactory {
         this.world = world;
     }
 
+    private Map<FoodType, TextureRegion> foodTextures = new HashMap<FoodType, TextureRegion>();
+
     /**
      * Creates an controllable entity, and adds it to the engine.
      * 
@@ -53,9 +57,11 @@ public class EntityFactory {
 
         WalkingAnimationComponent animation = engine.createComponent(WalkingAnimationComponent.class);
 
+        controllable.currentFood.init(engine);
+
         animation.animator = new CookAnimator();
         // Texture
-        TextureRegion[][] tempRegions = TextureRegion.split(new Texture("v2/chef_a.png"), 32, 32);
+        TextureRegion[][] tempRegions = TextureRegion.split(new Texture("v2/chef_1.png"), 32, 32);
 
         texture.region = tempRegions[0][0];
         // TODO: Set size in viewport units instead of scale
@@ -113,12 +119,11 @@ public class EntityFactory {
         FoodComponent food = engine.createComponent(FoodComponent.class);
 
         // Texture
-        TextureRegion tempRegion = new TextureRegion(new Texture("bucket.png"));
+        TextureRegion tempRegion = getFoodTexture(foodType);
 
         texture.region = tempRegion;
-
         // TODO: Set size in viewport units instead of scale
-        texture.scale.set(0.15f, 0.15f);
+        texture.scale.set(0.05f, 0.05f);
 
         // food creation
         food.type = foodType;
@@ -180,6 +185,36 @@ public class EntityFactory {
 
         engine.addEntity(entity);
 
+    }
+
+    public void cutFood(String path) {
+        if (path == null) {
+            path = "v2/food.png";
+        }
+
+        Texture foodSheet = new Texture(path);
+
+        TextureRegion[][] tmp = TextureRegion.split(foodSheet, 32, 32);
+
+        int rows = tmp.length;
+        int cols = tmp[0].length;
+
+        // Flatten the array
+        TextureRegion[] frames = new TextureRegion[rows * cols];
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                frames[index++] = tmp[i][j];
+            }
+        }
+
+        for (int i = 1; i < 14; i++) {
+            foodTextures.put(FoodType.from(i), frames[i]);
+        }
+    }
+
+    public TextureRegion getFoodTexture(FoodType type) {
+        return foodTextures.get(type);
     }
 
 }

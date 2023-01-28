@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.componentsystems.StationSystem;
+import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
+import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
@@ -52,6 +54,7 @@ public class GameScreen implements Screen {
         rayhandler = new RayHandler(world);
 
         EntityFactory factory = new EntityFactory(engine, world);
+        factory.cutFood(null);
 
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
@@ -61,9 +64,10 @@ public class GameScreen implements Screen {
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera));
         engine.addSystem(new LightingSystem(rayhandler, camera));
-        // engine.addSystem(new DebugRendererSystem(world, camera));
+        engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
+        engine.addSystem(new CarryItemsSystem());
 
         world.setContactListener(new WorldContactListener());
 
