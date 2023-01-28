@@ -2,8 +2,10 @@ package com.devcharles.piazzapanic.utility;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -13,6 +15,8 @@ public abstract class WalkAnimator {
     ArrayList<Animation<TextureRegion>> walkLeft = new ArrayList<>();
     ArrayList<Animation<TextureRegion>> walkUp = new ArrayList<>();
     ArrayList<Animation<TextureRegion>> walkDown = new ArrayList<>();
+
+    protected static final int COLS = 10, ROWS = 1;
 
     public enum Direction {
         left,
@@ -27,42 +31,6 @@ public abstract class WalkAnimator {
      */
     private static final Pair<Integer, Integer> dimensions = new Pair<Integer, Integer>(10, 1);
 
-    /**
-     * Cut the standard (for this project) animation spritesheet and initialise the
-     * animation.
-     * 
-     * @param path Relative path to the spritesheet.
-     */
-    public WalkAnimator(String path) {
-        // Load the sprite sheet as a Texture
-        walkSheet = new Texture(path);
-
-        // Split the spritesheet into separate textureregions
-        TextureRegion[][] tmp = TextureRegion.split(walkSheet, 32, 32);
-
-        // Flatten the array
-        TextureRegion[] frames = new TextureRegion[dimensions.first * dimensions.second];
-        int index = 0;
-        for (int i = 0; i < dimensions.second; i++) {
-            for (int j = 0; j < dimensions.first; j++) {
-                frames[index++] = tmp[i][j];
-            }
-        }
-
-        walkDown = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 0, 3));
-        walkUp = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 3, 6));
-        walkRight = new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 6, 10));
-
-        TextureRegion[] toCopy = walkRight.getKeyFrames();
-        TextureRegion[] flippedRegions = new TextureRegion[toCopy.length];
-
-        for (int i = 0; i < flippedRegions.length; i++) {
-            flippedRegions[i] = new TextureRegion(toCopy[i]);
-            flippedRegions[i].flip(true, false);
-        }
-
-        walkLeft = new Animation<TextureRegion>(0.1f, flippedRegions);
-    }
 
     /**
      * @param rotation  box2d body rotation
@@ -96,5 +64,35 @@ public abstract class WalkAnimator {
         }
 
         return dir;
+    }
+
+    // add textures to Walk Lists, made a function to avoid repeating code for
+    // different states
+    protected void addTextures(Texture currentSheet, int value) {
+        // Split the spritesheet into separate textureregions
+        TextureRegion[][] tmp = TextureRegion.split(currentSheet, 32, 32);
+
+        // Flatten the array
+        TextureRegion[] frames = new TextureRegion[ROWS * COLS];
+        int index = 0;
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                frames[index++] = tmp[i][j];
+            }
+        }
+
+        walkDown.add(new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 0, 3)));
+        walkUp.add(new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 3, 6)));
+        walkRight.add(new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 6, 10)));
+
+        TextureRegion[] toCopy = walkRight.get(value).getKeyFrames();
+        TextureRegion[] flippedRegions = new TextureRegion[toCopy.length];
+
+        for (int i = 0; i < flippedRegions.length; i++) {
+            flippedRegions[i] = new TextureRegion(toCopy[i]);
+            flippedRegions[i].flip(true, false);
+        }
+
+        walkLeft.add(new Animation<TextureRegion>(0.1f, flippedRegions));
     }
 }

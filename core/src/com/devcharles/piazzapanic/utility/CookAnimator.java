@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class CookAnimator extends WalkAnimator {
 
-    private static final int COLS = 10, ROWS = 1;
 
     CookAnimator() {
         int randomNum = ThreadLocalRandom.current().nextInt(1, 3);
@@ -58,35 +57,5 @@ public class CookAnimator extends WalkAnimator {
         }
 
         return currentAnimation.getKeyFrame(frameTime, true);
-    }
-
-    // add textures to Walk Lists, made a function to avoid repeating code for
-    // different states
-    public void addTextures(Texture currentSheet, int value) {
-        // Split the spritesheet into separate textureregions
-        TextureRegion[][] tmp = TextureRegion.split(currentSheet, 32, 32);
-
-        // Flatten the array
-        TextureRegion[] frames = new TextureRegion[ROWS * COLS];
-        int index = 0;
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                frames[index++] = tmp[i][j];
-            }
-        }
-
-        walkDown.add(new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 0, 3)));
-        walkUp.add(new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 3, 6)));
-        walkRight.add(new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 6, 10)));
-
-        TextureRegion[] toCopy = walkRight.get(value).getKeyFrames();
-        TextureRegion[] flippedRegions = new TextureRegion[toCopy.length];
-
-        for (int i = 0; i < flippedRegions.length; i++) {
-            flippedRegions[i] = new TextureRegion(toCopy[i]);
-            flippedRegions[i].flip(true, false);
-        }
-
-        walkLeft.add(new Animation<TextureRegion>(0.1f, flippedRegions));
     }
 }

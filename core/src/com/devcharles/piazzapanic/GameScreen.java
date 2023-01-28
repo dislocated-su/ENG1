@@ -71,8 +71,6 @@ public class GameScreen implements Screen {
         engine.addSystem(new CustomerAISystem());
         engine.addSystem(new CarryItemsSystem());
 
-        creator.createCustomer(15, 10);
-
         world.setContactListener(new WorldContactListener());
 
         // set the input processor

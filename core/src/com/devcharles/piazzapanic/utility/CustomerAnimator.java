@@ -1,12 +1,24 @@
 package com.devcharles.piazzapanic.utility;
 
+import java.util.concurrent.ThreadLocalRandom;
+
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class CustomerAnimator extends WalkAnimator {
 
     public CustomerAnimator() {
-        super("v2/workers_F_A.png");
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 3);
+
+        // Load the sprite sheet as a Texture
+        Texture walkSheet = new Texture("v2/chef_" + randomNum + ".png");
+        Texture holdOneSheet = new Texture("v2/chef_" + randomNum + "_holding.png");
+        Texture holdManySheet = new Texture("v2/chef_" + randomNum + "_crate.png");
+
+        addTextures(walkSheet, 0);
+        addTextures(holdOneSheet, 1);
+        addTextures(holdManySheet, 2);
     }
 
     /*
@@ -16,8 +28,10 @@ public class CustomerAnimator extends WalkAnimator {
      * float)
      */
     @Override
-    public TextureRegion getFrame(float rotation, boolean isMoving, float frameTime) {
+    public TextureRegion getFrame(float rotation, boolean isMoving, float frameTime, int holding) {
         int orientation = Math.round(rotation);
+
+        int animationIndex = holding > 0 ? 1 : 0;
 
         // Find closest mapped integer value in directions
         int minDistance = Math.abs(directions[0] - orientation);
@@ -34,7 +48,7 @@ public class CustomerAnimator extends WalkAnimator {
 
         rotation = directions[index];
 
-        Animation<TextureRegion> currentAnimation = walkDown;
+        Animation<TextureRegion> currentAnimation = walkDown.get(animationIndex);
 
         if (!isMoving) {
             frameTime = 0;
@@ -44,16 +58,16 @@ public class CustomerAnimator extends WalkAnimator {
 
         switch (dir) {
             case up:
-                currentAnimation = walkUp;
+                currentAnimation = walkUp.get(animationIndex);
                 break;
             case down:
-                currentAnimation = walkDown;
+                currentAnimation = walkDown.get(animationIndex);
                 break;
             case left:
-                currentAnimation = walkLeft;
+                currentAnimation = walkLeft.get(animationIndex);
                 break;
             case right:
-                currentAnimation = walkRight;
+                currentAnimation = walkRight.get(animationIndex);
                 break;
         }
 
