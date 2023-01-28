@@ -34,7 +34,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         batch = new SpriteBatch();
-        sprite = new Sprite(new Texture(Gdx.files.internal("v2/GameScreen.jpg")));
+        sprite = new Sprite(new Texture(Gdx.files.internal("mainMenuImage.png")));
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         skin = new Skin(Gdx.files.internal("metalui/metal-ui.json"));
