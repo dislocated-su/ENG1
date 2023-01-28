@@ -1,7 +1,9 @@
 package com.devcharles.piazzapanic;
 
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,9 +18,11 @@ import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.scene2d.CookCarryHud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.MapLoader;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
+import com.devcharles.piazzapanic.scene2d.Hud;
 
 import box2dLight.RayHandler;
 
@@ -35,6 +39,10 @@ public class GameScreen implements Screen {
     private PiazzaPanic game;
 
     public int total_cooks;
+    
+    private Hud hud;
+    private CookCarryHud cookCarryHud;
+    private InputMultiplexer multiplexer;
 
     private RayHandler rayhandler;
 
@@ -73,13 +81,22 @@ public class GameScreen implements Screen {
 
         world.setContactListener(new WorldContactListener());
 
+
+        hud = new Hud(game.batch, this, game);
+        cookCarryHud = new CookCarryHud(game.batch);
+
         // set the input processor
-        Gdx.input.setInputProcessor(kbInput);
+        multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(kbInput);
+        multiplexer.addProcessor(hud.gameStage);
+
+        Gdx.input.setInputProcessor(multiplexer);
+
     }
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(this.multiplexer);
     }
 
     @Override
@@ -89,6 +106,12 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         engine.update(delta);
+        game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
+        hud.update(delta);
+        cookCarryHud.update(delta);
+
+
+
     }
 
     @Override

@@ -1,19 +1,61 @@
 package com.devcharles.piazzapanic;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.devcharles.piazzapanic.scene2d.Tutorial;
 
-public class MainMenuScreen implements Screen {
+
+public class MainMenuScreen extends ApplicationAdapter implements Screen{
 
     final PiazzaPanic game;
     OrthographicCamera camera;
+    private Stage stage;
+    private Skin skin;
+    private Batch batch;
+    private Sprite sprite;
+
+
     public MainMenuScreen(final PiazzaPanic game) {
         this.game = game;
-
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
+        batch = new SpriteBatch();
+        sprite = new Sprite(new Texture(Gdx.files.internal("mainMenuImage.png")));
+        sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        skin = new Skin(Gdx.files.internal("metalui/metal-ui.json"));
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        Table root = new Table();
+        root.setFillParent(true);
+        stage.addActor(root);
+
+        //Begin layout
+        TextButton startGameButton = new TextButton("Start game", skin);
+        root.add(startGameButton).width(140).height(60);
+
+        //Checks if button is clicked
+        startGameButton.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new Tutorial(0, null, game, 1));
+                dispose();
+            }
+        });
     }
 
     @Override
@@ -23,36 +65,18 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0, 0, 0.2f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        camera.update();
-        game.batch.setProjectionMatrix(camera.combined);
-
-        game.batch.begin();
-        // TODO: get better fonts https://libgdx.com/wiki/graphics/2d/fonts/bitmap-fonts
-        game.font.draw(game.batch, "Main menu would be here ", 100, 150);
-        game.font.draw(game.batch, "clicking will switch to main game screen", 100, 100);
-        game.batch.end();
-
-        if (Gdx.input.isTouched()) {
-            game.setScreen(new GameScreen(game,2));
-            dispose();
-        }
+        batch.begin();
+        sprite.draw(batch);
+        batch.end();
+        stage.act();
+        stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -60,8 +84,8 @@ public class MainMenuScreen implements Screen {
 
     }
 
-    @Override
-    public void dispose() {
-
+    public void dispose () {
+        skin.dispose();
+        stage.dispose();
     }
 }
