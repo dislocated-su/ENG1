@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -28,31 +29,15 @@ public class MapBodyBuilder {
 
     public static Array<Body> buildShapes(Map map, float pixels, World world) {
         ppt = pixels;
-        MapObjects objects = map.getLayers().get("Obstacles").getObjects();
+        MapObjects shadowedObjects = map.getLayers().get("Obstacles").getObjects();
 
         Array<Body> bodies = new Array<Body>();
 
-        for(MapObject object : objects) {
+        for(MapObject object : shadowedObjects) {
 
-            if (object instanceof TextureMapObject) {
-                continue;
-            }
+            Shape shape = decideShape(object);
 
-            Shape shape;
-
-            if (object instanceof RectangleMapObject) {
-                shape = getRectangle((RectangleMapObject)object);
-            }
-            else if (object instanceof PolygonMapObject) {
-                shape = getPolygon((PolygonMapObject)object);
-            }
-            else if (object instanceof PolylineMapObject) {
-                shape = getPolyline((PolylineMapObject)object);
-            }
-            else if (object instanceof CircleMapObject) {
-                shape = getCircle((CircleMapObject)object);
-            }
-            else {
+            if (shape == null) {
                 continue;
             }
 
@@ -65,7 +50,55 @@ public class MapBodyBuilder {
 
             shape.dispose();
         }
+
+        MapObjects objects = map.getLayers().get("Obstacles_NoShadow").getObjects();
+
+        for (MapObject object : objects) {
+            Shape shape = decideShape(object);
+
+            if (shape == null) {
+                continue;
+            }
+
+            BodyDef bd = new BodyDef();
+            bd.type = BodyType.StaticBody;
+            Body body = world.createBody(bd);
+            Filter collisionFilter = new Filter();
+            collisionFilter.categoryBits = CollisionCategory.NO_SHADOWBOUNDARY.getValue();
+            collisionFilter.maskBits = CollisionCategory.ENTITY.getValue(); 
+            body.createFixture(shape, 1).setFilterData(collisionFilter);
+
+            bodies.add(body);
+
+            shape.dispose();
+        }
         return bodies;
+    }
+
+    private static Shape decideShape(MapObject object) {
+        if (object instanceof TextureMapObject) {
+            return null;
+        }
+
+        Shape shape;
+
+        if (object instanceof RectangleMapObject) {
+            shape = getRectangle((RectangleMapObject)object);
+        }
+        else if (object instanceof PolygonMapObject) {
+            shape = getPolygon((PolygonMapObject)object);
+        }
+        else if (object instanceof PolylineMapObject) {
+            shape = getPolyline((PolylineMapObject)object);
+        }
+        else if (object instanceof CircleMapObject) {
+            shape = getCircle((CircleMapObject)object);
+        }
+        else {
+            return null;
+        }
+
+        return shape;
     }
 
     private static PolygonShape getRectangle(RectangleMapObject rectangleObject) {
