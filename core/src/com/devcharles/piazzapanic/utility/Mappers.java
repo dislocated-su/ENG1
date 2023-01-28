@@ -1,6 +1,7 @@
 package com.devcharles.piazzapanic.utility;
 
 import com.badlogic.ashley.core.ComponentMapper;
+import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.AnimationComponent;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.CollisionComponent;
@@ -29,4 +30,5 @@ public class Mappers {
     public static final ComponentMapper<CookingComponent> cooking = ComponentMapper.getFor(CookingComponent.class);
     public static final ComponentMapper<ItemComponent> item = ComponentMapper.getFor(ItemComponent.class);
     public static final ComponentMapper<TintComponent> tint = ComponentMapper.getFor(TintComponent.class);
+    public static final ComponentMapper<AIAgentComponent> aiAgent = ComponentMapper.getFor(AIAgentComponent.class);
 }

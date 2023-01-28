@@ -3,7 +3,7 @@ package com.devcharles.piazzapanic.componentsystems;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import com.badlogic.ashley.core.ComponentMapper;
+
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -18,15 +18,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.devcharles.piazzapanic.components.AnimationComponent;
-import com.devcharles.piazzapanic.components.ControllableComponent;
-import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
-import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
 import com.devcharles.piazzapanic.utility.Mappers;
-import com.devcharles.piazzapanic.utility.Pair;
-import com.devcharles.piazzapanic.utility.Station;
 import com.devcharles.piazzapanic.utility.WalkAnimator;
 import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
 import com.devcharles.piazzapanic.utility.ZComparator;

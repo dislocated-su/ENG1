@@ -1,9 +1,11 @@
 package com.devcharles.piazzapanic.utility;
 
+
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.badlogic.gdx.graphics.Texture;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -24,6 +26,9 @@ public class CookAnimator extends WalkAnimator {
         addTextures(holdManySheet, 2);
     }
 
+    /* (non-Javadoc)
+     * @see com.devcharles.piazzapanic.utility.WalkAnimator#getFrame(float, boolean, float)
+     */
     @Override
     public TextureRegion getFrame(float rotation, boolean isMoving, float frameTime, int holding) {
 

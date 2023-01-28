@@ -1,11 +1,11 @@
 package com.devcharles.piazzapanic.utility;
 
+import java.util.Comparator;
+
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
-
-import java.util.Comparator;
 
 public class ZComparator implements Comparator<Entity> {
 
