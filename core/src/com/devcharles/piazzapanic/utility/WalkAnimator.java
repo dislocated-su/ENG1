@@ -1,22 +1,20 @@
 package com.devcharles.piazzapanic.utility;
 
 import java.security.InvalidParameterException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public abstract class WalkAnimator {
-    Texture walkSheet;
 
-    Animation<TextureRegion> walkRight;
-    Animation<TextureRegion> walkLeft;
-    Animation<TextureRegion> walkUp;
-    Animation<TextureRegion> walkDown;
+    ArrayList<Animation<TextureRegion>> walkRight = new ArrayList<>();
+    ArrayList<Animation<TextureRegion>> walkLeft = new ArrayList<>();
+    ArrayList<Animation<TextureRegion>> walkUp = new ArrayList<>();
+    ArrayList<Animation<TextureRegion>> walkDown = new ArrayList<>();
 
-    enum Direction {
+    public enum Direction {
         left,
         right,
         up,
@@ -73,9 +71,9 @@ public abstract class WalkAnimator {
      * @return A texture region to draw, and a rotation used for rendering the
      *         region.
      */
-    public abstract TextureRegion getFrame(float rotation, boolean isMoving, float frameTime);
+    public abstract TextureRegion getFrame(float rotation, boolean isMoving, float frameTime, int holding);
 
-    HashMap<Integer, Direction> directionMap = new HashMap<Integer, Direction>() {
+    private static HashMap<Integer, Direction> directionMap = new HashMap<Integer, Direction>() {
         {
             put(0, Direction.right);
             put(45, Direction.up);
@@ -89,8 +87,8 @@ public abstract class WalkAnimator {
     };
 
     protected int[] directions = { -135, -90, -45, 0, 45, 90, 135, 180 };
-
-    protected Direction rotationToDirection(float rotation) throws InvalidParameterException {
+    
+    public static Direction rotationToDirection(float rotation) throws InvalidParameterException {
         Direction dir = directionMap.get((int) Math.round(rotation));
 
         if (dir == null) {

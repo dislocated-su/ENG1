@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.componentsystems.CollisionSystem;
+import com.devcharles.piazzapanic.componentsystems.StationSystem;
+import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
 import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
 import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
@@ -17,7 +17,10 @@ import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.MapLoader;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
+
+import box2dLight.RayHandler;
 
 public class GameScreen implements Screen {
 
@@ -33,6 +36,10 @@ public class GameScreen implements Screen {
 
     public int total_cooks;
 
+    private RayHandler rayhandler;
+
+    private MapLoader mapLoader;
+
     public GameScreen(PiazzaPanic game, int total_cooks) {
         this.game = game;
         this.total_cooks = total_cooks;
@@ -45,27 +52,29 @@ public class GameScreen implements Screen {
 
         engine = new PooledEngine();
 
+        rayhandler = new RayHandler(world);
+
+        EntityFactory factory = new EntityFactory(engine, world);
+        factory.cutFood(null);
+
+        mapLoader = new MapLoader(null, null, factory);
+        mapLoader.buildCollisions(world);
+        mapLoader.buildFromObjects(engine, rayhandler);
+        mapLoader.buildStations(engine, world);
+
         engine.addSystem(new PhysicsSystem(world));
-        engine.addSystem(new RenderingSystem(world, game.batch, camera));
-        engine.addSystem(new LightingSystem(world, camera));
+        engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera));
+        engine.addSystem(new LightingSystem(rayhandler, camera));
         engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
+        engine.addSystem(new StationSystem(kbInput, factory));
         engine.addSystem(new CustomerAISystem());
-        engine.addSystem(new CollisionSystem(kbInput));
-
-        EntityFactory creator = new EntityFactory(engine, world);
-
-        creator.createCook(10, 10).add(new PlayerComponent());
-
-        for (int i = 0; i < total_cooks - 1; i++) {
-            creator.createCook(2 * (i + 4), 2 * (i + 4));
-        }
-
-        creator.createStation(9f, 10f);
+        engine.addSystem(new CarryItemsSystem());
 
         creator.createCustomer(15, 10);
 
         world.setContactListener(new WorldContactListener());
+
         // set the input processor
         Gdx.input.setInputProcessor(kbInput);
     }
