@@ -1,10 +1,12 @@
 package com.devcharles.piazzapanic.utility;
 
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.HashMap;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -19,6 +21,7 @@ import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.AnimationComponent;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
@@ -267,6 +270,8 @@ public class EntityFactory {
 
         AnimationComponent an = engine.createComponent(AnimationComponent.class);
 
+        CustomerComponent customer = engine.createComponent(CustomerComponent.class);
+
         WalkingAnimationComponent walkingAnimaton = engine.createComponent(WalkingAnimationComponent.class);
 
         AIAgentComponent aiAgent = engine.createComponent(AIAgentComponent.class);
@@ -295,12 +300,21 @@ public class EntityFactory {
 
         aiAgent.steeringBody.setSteeringBehavior(arriveSb);
 
+        FoodType[] s = new FoodType[Station.serveRecipes.values().size()];
+        s = Station.serveRecipes.values().toArray(s);
+
+        int orderIndex = ThreadLocalRandom.current().nextInt(0, s.length);
+
+        customer.order = FoodType.from(s[orderIndex].getValue());
+
+        Gdx.app.log("Order recieved", customer.order.name());
         entity.add(b2dBody);
         entity.add(transform);
         entity.add(texture);
         entity.add(an);
         entity.add(walkingAnimaton);
         entity.add(aiAgent);
+        entity.add(customer);
         engine.addEntity(entity);
 
         return entity;

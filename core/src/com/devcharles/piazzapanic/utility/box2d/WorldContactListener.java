@@ -14,25 +14,33 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
-        Pair<StationComponent, Entity> pair = stationInteractResolver(contact);
-        // Gdx.app.log("End Contact", "");
-
-        if (pair == null) {
+        Pair<StationComponent, Entity> stationCook = stationInteractResolver(contact);
+        if (stationCook != null) {
+            stationCook.first.interactingCook = stationCook.second;
             return;
         }
-        pair.first.interactingCook = pair.second;
+
+        Pair<Entity, Entity> customerCook = customerInteractResolver(contact);
+        if (customerCook != null) {
+            // Gdx.app.log("Begin contact", "Cook+Customer");
+            Mappers.customer.get(customerCook.first).interactingCook = customerCook.second;
+        }
     }
 
     @Override
     public void endContact(Contact contact) {
-        Pair<StationComponent, Entity> pair = stationInteractResolver(contact);
-        // Gdx.app.log("End Contact", "");
-
-        if (pair == null) {
+        Pair<StationComponent, Entity> stationCook = stationInteractResolver(contact);
+        if (stationCook != null) {
+            stationCook.first.interactingCook = null;
             return;
         }
 
-        pair.first.interactingCook = null;
+        Pair<Entity, Entity> customerCook = customerInteractResolver(contact);
+        if (customerCook != null) {
+            // Gdx.app.log("End contact", "Cook+Customer");
+            Mappers.customer.get(customerCook.first).interactingCook = null;
+        }
+
     }
 
     private Pair<StationComponent, Entity> stationInteractResolver(Contact contact) {
@@ -55,6 +63,38 @@ public class WorldContactListener implements ContactListener {
             if (cook != null && player != null) {
                 player.putDown = false;
                 return new Pair<StationComponent, Entity>((StationComponent) station, cook);
+            }
+        }
+        return null;
+    }
+
+    private Pair<Entity, Entity> customerInteractResolver(Contact contact) {
+        Object objA = contact.getFixtureA().getUserData();
+        Object objB = contact.getFixtureB().getUserData();
+
+        if (objA == null || objB == null) {
+            return null;
+        }
+
+        boolean objAEntity = (Entity.class.isAssignableFrom(objA.getClass()));
+        boolean objBEntity = (Entity.class.isAssignableFrom(objB.getClass()));
+
+        if (!objAEntity || !objBEntity) {
+            return null;
+        }
+
+        Entity a = (Entity) objA;
+        Entity b = (Entity) objB;
+
+        if (Mappers.customer.has(a) || Mappers.customer.has(b)) {
+            Entity customer = Mappers.customer.has(a) ? a : b;
+            Entity cook = (customer == a) ? b : a;
+
+            PlayerComponent player = Mappers.player.get(cook);
+
+            if (cook != null && player != null) {
+                player.putDown = false;
+                return new Pair<Entity, Entity>(customer, cook);
             }
         }
         return null;

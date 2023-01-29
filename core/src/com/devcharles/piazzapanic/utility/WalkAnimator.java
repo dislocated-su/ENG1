@@ -29,7 +29,6 @@ public abstract class WalkAnimator {
      */
     private static final Pair<Integer, Integer> dimensions = new Pair<Integer, Integer>(10, 1);
 
-
     /**
      * @param rotation  box2d body rotation
      * @param isMoving  whether the entity is moving or not
@@ -52,9 +51,27 @@ public abstract class WalkAnimator {
         }
     };
 
-    protected int[] directions = { -135, -90, -45, 0, 45, 90, 135, 180 };
-    
+    private static int[] directions = { -135, -90, -45, 0, 45, 90, 135, 180 };
+
     public static Direction rotationToDirection(float rotation) throws InvalidParameterException {
+
+        int orientation = Math.round(rotation);
+
+        // Find closest mapped integer value in directions
+        int minDistance = Math.abs(directions[0] - orientation);
+
+        int index = 0;
+        for (int i = 0; i < directions.length; i++) {
+            int currentDistance = Math.abs(directions[i] - orientation);
+
+            if (currentDistance < minDistance) {
+                index = i;
+                minDistance = currentDistance;
+            }
+        }
+
+        rotation = directions[index];
+
         Direction dir = directionMap.get((int) Math.round(rotation));
 
         if (dir == null) {

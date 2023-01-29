@@ -3,7 +3,6 @@ package com.devcharles.piazzapanic.componentsystems;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -96,6 +95,8 @@ public class RenderingSystem extends IteratingSystem {
 
                     if (Mappers.controllable.has(entity)) {
                         holdingCount = Mappers.controllable.get(entity).currentFood.size();
+                    } else if (Mappers.customer.has(entity) && Mappers.customer.get(entity).food != null) {
+                        holdingCount = 1;
                     }
                     toRender = walkAnimator.getFrame(transform.rotation, transform.isMoving, renderingAccumulator,
                             holdingCount);

@@ -9,6 +9,7 @@ public class FoodComponent implements Component {
     public FoodType type;
 
     public enum FoodType {
+        // These ids correspond to the order of the food in the sprite!
         unformedPatty(1),
         formedPatty(2),
         grilledPatty(3),
@@ -23,7 +24,6 @@ public class FoodComponent implements Component {
         slicedOnion(12),
         salad(13);
 
-        
         private int value;
 
         FoodType(int id) {

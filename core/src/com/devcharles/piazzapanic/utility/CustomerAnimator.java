@@ -27,24 +27,8 @@ public class CustomerAnimator extends WalkAnimator {
      */
     @Override
     public TextureRegion getFrame(float rotation, boolean isMoving, float frameTime, int holding) {
-        int orientation = Math.round(rotation);
 
         int animationIndex = holding > 0 ? 1 : 0;
-
-        // Find closest mapped integer value in directions
-        int minDistance = Math.abs(directions[0] - orientation);
-
-        int index = 0;
-        for (int i = 0; i < directions.length; i++) {
-            int currentDistance = Math.abs(directions[i] - orientation);
-
-            if (currentDistance < minDistance) {
-                index = i;
-                minDistance = currentDistance;
-            }
-        }
-
-        rotation = directions[index];
 
         Animation<TextureRegion> currentAnimation = walkDown.get(animationIndex);
 
