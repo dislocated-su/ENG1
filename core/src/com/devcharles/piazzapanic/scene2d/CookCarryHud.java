@@ -20,7 +20,6 @@ public class CookCarryHud extends ApplicationAdapter {
 
 
     public CookCarryHud(SpriteBatch spriteBatch) {
-        customerTimer = 000;
 
         gameViewport = new FitViewport(1280, 720, new OrthographicCamera());
         gameStage = new Stage(gameViewport, spriteBatch);

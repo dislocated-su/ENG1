@@ -82,7 +82,7 @@ public class GameScreen implements Screen {
         world.setContactListener(new WorldContactListener());
 
         hud = new Hud(game.batch, this, game);
-        cookCarryHud = new CookCarryHud(game.batch);
+//        cookCarryHud = new CookCarryHud(game.batch);
 
         // set the input processor
         multiplexer = new InputMultiplexer();
