@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -27,7 +29,8 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
     private Skin skin;
     private Batch batch;
     private Sprite sprite;
-
+    private BitmapFont gamesFont;
+    private Label title;
 
     public MainMenuScreen(final PiazzaPanic game) {
         this.game = game;
@@ -41,11 +44,19 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
+        Label.LabelStyle menuLabelStyle = new Label.LabelStyle();
+        gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
+        menuLabelStyle.font = gamesFont;
+
+        title = new Label("Pizza Panic", menuLabelStyle);
+
         Table root = new Table();
         root.setFillParent(true);
         stage.addActor(root);
 
         //Begin layout
+        root.add(title).expandX().padBottom(120);
+        root.row();
         TextButton startGameButton = new TextButton("Start game", skin);
         root.add(startGameButton);
 

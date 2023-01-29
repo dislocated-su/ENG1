@@ -53,7 +53,7 @@ public class Tutorial extends ApplicationAdapter implements Screen {
 
 
         TextButton exitButtonToGame = new TextButton("Exit", skin);
-        root.add(exitButtonToGame).width(180).height(50).expandX().left();
+        root.add(exitButtonToGame).width(180).height(80).expandX().left();
         exitButtonToGame.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 if (launchNewGame == 1){

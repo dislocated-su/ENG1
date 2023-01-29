@@ -39,9 +39,11 @@ public class CookCarryHud extends ApplicationAdapter {
         gameStage.addActor(gameTable);
 
 
-
     }
 
+    public void updateStack(){
+
+    }
     public void update(float deltaTime){
         gameStage.act();
         gameStage.draw();

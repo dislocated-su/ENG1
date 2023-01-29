@@ -29,6 +29,7 @@ public class Hud extends ApplicationAdapter {
     Label timeNameLabel;
     Label reputationLabel;
     Label reputationNameLabel;
+    BitmapFont gamesFont;
 
     public Hud (SpriteBatch spriteBatch, final GameScreen savedGame,final Game game ) {
         customerTimer = 000;
@@ -45,10 +46,14 @@ public class Hud extends ApplicationAdapter {
         gameTable.setFillParent(true);
         gameStage.addActor(gameTable);
 
-        timerLabel = new Label(String.format("%03d", customerTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        reputationLabel = new Label(String.format("%01d", reputation), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        timeNameLabel = new Label("Time", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        reputationNameLabel = new Label("Reputation", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        Label.LabelStyle hudLabelStyle = new Label.LabelStyle();
+        gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
+        hudLabelStyle.font = gamesFont;
+
+        timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);
+        reputationLabel = new Label(String.format("%01d", reputation), hudLabelStyle);
+        timeNameLabel = new Label("Time", hudLabelStyle);
+        reputationNameLabel = new Label("Reputation", hudLabelStyle);
 
         gameTable.add(timeNameLabel).expandX().padTop(10);
         gameTable.add(reputationNameLabel).expandX().padTop(10);
@@ -58,8 +63,9 @@ public class Hud extends ApplicationAdapter {
         gameTable.row();
         TextButton recipeBookButton = new TextButton("Recipe Book", skin);
         gameTable.add(recipeBookButton).width(220).height(50).left().top();
+        gameTable.row();
         TextButton tutorialButton = new TextButton("Tutorial", skin);
-        gameTable.add(tutorialButton).width(220).height(50).right().top();
+        gameTable.add(tutorialButton).width(220).height(50).left().top();
 
 
         recipeBookButton.addListener(new ClickListener(){
