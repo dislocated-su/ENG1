@@ -14,8 +14,8 @@ public class ZComparator implements Comparator<Entity> {
 
     @Override
     public int compare(Entity entityA, Entity entityB) {
-        boolean aIsWalk = Mappers.controllable.has(entityA);
-        boolean bIsWalk = Mappers.controllable.has(entityB);
+        boolean aIsWalk = Mappers.controllable.has(entityA) || Mappers.aiAgent.has(entityA);
+        boolean bIsWalk = Mappers.controllable.has(entityB) || Mappers.aiAgent.has(entityB);
 
         float az, bz;
 

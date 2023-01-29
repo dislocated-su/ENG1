@@ -1,7 +1,5 @@
 package com.devcharles.piazzapanic.utility;
 
-
-import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -11,22 +9,24 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class CookAnimator extends WalkAnimator {
 
-
     CookAnimator() {
         int randomNum = ThreadLocalRandom.current().nextInt(1, 3);
 
         // Load the sprite sheet as a Texture
-        Texture walkSheet = new Texture("v2/chef_" + randomNum + ".png");
-        Texture holdOneSheet = new Texture("v2/chef_" + randomNum + "_holding.png");
-        Texture holdManySheet = new Texture("v2/chef_" + randomNum + "_crate.png");
+        Texture walkSheet = new Texture("v2/chef/" + randomNum + ".png");
+        Texture holdOneSheet = new Texture("v2/chef/" + randomNum + "_holding.png");
+        Texture holdManySheet = new Texture("v2/chef/" + randomNum + "_crate.png");
 
         addTextures(walkSheet, 0);
         addTextures(holdOneSheet, 1);
         addTextures(holdManySheet, 2);
     }
 
-    /* (non-Javadoc)
-     * @see com.devcharles.piazzapanic.utility.WalkAnimator#getFrame(float, boolean, float)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.devcharles.piazzapanic.utility.WalkAnimator#getFrame(float, boolean,
+     * float)
      */
     @Override
     public TextureRegion getFrame(float rotation, boolean isMoving, float frameTime, int holding) {

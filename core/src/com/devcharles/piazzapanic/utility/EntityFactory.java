@@ -48,15 +48,16 @@ public class EntityFactory {
     private Map<FoodType, TextureRegion> foodTextures = new HashMap<FoodType, TextureRegion>();
 
     /**
-     * Create reusable definitions for bodies and fixtures. These can be then be used while creating the bodies for entities.
+     * Create reusable definitions for bodies and fixtures. These can be then be
+     * used while creating the bodies for entities.
      */
     private void createDefinitions() {
-        
+
         // Moving bodies
 
         // Bodydef
         movingBodyDef = new BodyDef();
-        
+
         movingBodyDef.type = BodyType.DynamicBody;
         movingBodyDef.linearDamping = 20f;
         movingBodyDef.fixedRotation = true;
@@ -74,7 +75,6 @@ public class EntityFactory {
         movingFixtureDef.filter.maskBits = (short) (CollisionCategory.BOUNDARY.getValue()
                 | CollisionCategory.ENTITY.getValue());
     }
-
 
     /**
      * Creates an controllable entity, and adds it to the engine.
@@ -100,7 +100,7 @@ public class EntityFactory {
 
         animation.animator = new CookAnimator();
         // Texture
-        TextureRegion[][] tempRegions = TextureRegion.split(new Texture("v2/chef_1.png"), 32, 32);
+        TextureRegion[][] tempRegions = TextureRegion.split(new Texture("droplet.png"), 32, 32);
 
         texture.region = tempRegions[0][0];
         // TODO: Set size in viewport units instead of scale
@@ -277,21 +277,21 @@ public class EntityFactory {
         movingBodyDef.position.set(position.x, position.y);
         b2dBody.body = world.createBody(movingBodyDef);
         b2dBody.body.createFixture(movingFixtureDef).setUserData(entity);
-        
+
         texture.region = new TextureRegion(new Texture("droplet.png"));
-        texture.scale.set(0.05f, 0.05f);
+        texture.scale.set(0.1f, 0.1f);
 
         transform.isHidden = false;
 
         // Ai agent setup
         aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, false, 0.5f);
-        
+
         Box2dLocation targetLocation = new Box2dLocation(target, 180);
 
         Arrive<Vector2> arriveSb = new Arrive<Vector2>(aiAgent.steeringBody, targetLocation)
-            .setTimeToTarget(0.1f)
-            .setArrivalTolerance(0.5f)
-            .setDecelerationRadius(2);
+                .setTimeToTarget(0.1f)
+                .setArrivalTolerance(0.5f)
+                .setDecelerationRadius(2);
 
         aiAgent.steeringBody.setSteeringBehavior(arriveSb);
 

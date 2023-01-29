@@ -9,16 +9,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class CustomerAnimator extends WalkAnimator {
 
     public CustomerAnimator() {
-        int randomNum = ThreadLocalRandom.current().nextInt(1, 3);
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 4);
 
         // Load the sprite sheet as a Texture
-        Texture walkSheet = new Texture("v2/chef_" + randomNum + ".png");
-        Texture holdOneSheet = new Texture("v2/chef_" + randomNum + "_holding.png");
-        Texture holdManySheet = new Texture("v2/chef_" + randomNum + "_crate.png");
+        Texture walkSheet = new Texture("v2/customer/" + randomNum + ".png");
+        Texture holdOneSheet = new Texture("v2/customer/" + randomNum + "_holding.png");
 
         addTextures(walkSheet, 0);
         addTextures(holdOneSheet, 1);
-        addTextures(holdManySheet, 2);
     }
 
     /*
