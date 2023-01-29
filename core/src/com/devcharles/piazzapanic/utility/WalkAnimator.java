@@ -16,8 +16,6 @@ public abstract class WalkAnimator {
     ArrayList<Animation<TextureRegion>> walkUp = new ArrayList<>();
     ArrayList<Animation<TextureRegion>> walkDown = new ArrayList<>();
 
-    protected static final int COLS = 10, ROWS = 1;
-
     public enum Direction {
         left,
         right,
@@ -73,10 +71,10 @@ public abstract class WalkAnimator {
         TextureRegion[][] tmp = TextureRegion.split(currentSheet, 32, 32);
 
         // Flatten the array
-        TextureRegion[] frames = new TextureRegion[ROWS * COLS];
+        TextureRegion[] frames = new TextureRegion[dimensions.first * dimensions.second];
         int index = 0;
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
+        for (int i = 0; i < dimensions.second; i++) {
+            for (int j = 0; j < dimensions.first; j++) {
                 frames[index++] = tmp[i][j];
             }
         }
