@@ -42,7 +42,7 @@ public class Tutorial extends ApplicationAdapter implements Screen {
         sprite = new Sprite(new Texture(Gdx.files.internal(completeTutorial[currentPage])));
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        skin = new Skin(Gdx.files.internal("metalui/metal-ui.json"));
+        skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
@@ -52,8 +52,8 @@ public class Tutorial extends ApplicationAdapter implements Screen {
         stage.addActor(root);
 
 
-        TextButton exitButtonToGame = new TextButton("Exit back to game", skin);
-        root.add(exitButtonToGame).width(180).height(60).expandX().left();
+        TextButton exitButtonToGame = new TextButton("Exit", skin);
+        root.add(exitButtonToGame).width(180).height(50).expandX().left();
         exitButtonToGame.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 if (launchNewGame == 1){
@@ -78,7 +78,7 @@ public class Tutorial extends ApplicationAdapter implements Screen {
 
         if(leftButtonOn == 1){
             TextButton leftRecipeButton = new TextButton("Page Left", skin);
-            root.add(leftRecipeButton).width(120).height(60).expandX().left();
+            root.add(leftRecipeButton).width(200).height(50).expandX().left();
             //Checks if button is clicked
             leftRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
@@ -90,7 +90,7 @@ public class Tutorial extends ApplicationAdapter implements Screen {
         }
         if(rightButtonOn == 1){
             TextButton rightRecipeButton = new TextButton("Page Right", skin);
-            root.add(rightRecipeButton).width(120).height(60).expandX().right();
+            root.add(rightRecipeButton).width(200).height(50).expandX().right();
             //Checks if button is clicked
             rightRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {

@@ -37,7 +37,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
         sprite = new Sprite(new Texture(Gdx.files.internal("mainMenuImage.png")));
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        skin = new Skin(Gdx.files.internal("metalui/metal-ui.json"));
+        skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
@@ -47,7 +47,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
 
         //Begin layout
         TextButton startGameButton = new TextButton("Start game", skin);
-        root.add(startGameButton).width(140).height(60);
+        root.add(startGameButton);
 
         //Checks if button is clicked
         startGameButton.addListener(new ClickListener(){

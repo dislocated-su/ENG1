@@ -37,12 +37,13 @@ public class Hud extends ApplicationAdapter {
 
         gameViewport = new FitViewport(1280, 720, new OrthographicCamera());
         gameStage = new Stage(gameViewport, spriteBatch);
-        skin = new Skin(Gdx.files.internal("metalui/metal-ui.json"));
+        skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
+        Gdx.input.setInputProcessor(gameStage);
 
         Table gameTable = new Table();
         gameTable.top();
         gameTable.setFillParent(true);
-        Gdx.input.setInputProcessor(gameStage);
+        gameStage.addActor(gameTable);
 
         timerLabel = new Label(String.format("%03d", customerTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         reputationLabel = new Label(String.format("%01d", reputation), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -56,10 +57,10 @@ public class Hud extends ApplicationAdapter {
         gameTable.add(reputationLabel).expandX();
         gameTable.row();
         TextButton recipeBookButton = new TextButton("Recipe Book", skin);
-        gameTable.add(recipeBookButton).width(80).height(40).left().top();
+        gameTable.add(recipeBookButton).width(220).height(50).left().top();
         TextButton tutorialButton = new TextButton("Tutorial", skin);
-        gameTable.add(tutorialButton).width(80).height(40).right().top();
-        gameStage.addActor(gameTable);
+        gameTable.add(tutorialButton).width(220).height(50).right().top();
+
 
         recipeBookButton.addListener(new ClickListener(){
             public void clicked(InputEvent event, float x, float y) {

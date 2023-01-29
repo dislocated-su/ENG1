@@ -81,7 +81,6 @@ public class GameScreen implements Screen {
 
         world.setContactListener(new WorldContactListener());
 
-
         hud = new Hud(game.batch, this, game);
         cookCarryHud = new CookCarryHud(game.batch);
 
@@ -89,8 +88,8 @@ public class GameScreen implements Screen {
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.gameStage);
-
         Gdx.input.setInputProcessor(multiplexer);
+
 
     }
 
@@ -109,9 +108,6 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
         hud.update(delta);
         cookCarryHud.update(delta);
-
-
-
     }
 
     @Override
