@@ -24,7 +24,7 @@ public class recipeBook implements Screen {
     private Skin skin;
     private Batch batch;
     private Sprite sprite;
-    private String[] completeBook = {"bucket.png", "droplet.png", "v2/GameScreen.jpg"};
+    private String[] completeBook = {"Recipe/page1.png", "Recipe/page2.png"};
     private Integer newPageNumber;
     private Integer rightButtonOn = 1, leftButtonOn = 1;
     private TextButton leftRecipeButton, rightRecipeButton;

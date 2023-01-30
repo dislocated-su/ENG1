@@ -27,7 +27,8 @@ public class Tutorial extends ApplicationAdapter implements Screen {
     private Skin skin;
     private Batch batch;
     private Sprite sprite;
-    private String[] completeTutorial = {"bucket.png", "v2/GameScreen.jpg", "droplet.png"};
+    private String[] completeTutorial = {"Tutorial/page1.png", "Tutorial/page2.png", "Tutorial/page3.png", "Tutorial/page4.png",
+            "Tutorial/page5.png", "Tutorial/page6.png", "Tutorial/page7.png", "Tutorial/page8.png"};
     private Integer newPageNumber;
     private Integer rightButtonOn = 1, leftButtonOn = 1;
     private TextButton leftRecipeButton, rightRecipeButton;
