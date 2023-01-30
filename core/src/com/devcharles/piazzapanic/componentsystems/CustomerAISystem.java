@@ -1,5 +1,7 @@
 package com.devcharles.piazzapanic.componentsystems;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.ashley.core.Engine;
@@ -7,7 +9,10 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
+import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
+import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.components.AIAgentComponent;
@@ -20,20 +25,43 @@ import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
+import com.devcharles.piazzapanic.utility.box2d.Box2dRadiusProximity;
 
 public class CustomerAISystem extends IteratingSystem {
 
     private Map<Integer, Box2dLocation> objectives;
+    private Map<Integer, Boolean> objectiveTaken;
+
     private World world;
     private GdxTimer spawnTimer = new GdxTimer(5000, false, true);
     private EntityFactory factory;
-    private int numOfCustomers = 0;
     private int numOfCutstomerTotal = 0;
+
+    ArrayList<Entity> customers = new ArrayList<Entity>() {
+        @Override
+        public boolean remove(Object o) {
+            for (Entity entity : customers) {
+                if (entity != o) {
+                    AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
+
+                    if (aiAgent.currentObjective - 1 >= 0) {
+                        if (!objectiveTaken.get(aiAgent.currentObjective - 1)) {
+                            makeItGoThere(aiAgent, aiAgent.currentObjective - 1);
+                        }
+                    }
+                    
+
+                }
+            }
+            return super.remove(o);
+        };
+    };
 
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.objectives = objectives;
+        this.objectiveTaken = new HashMap<Integer, Boolean>();
 
         // Use a reference to the world to destroy box2d bodies when despawning
         // customers
@@ -45,8 +73,8 @@ public class CustomerAISystem extends IteratingSystem {
     @Override
     public void update(float deltaTime) {
         if (spawnTimer.tick(deltaTime) && numOfCutstomerTotal < 5) {
-            factory.createCustomer(objectives.get(-2).getPosition());
-            numOfCustomers++;
+            Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
+            customers.add(newCustomer);
             numOfCutstomerTotal++;
         }
 
@@ -65,7 +93,7 @@ public class CustomerAISystem extends IteratingSystem {
         }
 
         if (aiAgent.steeringBody.getSteeringBehavior() == null) {
-            makeItGoThere(aiAgent, numOfCustomers - 1);
+            makeItGoThere(aiAgent, customers.size() - 1);
         }
 
         aiAgent.steeringBody.update(deltaTime);
@@ -107,14 +135,27 @@ public class CustomerAISystem extends IteratingSystem {
     }
 
     private void makeItGoThere(AIAgentComponent aiAgent, int locationID) {
+        objectiveTaken.put(aiAgent.currentObjective, false);
+
         Box2dLocation there = objectives.get(locationID);
-        Arrive<Vector2> arriveSb = new Arrive<Vector2>(aiAgent.steeringBody)
+
+        Arrive<Vector2> arrive = new Arrive<Vector2>(aiAgent.steeringBody)
                 .setTimeToTarget(0.1f)
-                .setArrivalTolerance(0.5f)
+                .setArrivalTolerance(0.25f)
                 .setDecelerationRadius(2)
                 .setTarget(there);
-        aiAgent.steeringBody.setSteeringBehavior(arriveSb);
-        aiAgent.steeringBody.setIndependentFacing(true);
+
+        Proximity<Vector2> proximity = new Box2dRadiusProximity(aiAgent.steeringBody, world, 1f);
+        CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(
+                aiAgent.steeringBody, proximity);
+
+        PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(aiAgent.steeringBody)
+                .add(collisionAvoidance)
+                .add(arrive);
+
+        aiAgent.steeringBody.setSteeringBehavior(prioritySteering);
+        aiAgent.currentObjective = locationID;
+        objectiveTaken.put(aiAgent.currentObjective, true);
 
         if (locationID == -1) {
             aiAgent.steeringBody.setOrientation(0);
@@ -138,7 +179,7 @@ public class CustomerAISystem extends IteratingSystem {
 
         AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
         makeItGoThere(aiAgent, -1);
-        numOfCustomers--;
+        customers.remove(entity);
     }
 
 }

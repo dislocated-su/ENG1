@@ -367,13 +367,13 @@
    </properties>
    <point/>
   </object>
-  <object id="53" x="1056" y="704">
+  <object id="53" x="992" y="704">
    <properties>
     <property name="aiobjective" type="int" value="0"/>
    </properties>
    <point/>
   </object>
-  <object id="54" x="1088" y="704">
+  <object id="54" x="1068.5" y="704">
    <properties>
     <property name="aiobjective" type="int" value="1"/>
    </properties>
@@ -439,7 +439,7 @@
    </properties>
    <point/>
   </object>
-  <object id="96" x="1152" y="704">
+  <object id="96" x="1167" y="704">
    <properties>
     <property name="aiobjective" type="int" value="3"/>
    </properties>
@@ -451,7 +451,7 @@
    </properties>
    <point/>
   </object>
-  <object id="98" x="1184" y="704">
+  <object id="98" x="1216" y="704">
    <properties>
     <property name="aiobjective" type="int" value="4"/>
    </properties>
