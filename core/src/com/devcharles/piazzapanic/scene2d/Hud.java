@@ -45,8 +45,9 @@ public class Hud extends ApplicationAdapter {
     private Game game;
     private Table tableBottom, tableRight;
 
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer reputationPoints) {
         this.game = game;
+        this.reputation = reputationPoints;
 
         // Setup the viewport
         gameViewport = new ScreenViewport(new OrthographicCamera(1280, 720));
