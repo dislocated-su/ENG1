@@ -274,7 +274,7 @@ public class StationSystem extends IteratingSystem {
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         readyTint = getEngine().createComponent(TintComponent.class);
-        readyTint.tint = Color.YELLOW;
+        readyTint.tint = Color.ORANGE;
     }
 
 }

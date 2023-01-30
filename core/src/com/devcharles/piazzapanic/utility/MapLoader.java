@@ -1,6 +1,7 @@
 package com.devcharles.piazzapanic.utility;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.utils.Array;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.Station.StationType;
+import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
 import com.devcharles.piazzapanic.utility.box2d.LightBuilder;
 import com.devcharles.piazzapanic.utility.box2d.MapBodyBuilder;
 
@@ -50,6 +52,8 @@ public class MapLoader {
     static final String stationIdProperty = "stationID";
     static final String ingredientTypeProperty = "ingredientType";
 
+    private Map<Integer, Box2dLocation> aiObjectives;
+
     public MapLoader(String path, Integer ppt, EntityFactory factory) {
         if (ppt != null) {
             this.ppt = ppt;
@@ -71,7 +75,7 @@ public class MapLoader {
         MapObjects objects = map.getLayers().get(objectLayer).getObjects();
 
         Vector2 aiSpawn = new Vector2();
-        ArrayList<Vector2> aiObjectives = new ArrayList<Vector2>();
+        aiObjectives = new HashMap<Integer, Box2dLocation>();
 
         for (MapObject mapObject : objects) {
 
@@ -114,17 +118,19 @@ public class MapLoader {
 
                 } else if (properties.containsKey(aiSpawnPoint)) {
                     Gdx.app.log("map parsing", String.format("Ai spawn point at x:%.2f y:%.2f", pos.x, pos.y));
-                    aiSpawn.set(pos.x, pos.y);
+                    aiObjectives.put(-2, new Box2dLocation(pos, 0));
                 } else if (properties.containsKey(aiObjective)) {
                     int objective = (int) properties.get(aiObjective);
-                    aiObjectives.add(new Vector2(pos.x, pos.y));
+                    aiObjectives.put(objective, new Box2dLocation(new Vector2(pos.x, pos.y), (float) (1.5f * Math.PI)));
                     Gdx.app.log("map parsing",
                             String.format("Ai objective %d at x:%.2f y:%.2f", objective, pos.x, pos.y));
                 }
             }
         }
+    }
 
-        factory.createCustomer(aiSpawn, aiObjectives.get(0));
+    public Map<Integer, Box2dLocation> getObjectives() {
+        return aiObjectives;
     }
 
     public void buildStations(Engine engine, World world) {

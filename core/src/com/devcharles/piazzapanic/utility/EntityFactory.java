@@ -7,7 +7,6 @@ import java.util.HashMap;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ai.steer.behaviors.Arrive;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -28,7 +27,6 @@ import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.components.StationComponent;
-import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
 import com.devcharles.piazzapanic.utility.box2d.Box2dSteeringBody;
 import com.devcharles.piazzapanic.utility.box2d.CollisionCategory;
 
@@ -148,6 +146,9 @@ public class EntityFactory {
 
         engine.addEntity(entity);
 
+        Mappers.controllable.get(entity).currentFood.pushItem(createFood(FoodType.burger), entity);
+        Mappers.controllable.get(entity).currentFood.pushItem(createFood(FoodType.salad), entity);
+
         return entity;
     }
 
@@ -259,7 +260,7 @@ public class EntityFactory {
         return foodTextures.get(type);
     }
 
-    public Entity createCustomer(Vector2 position, Vector2 target) {
+    public Entity createCustomer(Vector2 position) {
         Entity entity = engine.createEntity();
 
         B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
@@ -290,15 +291,6 @@ public class EntityFactory {
 
         // Ai agent setup
         aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, false, 0.5f);
-
-        Box2dLocation targetLocation = new Box2dLocation(target, 180);
-
-        Arrive<Vector2> arriveSb = new Arrive<Vector2>(aiAgent.steeringBody, targetLocation)
-                .setTimeToTarget(0.1f)
-                .setArrivalTolerance(0.5f)
-                .setDecelerationRadius(2);
-
-        aiAgent.steeringBody.setSteeringBehavior(arriveSb);
 
         FoodType[] s = new FoodType[Station.serveRecipes.values().size()];
         s = Station.serveRecipes.values().toArray(s);

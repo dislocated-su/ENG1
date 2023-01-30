@@ -44,11 +44,11 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
     }
 
     public boolean isIndependentFacing() {
-       return independentFacing;
+        return independentFacing;
     }
 
     public void setIndependentFacing(boolean independentFacing) {
-       throw new UnsupportedOperationException();
+        this.independentFacing = independentFacing;
     }
 
     @Override
@@ -98,14 +98,14 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
 
     @Override
     public float vectorToAngle(Vector2 vector) {
-        return (float)Math.atan2(-vector.x, vector.y);
+        return (float) Math.atan2(-vector.x, vector.y);
     }
 
     @Override
     public Vector2 angleToVector(Vector2 outVector, float angle) {
-        outVector.x = -(float)Math.sin(angle);
-		outVector.y = (float)Math.cos(angle);
-		return outVector;
+        outVector.x = -(float) Math.sin(angle);
+        outVector.y = (float) Math.cos(angle);
+        return outVector;
     }
 
     public SteeringBehavior<Vector2> getSteeringBehavior() {
@@ -132,7 +132,6 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
         if (!steeringOutput.linear.isZero()) {
             // this method internally scales the force by deltaTime
             body.applyForceToCenter(steeringOutput.linear.cpy().scl(2), true);
-            body.setTransform(getPosition(), (float)(vectorToAngle(steering.linear) + Math.PI));
             anyAccelerations = true;
         }
 

@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 
 public class CookingComponent implements Component, Poolable {
-    public GdxTimer timer = new GdxTimer(5000, false);
+    public GdxTimer timer = new GdxTimer(5000, false, false);
     /**
      * If patty is flipped, onion is chopped, etc.
      */

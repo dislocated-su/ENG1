@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="96">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="100">
  <tileset firstgid="1" source="tileset_32.tsx"/>
  <tileset firstgid="43" source="objects.tsx"/>
  <layer id="1" name="floor" width="60" height="35">
@@ -381,7 +381,7 @@
   </object>
   <object id="55" x="1408" y="704">
    <properties>
-    <property name="aiobjective" type="int" value="5"/>
+    <property name="aiobjective" type="int" value="-1"/>
    </properties>
    <point/>
   </object>
@@ -436,6 +436,30 @@
   <object id="95" x="1104" y="840">
    <properties>
     <property name="lightID" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="96" x="1152" y="704">
+   <properties>
+    <property name="aiobjective" type="int" value="3"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="97" x="1120" y="704">
+   <properties>
+    <property name="aiobjective" type="int" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="98" x="1184" y="704">
+   <properties>
+    <property name="aiobjective" type="int" value="4"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="99" x="1376" y="704">
+   <properties>
+    <property name="lightID" type="int" value="2"/>
    </properties>
    <point/>
   </object>

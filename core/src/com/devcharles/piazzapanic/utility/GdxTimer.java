@@ -8,16 +8,19 @@ public class GdxTimer {
     private int delay;
     private int elapsed;
     private boolean running;
+    private boolean looping;
 
-    public GdxTimer(int delay, boolean running) {
+    public GdxTimer(int delay, boolean running, boolean looping) {
         this.delay = delay;
         this.running = running;
+        this.looping = looping;
     }
 
     public boolean tick(float delta) {
         if (running) {
             elapsed += delta * 1000;
             if (elapsed > delay) {
+                elapsed -= looping ? delay : 0;
                 return true;
             }
         }
