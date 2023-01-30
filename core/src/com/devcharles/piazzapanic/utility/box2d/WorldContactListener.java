@@ -62,6 +62,7 @@ public class WorldContactListener implements ContactListener {
 
             if (cook != null && player != null) {
                 player.putDown = false;
+                player.pickUp = false;
                 return new Pair<StationComponent, Entity>((StationComponent) station, cook);
             }
         }
