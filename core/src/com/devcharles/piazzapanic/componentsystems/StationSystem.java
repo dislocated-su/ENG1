@@ -59,54 +59,54 @@ public class StationSystem extends IteratingSystem {
 
             PlayerComponent player = Mappers.player.get(station.interactingCook);
 
-            if (player != null) {
+            if (player == null) {
+                return;
+            }
 
-                if (player.putDown) {
-                    player.putDown = false;
+            if (player.putDown) {
+                player.putDown = false;
 
-                    ControllableComponent controllable = Mappers.controllable.get(station.interactingCook);
+                ControllableComponent controllable = Mappers.controllable.get(station.interactingCook);
 
-                    switch (station.type) {
-                        case ingredient:
-                            controllable.currentFood.pushItem(factory.createFood(station.ingredient),
-                                    station.interactingCook);
-                            break;
-                        case bin:
-                            processBin(controllable);
-                            break;
+                switch (station.type) {
+                    case ingredient:
+                        controllable.currentFood.pushItem(factory.createFood(station.ingredient),
+                                station.interactingCook);
+                        break;
+                    case bin:
+                        processBin(controllable);
+                        break;
 
-                        case serve:
-                            processServe(station.interactingCook);
-                            break;
+                    case serve:
+                        processServe(station.interactingCook);
+                        break;
 
-                        default:
-                            processStation(controllable, station);
-                            break;
-                    }
-                } else if (player.pickUp) {
-                    player.pickUp = false;
-
-                    ControllableComponent controllable = Mappers.controllable.get(station.interactingCook);
-
-                    switch (station.type) {
-                        case ingredient:
-                            controllable.currentFood.pushItem(factory.createFood(station.ingredient),
-                                    station.interactingCook);
-                            break;
-                        case bin:
-                        case serve:
-                            break;
-                        default:
-                            stationPickup(station, controllable);
-                            break;
-                    }
-                } else if (player.interact) {
-                    player.interact = false;
-                    interactStation(station);
+                    default:
+                        processStation(controllable, station);
+                        break;
                 }
+            } else if (player.pickUp) {
+                player.pickUp = false;
+
+                ControllableComponent controllable = Mappers.controllable.get(station.interactingCook);
+
+                switch (station.type) {
+                    case ingredient:
+                        controllable.currentFood.pushItem(factory.createFood(station.ingredient),
+                                station.interactingCook);
+                        break;
+                    case bin:
+                    case serve:
+                        break;
+                    default:
+                        stationPickup(station, controllable);
+                        break;
+                }
+            } else if (player.interact) {
+                player.interact = false;
+                interactStation(station);
             }
         }
-        return;
     }
 
     private void processStation(ControllableComponent controllable, StationComponent station) {
@@ -223,7 +223,7 @@ public class StationSystem extends IteratingSystem {
                 controllable.currentFood.pushItem(foodEntity, station.interactingCook);
                 station.food.set(station.food.indexOf(foodEntity), null);
                 Mappers.transform.get(foodEntity).scale.set(1, 1);
-                Gdx.app.log("picked up", foodEntity.toString());
+                Gdx.app.log("Picked up", Mappers.food.get(foodEntity).type.toString());
                 return;
             }
         }
@@ -274,7 +274,7 @@ public class StationSystem extends IteratingSystem {
     public void addedToEngine(Engine engine) {
         super.addedToEngine(engine);
         readyTint = getEngine().createComponent(TintComponent.class);
-        readyTint.tint = Color.YELLOW;
+        readyTint.tint = Color.ORANGE;
     }
 
 }

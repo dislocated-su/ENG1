@@ -1,7 +1,6 @@
 package com.devcharles.piazzapanic;
 
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.componentsystems.StationSystem;
 import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
 import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
-import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
@@ -39,7 +37,7 @@ public class GameScreen implements Screen {
     private PiazzaPanic game;
 
     public int total_cooks;
-    
+
     private Hud hud;
     private CookCarryHud cookCarryHud;
     private InputMultiplexer multiplexer;
@@ -73,14 +71,13 @@ public class GameScreen implements Screen {
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera));
         engine.addSystem(new LightingSystem(rayhandler, camera));
-        //engine.addSystem(new DebugRendererSystem(world, camera));
+        // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem());
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory));
         engine.addSystem(new CarryItemsSystem());
 
         world.setContactListener(new WorldContactListener());
-
 
         hud = new Hud(game.batch, this, game);
         cookCarryHud = new CookCarryHud(game.batch);
@@ -109,9 +106,6 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
         hud.update(delta);
         cookCarryHud.update(delta);
-
-
-
     }
 
     @Override
@@ -139,7 +133,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
+        // TODO Figure out what to dispose
         world.dispose();
     }
 

@@ -1,9 +1,8 @@
 package com.devcharles.piazzapanic.componentsystems;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-
-
+import java.util.Collections;
+import java.util.List;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -13,30 +12,27 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.WalkAnimator;
 import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
+import com.devcharles.piazzapanic.utility.YComparator;
 import com.devcharles.piazzapanic.utility.ZComparator;
 import com.devcharles.piazzapanic.utility.Station.StationType;
 
 public class RenderingSystem extends IteratingSystem {
 
     private SpriteBatch sb;
-    private Array<Entity> entities;
     private OrthographicCamera camera;
-
-    private Comparator<Entity> comparator;
-
     private float renderingAccumulator = 0f;
-
     private WorldTilemapRenderer mapRenderer;
+
+    private ZComparator Zcomparator;
+    private YComparator Ycomparator;
+
+    List<Entity> entities = new ArrayList<Entity>();
 
     public RenderingSystem(TiledMap map, SpriteBatch batch, OrthographicCamera camera) {
         super(Family.all(TransformComponent.class, TextureComponent.class).get());
@@ -44,9 +40,8 @@ public class RenderingSystem extends IteratingSystem {
         this.sb = batch;
         this.camera = camera;
         this.mapRenderer = new WorldTilemapRenderer(map, camera, batch);
-        this.comparator = new ZComparator();
-
-        entities = new Array<Entity>(32);
+        this.Zcomparator = new ZComparator();
+        this.Ycomparator = new YComparator();
     }
 
     @Override
@@ -55,7 +50,10 @@ public class RenderingSystem extends IteratingSystem {
 
         renderingAccumulator += deltaTime;
 
-        entities.sort(comparator);
+        Collections.shuffle(entities);
+        Collections.sort(entities, Zcomparator);
+        Collections.sort(entities, Ycomparator);
+
 
         sb.setProjectionMatrix(camera.combined);
         camera.update();
@@ -64,6 +62,9 @@ public class RenderingSystem extends IteratingSystem {
         mapRenderer.renderBackground();
 
         for (Entity entity : entities) {
+            if (entity == null) {
+                continue;
+            }
             TextureComponent texture = Mappers.texture.get(entity);
             TransformComponent transform = Mappers.transform.get(entity);
 
@@ -96,6 +97,8 @@ public class RenderingSystem extends IteratingSystem {
 
                     if (Mappers.controllable.has(entity)) {
                         holdingCount = Mappers.controllable.get(entity).currentFood.size();
+                    } else if (Mappers.customer.has(entity) && Mappers.customer.get(entity).food != null) {
+                        holdingCount = 1;
                     }
                     toRender = walkAnimator.getFrame(transform.rotation, transform.isMoving, renderingAccumulator,
                             holdingCount);
@@ -169,7 +172,7 @@ public class RenderingSystem extends IteratingSystem {
                     break;
             }
             TransformComponent transformFood = Mappers.transform.get(entity);
-            transformFood.position.set(foodPos);
+            transformFood.position.set(foodPos.cpy());
             if (Mappers.station.get(station).type == StationType.cutting_board) {
                 transformFood.scale.set(0.4f, 0.4f);
             } else if (Mappers.station.get(station).type == StationType.oven) {

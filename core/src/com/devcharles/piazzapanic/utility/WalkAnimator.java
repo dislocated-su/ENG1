@@ -16,8 +16,6 @@ public abstract class WalkAnimator {
     ArrayList<Animation<TextureRegion>> walkUp = new ArrayList<>();
     ArrayList<Animation<TextureRegion>> walkDown = new ArrayList<>();
 
-    protected static final int COLS = 10, ROWS = 1;
-
     public enum Direction {
         left,
         right,
@@ -30,7 +28,6 @@ public abstract class WalkAnimator {
      * The values represent columns and rows, respectively.
      */
     private static final Pair<Integer, Integer> dimensions = new Pair<Integer, Integer>(10, 1);
-
 
     /**
      * @param rotation  box2d body rotation
@@ -54,9 +51,27 @@ public abstract class WalkAnimator {
         }
     };
 
-    protected int[] directions = { -135, -90, -45, 0, 45, 90, 135, 180 };
-    
+    private static int[] directions = { -135, -90, -45, 0, 45, 90, 135, 180 };
+
     public static Direction rotationToDirection(float rotation) throws InvalidParameterException {
+
+        int orientation = Math.round(rotation);
+
+        // Find closest mapped integer value in directions
+        int minDistance = Math.abs(directions[0] - orientation);
+
+        int index = 0;
+        for (int i = 0; i < directions.length; i++) {
+            int currentDistance = Math.abs(directions[i] - orientation);
+
+            if (currentDistance < minDistance) {
+                index = i;
+                minDistance = currentDistance;
+            }
+        }
+
+        rotation = directions[index];
+
         Direction dir = directionMap.get((int) Math.round(rotation));
 
         if (dir == null) {
@@ -73,10 +88,10 @@ public abstract class WalkAnimator {
         TextureRegion[][] tmp = TextureRegion.split(currentSheet, 32, 32);
 
         // Flatten the array
-        TextureRegion[] frames = new TextureRegion[ROWS * COLS];
+        TextureRegion[] frames = new TextureRegion[dimensions.first * dimensions.second];
         int index = 0;
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
+        for (int i = 0; i < dimensions.second; i++) {
+            for (int j = 0; j < dimensions.first; j++) {
                 frames[index++] = tmp[i][j];
             }
         }
