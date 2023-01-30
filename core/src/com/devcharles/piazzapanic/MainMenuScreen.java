@@ -48,7 +48,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
         gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
         menuLabelStyle.font = gamesFont;
 
-        title = new Label("Pizza Panic", menuLabelStyle);
+        title = new Label("Piazza Panic", menuLabelStyle);
 
         Table root = new Table();
         root.setFillParent(true);
