@@ -21,7 +21,7 @@ public class Hud extends ApplicationAdapter {
     private Viewport gameViewport;
     private Integer customerTimer = 000;
     private float timeCounter = 0;
-    private Integer reputation = 0;
+    private Integer reputation = 3;
     private Skin skin;
 
     // A label is basically a widget
