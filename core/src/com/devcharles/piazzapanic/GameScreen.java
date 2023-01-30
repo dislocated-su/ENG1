@@ -1,7 +1,6 @@
 package com.devcharles.piazzapanic;
 
 import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.componentsystems.StationSystem;
 import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
 import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
-import com.devcharles.piazzapanic.componentsystems.DebugRendererSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
@@ -135,7 +133,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
+        // TODO Figure out what to dispose
         world.dispose();
     }
 

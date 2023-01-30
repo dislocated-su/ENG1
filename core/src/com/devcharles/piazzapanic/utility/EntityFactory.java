@@ -289,7 +289,7 @@ public class EntityFactory {
 
         transform.isHidden = false;
 
-        // Ai agent setup
+        // Create a steering body with no behaviour (to be set later)
         aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, false, 0.5f);
 
         FoodType[] s = new FoodType[Station.serveRecipes.values().size()];

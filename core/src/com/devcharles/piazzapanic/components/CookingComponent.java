@@ -13,7 +13,8 @@ public class CookingComponent implements Component, Poolable {
 
     @Override
     public void reset() {
-        // TODO Auto-generated method stub
+        timer.stop();
+        timer.reset();
         processed = false;
     }
 }

@@ -74,7 +74,6 @@ public class MapLoader {
     public void buildFromObjects(Engine engine, RayHandler rayHandler) {
         MapObjects objects = map.getLayers().get(objectLayer).getObjects();
 
-        Vector2 aiSpawn = new Vector2();
         aiObjectives = new HashMap<Integer, Box2dLocation>();
 
         for (MapObject mapObject : objects) {

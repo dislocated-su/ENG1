@@ -66,7 +66,6 @@ public class CustomerAISystem extends IteratingSystem {
 
         if (aiAgent.steeringBody.getSteeringBehavior() == null) {
             makeItGoThere(aiAgent, numOfCustomers - 1);
-            Gdx.app.log("ai agent setup", "success");
         }
 
         aiAgent.steeringBody.update(deltaTime);
