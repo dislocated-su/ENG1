@@ -80,14 +80,16 @@ public class GameScreen implements Screen {
         world.setContactListener(new WorldContactListener());
 
         hud = new Hud(game.batch, this, game);
-        cookCarryHud = new CookCarryHud(game.batch);
+
+        //cookCarryHud = new CookCarryHud(game.batch);
+
 
         // set the input processor
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.gameStage);
-
         Gdx.input.setInputProcessor(multiplexer);
+
 
     }
 
@@ -105,12 +107,12 @@ public class GameScreen implements Screen {
         engine.update(delta);
         game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
         hud.update(delta);
-        cookCarryHud.update(delta);
     }
 
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, game.VIRTUAL_HEIGHT * width / (float) height, game.VIRTUAL_HEIGHT);
+        hud.resize(width, height);
     }
 
     @Override

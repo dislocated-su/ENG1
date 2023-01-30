@@ -24,7 +24,7 @@ public class recipeBook implements Screen {
     private Skin skin;
     private Batch batch;
     private Sprite sprite;
-    private String[] completeBook = {"bucket.png", "droplet.png", "v2/GameScreen.jpg"};
+    private String[] completeBook = {"Recipe/page1.png", "Recipe/page2.png"};
     private Integer newPageNumber;
     private Integer rightButtonOn = 1, leftButtonOn = 1;
     private TextButton leftRecipeButton, rightRecipeButton;
@@ -39,7 +39,7 @@ public class recipeBook implements Screen {
         sprite = new Sprite(new Texture(Gdx.files.internal(completeBook[currentPage])));
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        skin = new Skin(Gdx.files.internal("metalui/metal-ui.json"));
+        skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
@@ -49,8 +49,8 @@ public class recipeBook implements Screen {
         stage.addActor(root);
 
 
-        TextButton exitButtonToGame = new TextButton("Exit back to game", skin);
-        root.add(exitButtonToGame).width(120).height(60).expandX().left();
+        TextButton exitButtonToGame = new TextButton("Exit", skin);
+        root.add(exitButtonToGame).width(120).height(80).expandX().left();
         exitButtonToGame.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(savedGame);
@@ -70,7 +70,7 @@ public class recipeBook implements Screen {
 
         if(leftButtonOn == 1){
             TextButton leftRecipeButton = new TextButton("Page Left", skin);
-            root.add(leftRecipeButton).width(120).height(60).expandX().left();
+            root.add(leftRecipeButton).width(200).height(50).left();
             //Checks if button is clicked
             leftRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
@@ -82,7 +82,7 @@ public class recipeBook implements Screen {
         }
         if(rightButtonOn == 1){
             TextButton rightRecipeButton = new TextButton("Page Right", skin);
-            root.add(rightRecipeButton).width(120).height(60).expandX().right();
+            root.add(rightRecipeButton).width(200).height(50).right();
             //Checks if button is clicked
             rightRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {

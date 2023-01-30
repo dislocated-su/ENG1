@@ -17,13 +17,12 @@ public class CookCarryHud extends ApplicationAdapter {
     private Skin skin;
     private Image photo, photo2;
 
-    // BROKEN AND I DONT KNOW WHY
+
     public CookCarryHud(SpriteBatch spriteBatch) {
-        customerTimer = 000;
 
         gameViewport = new FitViewport(1280, 720, new OrthographicCamera());
         gameStage = new Stage(gameViewport, spriteBatch);
-        skin = new Skin(Gdx.files.internal("metalui/metal-ui.json"));
+
 
         Table gameTable = new Table();
         gameTable.right();
@@ -38,9 +37,11 @@ public class CookCarryHud extends ApplicationAdapter {
         gameStage.addActor(gameTable);
 
 
-
     }
 
+    public void updateStack(){
+
+    }
     public void update(float deltaTime){
         gameStage.act();
         gameStage.draw();
