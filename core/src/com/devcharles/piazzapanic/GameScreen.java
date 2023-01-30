@@ -44,7 +44,7 @@ public class GameScreen implements Screen {
 
     private MapLoader mapLoader;
 
-    private Integer reputationPoints;
+    private Integer[] reputationPoints = { 3 };
 
     public GameScreen(PiazzaPanic game, int total_cooks) {
         this.game = game;
@@ -86,13 +86,12 @@ public class GameScreen implements Screen {
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.gameStage);
-        Gdx.input.setInputProcessor(multiplexer);
 
     }
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(this.multiplexer);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override

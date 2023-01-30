@@ -26,7 +26,7 @@ public class Hud extends ApplicationAdapter {
     private Viewport gameViewport;
     private Integer customerTimer = 000;
     private float timeCounter = 0;
-    private Integer reputation;
+    private Integer[] reputation;
     private Skin skin;
 
     private final float fontScale = 0.6f;
@@ -45,7 +45,7 @@ public class Hud extends ApplicationAdapter {
     private Game game;
     private Table tableBottom, tableRight;
 
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer reputationPoints) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints) {
         this.game = game;
         this.reputation = reputationPoints;
 
@@ -68,7 +68,7 @@ public class Hud extends ApplicationAdapter {
     private void createTables(final GameScreen savedGame) {
 
         timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);
-        reputationLabel = new Label(String.format("%01d", reputation), hudLabelStyle);
+        reputationLabel = new Label(String.format("%01d", reputation[0]), hudLabelStyle);
         timeNameLabel = new Label("Time", hudLabelStyle);
         reputationNameLabel = new Label("Reputation", hudLabelStyle);
 
@@ -83,8 +83,8 @@ public class Hud extends ApplicationAdapter {
         recipeBookButton.getLabel().setFontScale(fontScale);
         tutorialButton.getLabel().setFontScale(fontScale);
 
-        recipeBookButton.addListener(createListener(new recipeBook(0, savedGame, game)));
-        tutorialButton.addListener(createListener(new Tutorial(0, savedGame, game, 0)));
+        recipeBookButton.addListener(createListener(new Slideshow(game, Slideshow.Type.recipe, savedGame)));
+        tutorialButton.addListener(createListener(new Slideshow(game, Slideshow.Type.tutorial, savedGame)));
 
         Table tableTop = new Table();
         tableTop.top();
@@ -158,6 +158,11 @@ public class Hud extends ApplicationAdapter {
         if (timeCounter >= 1) {
             customerTimer++;
             timerLabel.setText(String.format("%03d", customerTimer));
+            reputationLabel.setText(reputation[0]);
+            if (triggerWin) {
+                triggerWin = false;
+                Win();
+            }
             timeCounter = 0;
         }
 
@@ -167,6 +172,7 @@ public class Hud extends ApplicationAdapter {
     }
 
     public boolean won;
+    public boolean triggerWin = false;
 
     public void Win() {
         won = true;
@@ -183,21 +189,30 @@ public class Hud extends ApplicationAdapter {
         titleLabelStyle = new Label.LabelStyle();
         titleLabelStyle.font = uiTitleFont;
 
-        timeNameLabel = new Label("Congratulations you won!", hudLabelStyle);
+        Label congrats = new Label("Congratulations!", titleLabelStyle);
+        Label congratsSubtitle = new Label("You won!", hudLabelStyle);
+
+        centerTable.add(congrats).padBottom(40);
+        centerTable.row();
+        centerTable.add(congratsSubtitle).padBottom(30);
+        centerTable.row();
+
         centerTable.add(timeNameLabel).padBottom(50);
 
-        centerTable.row();
+        centerTable.row().fill(0.8f, 0.1f).center();
 
         centerTable.add(timeNameLabel).padBottom(25);
         centerTable.add(reputationNameLabel).padBottom(25);
 
-        centerTable.row();
+        centerTable.row().fill(0.3f, 0.1f);
 
         centerTable.add(timerLabel);
-        centerTable.add(reputationLabel).padBottom(40);
+        centerTable.add(reputationLabel).padBottom(25);
 
-        TextButton returnToMenuButton = new TextButton("Recipe Book", skin);
-        centerTable.add(returnToMenuButton);
+        centerTable.row();
+
+        TextButton returnToMenuButton = new TextButton("Main menu", skin);
+        centerTable.add(returnToMenuButton).padTop(50);
 
         returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
 

@@ -39,7 +39,8 @@ public class CustomerAISystem extends IteratingSystem {
     private EntityFactory factory;
     private int numOfCustomerTotal = 0;
     private Hud hud;
-    private Integer reputationPoints;
+    private Integer reputationPoints[];
+    private final int CUSTOMER = 2;
 
     private ArrayList<Entity> customers = new ArrayList<Entity>() {
         @Override
@@ -61,7 +62,7 @@ public class CustomerAISystem extends IteratingSystem {
     };
 
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer reputationPoints) {
+            Integer[] reputationPoints) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.hud = hud;
@@ -79,7 +80,7 @@ public class CustomerAISystem extends IteratingSystem {
 
     @Override
     public void update(float deltaTime) {
-        if (spawnTimer.tick(deltaTime) && numOfCustomerTotal < 2) {
+        if (spawnTimer.tick(deltaTime) && numOfCustomerTotal < CUSTOMER) {
             Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
             customers.add(newCustomer);
             numOfCustomerTotal++;
@@ -93,8 +94,8 @@ public class CustomerAISystem extends IteratingSystem {
             i++;
         }
 
-        if (customers.size() == 0 && numOfCustomerTotal == 2) {
-            hud.Win();
+        if (!hud.won && customers.size() == 0 && numOfCustomerTotal == CUSTOMER) {
+            hud.triggerWin = true;
         }
 
         super.update(deltaTime);
@@ -121,7 +122,9 @@ public class CustomerAISystem extends IteratingSystem {
 
         // lower reputation points if they have waited longer than time alloted (1 min)
         if (customer.timer.tick(deltaTime)) {
-            reputationPoints--;
+            if (reputationPoints[0] > 0) {
+                reputationPoints[0]--;
+            }
             customer.timer.stop();
             if (!hud.won) {
 
@@ -209,6 +212,9 @@ public class CustomerAISystem extends IteratingSystem {
 
         AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
         makeItGoThere(aiAgent, -1);
+
+        customer.timer.stop();
+        customer.timer.reset();
 
         customers.remove(entity);
     }
