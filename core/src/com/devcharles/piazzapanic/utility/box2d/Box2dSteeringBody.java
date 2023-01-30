@@ -1,3 +1,22 @@
+/*******************************************************************************
+ * Copyright 2014 davebaol https://github.com/davebaol
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+/*
+ * Max velocity/acceleration values were set and applySteering() was modified to fit the needs of this project.
+ */
 package com.devcharles.piazzapanic.utility.box2d;
 
 import com.badlogic.gdx.ai.steer.Steerable;
@@ -44,11 +63,11 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
     }
 
     public boolean isIndependentFacing() {
-       return independentFacing;
+        return independentFacing;
     }
 
     public void setIndependentFacing(boolean independentFacing) {
-       throw new UnsupportedOperationException();
+        this.independentFacing = independentFacing;
     }
 
     @Override
@@ -98,14 +117,14 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
 
     @Override
     public float vectorToAngle(Vector2 vector) {
-        return (float)Math.atan2(-vector.x, vector.y);
+        return (float) Math.atan2(-vector.x, vector.y);
     }
 
     @Override
     public Vector2 angleToVector(Vector2 outVector, float angle) {
-        outVector.x = -(float)Math.sin(angle);
-		outVector.y = (float)Math.cos(angle);
-		return outVector;
+        outVector.x = -(float) Math.sin(angle);
+        outVector.y = (float) Math.cos(angle);
+        return outVector;
     }
 
     public SteeringBehavior<Vector2> getSteeringBehavior() {
@@ -132,7 +151,6 @@ public class Box2dSteeringBody implements Steerable<Vector2> {
         if (!steeringOutput.linear.isZero()) {
             // this method internally scales the force by deltaTime
             body.applyForceToCenter(steeringOutput.linear.cpy().scl(2), true);
-            body.setTransform(getPosition(), (float)(vectorToAngle(steering.linear) + Math.PI));
             anyAccelerations = true;
         }
 

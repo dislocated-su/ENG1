@@ -7,7 +7,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.math.Vector3;
-import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.ItemComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.utility.Mappers;
@@ -17,7 +16,7 @@ import com.devcharles.piazzapanic.utility.WalkAnimator.Direction;
 public class CarryItemsSystem extends IteratingSystem {
 
     public CarryItemsSystem() {
-        super(Family.all(ItemComponent.class, FoodComponent.class, TransformComponent.class).get());
+        super(Family.all(ItemComponent.class, TransformComponent.class).get());
     }
 
     Map<Direction, Vector3> dirToVector = new HashMap<Direction, Vector3>() {

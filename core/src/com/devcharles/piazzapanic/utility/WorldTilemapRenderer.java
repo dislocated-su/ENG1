@@ -1,16 +1,10 @@
 package com.devcharles.piazzapanic.utility;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.physics.box2d.World;
-import com.devcharles.piazzapanic.utility.box2d.MapBodyBuilder;
-
-import box2dLight.RayHandler;
 
 public class WorldTilemapRenderer {
 
