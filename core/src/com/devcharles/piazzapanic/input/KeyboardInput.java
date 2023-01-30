@@ -15,6 +15,8 @@ public class KeyboardInput implements InputProcessor {
 
     public boolean interact;
 
+    public boolean disableHud;
+
     @Override
     public boolean keyDown(int keycode) {
         boolean processed = true;
@@ -43,6 +45,8 @@ public class KeyboardInput implements InputProcessor {
             case Keys.Q:
                 interact = true;
                 break;
+            case Keys.H:
+                disableHud = true;
             default:
                 processed = false;
         }
@@ -76,6 +80,8 @@ public class KeyboardInput implements InputProcessor {
             case Keys.Q:
                 interact = false;
                 break;
+            case Keys.H:
+                disableHud = false;
             default:
                 processed = false;
         }

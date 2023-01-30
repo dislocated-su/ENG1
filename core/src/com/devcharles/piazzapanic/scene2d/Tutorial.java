@@ -27,16 +27,14 @@ public class Tutorial extends ApplicationAdapter implements Screen {
     private Skin skin;
     private Batch batch;
     private Sprite sprite;
-    private String[] completeTutorial = {"Tutorial/page0.png", "Tutorial/page1.png", "Tutorial/page2.png", "Tutorial/page3.png", "Tutorial/page4.png",
-            "Tutorial/page5.png", "Tutorial/page6.png", "Tutorial/page7.png"};
+    private String[] completeTutorial = { "Tutorial/page0.png", "Tutorial/page1.png", "Tutorial/page2.png",
+            "Tutorial/page3.png", "Tutorial/page4.png",
+            "Tutorial/page5.png", "Tutorial/page6.png", "Tutorial/page7.png" };
     private Integer newPageNumber;
     private Integer rightButtonOn = 1, leftButtonOn = 1;
-    private TextButton leftRecipeButton, rightRecipeButton;
 
-
-
-
-    public Tutorial( final Integer currentPage, final GameScreen savedGame, final Game game, final Integer launchNewGame) {
+    public Tutorial(final Integer currentPage, final GameScreen savedGame, final Game game,
+            final Integer launchNewGame) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         batch = new SpriteBatch();
@@ -52,13 +50,12 @@ public class Tutorial extends ApplicationAdapter implements Screen {
         root.setFillParent(true);
         stage.addActor(root);
 
-
         TextButton exitButtonToGame = new TextButton("Exit", skin);
         root.add(exitButtonToGame).width(180).height(80).expandX().left();
         exitButtonToGame.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                if (launchNewGame == 1){
-                    game.setScreen(new GameScreen((PiazzaPanic) game,2));
+                if (launchNewGame == 1) {
+                    game.setScreen(new GameScreen((PiazzaPanic) game, 2));
                     dispose();
                 } else {
                     game.setScreen(savedGame);
@@ -69,18 +66,17 @@ public class Tutorial extends ApplicationAdapter implements Screen {
 
         root.row();
 
-        //Begin layout
-        if(currentPage == 0){
+        // Begin layout
+        if (currentPage == 0) {
             leftButtonOn = 0;
-        }
-        else if(completeTutorial.length - 1 == currentPage){
+        } else if (completeTutorial.length - 1 == currentPage) {
             rightButtonOn = 0;
         }
 
-        if(leftButtonOn == 1){
+        if (leftButtonOn == 1) {
             TextButton leftRecipeButton = new TextButton("Page Left", skin);
             root.add(leftRecipeButton).width(200).height(50).expandX().left();
-            //Checks if button is clicked
+            // Checks if button is clicked
             leftRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     newPageNumber = currentPage - 1;
@@ -89,10 +85,10 @@ public class Tutorial extends ApplicationAdapter implements Screen {
                 }
             });
         }
-        if(rightButtonOn == 1){
+        if (rightButtonOn == 1) {
             TextButton rightRecipeButton = new TextButton("Page Right", skin);
             root.add(rightRecipeButton).width(200).height(50).expandX().right();
-            //Checks if button is clicked
+            // Checks if button is clicked
             rightRecipeButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     newPageNumber = currentPage + 1;
@@ -103,7 +99,6 @@ public class Tutorial extends ApplicationAdapter implements Screen {
             });
         }
     }
-
 
     @Override
     public void show() {
@@ -141,9 +136,8 @@ public class Tutorial extends ApplicationAdapter implements Screen {
 
     }
 
-    public void dispose () {
+    public void dispose() {
         skin.dispose();
         stage.dispose();
     }
 }
-

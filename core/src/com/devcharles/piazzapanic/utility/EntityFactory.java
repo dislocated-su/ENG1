@@ -46,7 +46,7 @@ public class EntityFactory {
         createDefinitions();
     }
 
-    private Map<FoodType, TextureRegion> foodTextures = new HashMap<FoodType, TextureRegion>();
+    private static Map<FoodType, TextureRegion> foodTextures = new HashMap<FoodType, TextureRegion>();
 
     /**
      * Create reusable definitions for bodies and fixtures. These can be then be
@@ -230,7 +230,7 @@ public class EntityFactory {
 
     }
 
-    public void cutFood(String path) {
+    public static void cutFood(String path) {
         if (path == null) {
             path = "v2/food.png";
         }
@@ -256,7 +256,7 @@ public class EntityFactory {
         }
     }
 
-    public TextureRegion getFoodTexture(FoodType type) {
+    public static TextureRegion getFoodTexture(FoodType type) {
         return foodTextures.get(type);
     }
 

@@ -11,17 +11,16 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.componentsystems.StationSystem;
 import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
 import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
+import com.devcharles.piazzapanic.componentsystems.InventoryUpdateSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
-import com.devcharles.piazzapanic.scene2d.CookCarryHud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.MapLoader;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 import com.devcharles.piazzapanic.scene2d.Hud;
-
 import box2dLight.RayHandler;
 
 public class GameScreen implements Screen {
@@ -39,7 +38,6 @@ public class GameScreen implements Screen {
     public int total_cooks;
 
     private Hud hud;
-    private CookCarryHud cookCarryHud;
     private InputMultiplexer multiplexer;
 
     private RayHandler rayhandler;
@@ -61,7 +59,9 @@ public class GameScreen implements Screen {
         rayhandler = new RayHandler(world);
 
         EntityFactory factory = new EntityFactory(engine, world);
-        factory.cutFood(null);
+        EntityFactory.cutFood(null);
+
+        hud = new Hud(game.batch, this, game);
 
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
@@ -74,22 +74,17 @@ public class GameScreen implements Screen {
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud));
         engine.addSystem(new CarryItemsSystem());
+        engine.addSystem(new InventoryUpdateSystem(hud));
 
         world.setContactListener(new WorldContactListener());
-
-        hud = new Hud(game.batch, this, game);
-
-        //cookCarryHud = new CookCarryHud(game.batch);
-
 
         // set the input processor
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.gameStage);
         Gdx.input.setInputProcessor(multiplexer);
-
 
     }
 
@@ -106,7 +101,10 @@ public class GameScreen implements Screen {
 
         engine.update(delta);
         game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
-        hud.update(delta);
+
+        if (!kbInput.disableHud) {
+            hud.update(delta);
+        }
     }
 
     @Override
