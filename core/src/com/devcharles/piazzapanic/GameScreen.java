@@ -44,6 +44,8 @@ public class GameScreen implements Screen {
 
     private MapLoader mapLoader;
 
+    private Integer reputationPoints;
+
     public GameScreen(PiazzaPanic game, int total_cooks) {
         this.game = game;
         this.total_cooks = total_cooks;
@@ -61,7 +63,7 @@ public class GameScreen implements Screen {
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
-        hud = new Hud(game.batch, this, game);
+        hud = new Hud(game.batch, this, game, reputationPoints);
 
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
@@ -74,7 +76,7 @@ public class GameScreen implements Screen {
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
 

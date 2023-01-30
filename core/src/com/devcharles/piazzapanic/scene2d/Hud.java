@@ -16,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.devcharles.piazzapanic.GameScreen;
+import com.devcharles.piazzapanic.MainMenuScreen;
+import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 
@@ -24,7 +26,7 @@ public class Hud extends ApplicationAdapter {
     private Viewport gameViewport;
     private Integer customerTimer = 000;
     private float timeCounter = 0;
-    private Integer reputation = 3;
+    private Integer reputation;
     private Skin skin;
 
     private final float fontScale = 0.6f;
@@ -35,7 +37,8 @@ public class Hud extends ApplicationAdapter {
     Label timeNameLabel;
     Label reputationLabel;
     Label reputationNameLabel;
-    BitmapFont uiFont;
+    LabelStyle titleLabelStyle;
+    BitmapFont uiFont, uiTitleFont;
 
     private Image photo;
 
@@ -162,7 +165,7 @@ public class Hud extends ApplicationAdapter {
 
     }
 
-    private boolean won;
+    public boolean won;
 
     public void Win() {
         won = true;
@@ -171,11 +174,33 @@ public class Hud extends ApplicationAdapter {
         Table centerTable = new Table().center();
         centerTable.setFillParent(true);
 
-        centerTable.add(timeNameLabel);
-        centerTable.add(reputationNameLabel);
+        // Create generic style for labels
+
+        uiTitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
+
+        // Create generic style for labels
+        titleLabelStyle = new Label.LabelStyle();
+        titleLabelStyle.font = uiTitleFont;
+
+        timeNameLabel = new Label("Congratulations you won!", hudLabelStyle);
+        centerTable.add(timeNameLabel).padBottom(50);
+
         centerTable.row();
+
+        centerTable.add(timeNameLabel).padBottom(25);
+        centerTable.add(reputationNameLabel).padBottom(25);
+
+        centerTable.row();
+
         centerTable.add(timerLabel);
-        centerTable.add(reputationLabel);
+        centerTable.add(reputationLabel).padBottom(40);
+
+        TextButton returnToMenuButton = new TextButton("Recipe Book", skin);
+        centerTable.add(returnToMenuButton);
+
+
+        returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
+
 
         gameStage.addActor(centerTable);
     }
@@ -189,6 +214,9 @@ public class Hud extends ApplicationAdapter {
 
     public void dispose() {
         gameStage.dispose();
+        // no! can u hear us?  no
+        // maybe restart discord i have i sent you a photo on messages
+        
     }
 
     private ClickListener createListener(final Screen screen) {

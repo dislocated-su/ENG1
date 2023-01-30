@@ -37,10 +37,11 @@ public class CustomerAISystem extends IteratingSystem {
     private World world;
     private GdxTimer spawnTimer = new GdxTimer(5000, false, true);
     private EntityFactory factory;
-    private int numOfCutstomerTotal = 0;
+    private int numOfCustomerTotal = 0;
     private Hud hud;
+    private Integer reputationPoints;
 
-    ArrayList<Entity> customers = new ArrayList<Entity>() {
+    private ArrayList<Entity> customers = new ArrayList<Entity>() {
         @Override
         public boolean remove(Object o) {
             for (Entity entity : customers) {
@@ -59,26 +60,30 @@ public class CustomerAISystem extends IteratingSystem {
         };
     };
 
-    public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud) {
+    public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
+            Integer reputationPoints) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.hud = hud;
         this.objectives = objectives;
         this.objectiveTaken = new HashMap<Integer, Boolean>();
+        this.reputationPoints = reputationPoints;
 
         // Use a reference to the world to destroy box2d bodies when despawning
         // customers
         this.world = world;
         this.factory = factory;
+
         spawnTimer.start();
     }
 
     @Override
     public void update(float deltaTime) {
-        if (spawnTimer.tick(deltaTime) && numOfCutstomerTotal < 2) {
+        if (spawnTimer.tick(deltaTime) && numOfCustomerTotal < 2) {
             Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
             customers.add(newCustomer);
-            numOfCutstomerTotal++;
+            numOfCustomerTotal++;
+            Mappers.customer.get(newCustomer).timer.start();
         }
 
         FoodType[] orders = new FoodType[customers.size()];
@@ -88,7 +93,7 @@ public class CustomerAISystem extends IteratingSystem {
             i++;
         }
 
-        if (customers.size() == 0 && numOfCutstomerTotal == 2) {
+        if (customers.size() == 0 && numOfCustomerTotal == 2) {
             hud.Win();
         }
 
@@ -113,6 +118,15 @@ public class CustomerAISystem extends IteratingSystem {
         }
 
         aiAgent.steeringBody.update(deltaTime);
+
+        //lower reputation points if they have waited longer than time alloted (1 min)
+        if (customer.timer.tick(deltaTime)) {
+            reputationPoints--;
+            customer.timer.stop();
+            if (!hud.won) {
+
+            }
+        }
 
         if (customer.interactingCook != null) {
             PlayerComponent player = Mappers.player.get(customer.interactingCook);
@@ -195,6 +209,7 @@ public class CustomerAISystem extends IteratingSystem {
 
         AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
         makeItGoThere(aiAgent, -1);
+
         customers.remove(entity);
     }
 
