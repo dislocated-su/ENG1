@@ -198,9 +198,7 @@ public class Hud extends ApplicationAdapter {
         TextButton returnToMenuButton = new TextButton("Recipe Book", skin);
         centerTable.add(returnToMenuButton);
 
-
         returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
-
 
         gameStage.addActor(centerTable);
     }
@@ -214,9 +212,9 @@ public class Hud extends ApplicationAdapter {
 
     public void dispose() {
         gameStage.dispose();
-        // no! can u hear us?  no
+        // no! can u hear us? no
         // maybe restart discord i have i sent you a photo on messages
-        
+
     }
 
     private ClickListener createListener(final Screen screen) {

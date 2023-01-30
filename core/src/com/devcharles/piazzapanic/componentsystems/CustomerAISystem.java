@@ -119,7 +119,7 @@ public class CustomerAISystem extends IteratingSystem {
 
         aiAgent.steeringBody.update(deltaTime);
 
-        //lower reputation points if they have waited longer than time alloted (1 min)
+        // lower reputation points if they have waited longer than time alloted (1 min)
         if (customer.timer.tick(deltaTime)) {
             reputationPoints--;
             customer.timer.stop();
