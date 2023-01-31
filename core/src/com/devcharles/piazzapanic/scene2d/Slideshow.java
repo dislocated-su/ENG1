@@ -48,7 +48,13 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         viewport.apply();
         batch = new SpriteBatch();
 
-        int fileCount = Gdx.files.internal("assets/" + type.name()).list().length;
+        int fileCount = 0;
+        if (type == Type.recipe) {
+            fileCount = 2;
+        }
+        else if (type == Type.tutorial) {
+            fileCount = 8;
+        }
 
         textures = new Texture[fileCount];
 
