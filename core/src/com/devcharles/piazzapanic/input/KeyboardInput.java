@@ -34,15 +34,19 @@ public class KeyboardInput implements InputProcessor {
         boolean processed = true;
         switch (keycode) {
             case Keys.LEFT:
+            case Keys.A:
                 left = true;
                 break;
-            case Keys.RIGHT:
+                case Keys.RIGHT:
+                case Keys.D:
                 right = true;
                 break;
-            case Keys.UP:
+                case Keys.UP:
+                case Keys.W:
                 up = true;
                 break;
-            case Keys.DOWN:
+                case Keys.DOWN:
+                case Keys.S:
                 down = true;
                 break;
             case Keys.F:
@@ -70,15 +74,19 @@ public class KeyboardInput implements InputProcessor {
         boolean processed = true;
         switch (keycode) {
             case Keys.LEFT:
+            case Keys.A:
                 left = false;
                 break;
             case Keys.RIGHT:
+            case Keys.D:
                 right = false;
                 break;
             case Keys.UP:
+            case Keys.W:
                 up = false;
                 break;
             case Keys.DOWN:
+            case Keys.S:
                 down = false;
                 break;
             case Keys.E:
