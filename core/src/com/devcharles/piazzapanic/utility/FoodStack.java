@@ -1,12 +1,12 @@
 package com.devcharles.piazzapanic.utility;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.devcharles.piazzapanic.components.ItemComponent;
 
-public class FoodStack extends Stack<Entity> {
+public class FoodStack extends ArrayDeque<Entity> {
 
     private Engine engine;
 
@@ -14,19 +14,25 @@ public class FoodStack extends Stack<Entity> {
         engine = e;
     }
 
+    public final int capacity = 12;
+
     // Use this instead of push
-    public Entity pushItem(Entity food, Entity cook) {
-        ItemComponent item = engine.createComponent(ItemComponent.class);
-        item.holderTransform = Mappers.transform.get(cook);
-        food.add(item);
-        return this.push(food);
+    public boolean pushItem(Entity food, Entity cook) {
+        if (this.size() < capacity) {
+            ItemComponent item = engine.createComponent(ItemComponent.class);
+            item.holderTransform = Mappers.transform.get(cook);
+            food.add(item);
+            this.push(food);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public Entity push(Entity food) {
-        Entity e = super.push(food);
+    public void push(Entity food) {
+        super.push(food);
         setVisibility(this.size(), null);
-        return e;
+        return;
     }
 
     @Override

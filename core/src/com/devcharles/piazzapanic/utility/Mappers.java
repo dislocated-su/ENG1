@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.AnimationComponent;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
-import com.devcharles.piazzapanic.components.CollisionComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.CustomerComponent;
@@ -28,8 +27,6 @@ public class Mappers {
             .getFor(AnimationComponent.class);
     public static final ComponentMapper<WalkingAnimationComponent> walkingAnimation = ComponentMapper
             .getFor(WalkingAnimationComponent.class);
-    public static final ComponentMapper<CollisionComponent> collision = ComponentMapper
-            .getFor(CollisionComponent.class);
     public static final ComponentMapper<TextureComponent> texture = ComponentMapper.getFor(TextureComponent.class);
     public static final ComponentMapper<StationComponent> station = ComponentMapper.getFor(StationComponent.class);
     public static final ComponentMapper<FoodComponent> food = ComponentMapper.getFor(FoodComponent.class);

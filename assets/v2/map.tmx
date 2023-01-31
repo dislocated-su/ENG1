@@ -457,11 +457,5 @@
    </properties>
    <point/>
   </object>
-  <object id="99" x="1376" y="704">
-   <properties>
-    <property name="lightID" type="int" value="2"/>
-   </properties>
-   <point/>
-  </object>
  </objectgroup>
 </map>

@@ -21,6 +21,8 @@ import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.ItemComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 import com.devcharles.piazzapanic.utility.Mappers;
@@ -33,11 +35,15 @@ public class CustomerAISystem extends IteratingSystem {
     private Map<Integer, Boolean> objectiveTaken;
 
     private World world;
-    private GdxTimer spawnTimer = new GdxTimer(5000, false, true);
+    private GdxTimer spawnTimer = new GdxTimer(30000, false, true);
     private EntityFactory factory;
-    private int numOfCutstomerTotal = 0;
+    private int numOfCustomerTotal = 0;
+    private Hud hud;
+    private Integer reputationPoints[];
+    private final int CUSTOMER = 5;
+    private boolean firstSpawn = true;
 
-    ArrayList<Entity> customers = new ArrayList<Entity>() {
+    private ArrayList<Entity> customers = new ArrayList<Entity>() {
         @Override
         public boolean remove(Object o) {
             for (Entity entity : customers) {
@@ -49,7 +55,6 @@ public class CustomerAISystem extends IteratingSystem {
                             makeItGoThere(aiAgent, aiAgent.currentObjective - 1);
                         }
                     }
-                    
 
                 }
             }
@@ -57,28 +62,47 @@ public class CustomerAISystem extends IteratingSystem {
         };
     };
 
-    public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory) {
+    public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
+            Integer[] reputationPoints) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
+        this.hud = hud;
         this.objectives = objectives;
         this.objectiveTaken = new HashMap<Integer, Boolean>();
+        this.reputationPoints = reputationPoints;
 
         // Use a reference to the world to destroy box2d bodies when despawning
         // customers
         this.world = world;
         this.factory = factory;
+
         spawnTimer.start();
     }
 
     @Override
     public void update(float deltaTime) {
-        if (spawnTimer.tick(deltaTime) && numOfCutstomerTotal < 5) {
+        if (firstSpawn || (spawnTimer.tick(deltaTime) && numOfCustomerTotal < CUSTOMER)) {
+            firstSpawn = false;
             Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
             customers.add(newCustomer);
-            numOfCutstomerTotal++;
+            numOfCustomerTotal++;
+            Mappers.customer.get(newCustomer).timer.start();
+        }
+
+        FoodType[] orders = new FoodType[customers.size()];
+        int i = 0;
+        for (Entity customer : customers) {
+            orders[i] = Mappers.customer.get(customer).order;
+            i++;
+        }
+
+        if (!hud.won && customers.size() == 0 && numOfCustomerTotal == CUSTOMER) {
+            hud.triggerWin = true;
         }
 
         super.update(deltaTime);
+
+        hud.updateOrders(orders);
     }
 
     @Override
@@ -97,6 +121,17 @@ public class CustomerAISystem extends IteratingSystem {
         }
 
         aiAgent.steeringBody.update(deltaTime);
+
+        // lower reputation points if they have waited longer than time alloted (1 min)
+        if (customer.timer.tick(deltaTime)) {
+            if (reputationPoints[0] > 0) {
+                reputationPoints[0]--;
+            }
+            customer.timer.stop();
+            if (!hud.won) {
+
+            }
+        }
 
         if (customer.interactingCook != null) {
             PlayerComponent player = Mappers.player.get(customer.interactingCook);
@@ -179,6 +214,10 @@ public class CustomerAISystem extends IteratingSystem {
 
         AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
         makeItGoThere(aiAgent, -1);
+
+        customer.timer.stop();
+        customer.timer.reset();
+
         customers.remove(entity);
     }
 

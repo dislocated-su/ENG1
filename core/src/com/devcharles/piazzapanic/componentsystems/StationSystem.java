@@ -200,9 +200,14 @@ public class StationSystem extends IteratingSystem {
 
     private FoodType tryServe(ControllableComponent controllable, int count) {
         Set<FoodType> ingredients = new HashSet<FoodType>();
-
-        for (Entity foodEntity : controllable.currentFood.subList(0, count)) {
+        int i = 0;
+        for (Entity foodEntity : controllable.currentFood) {
+            if (i > count - 1) {
+                break;
+            }
             ingredients.add(Mappers.food.get(foodEntity).type);
+
+            i++;
         }
 
         return Station.serveRecipes.get(ingredients);
@@ -220,10 +225,11 @@ public class StationSystem extends IteratingSystem {
     private void stationPickup(StationComponent station, ControllableComponent controllable) {
         for (Entity foodEntity : station.food) {
             if (foodEntity != null && !Mappers.cooking.has(foodEntity)) {
-                controllable.currentFood.pushItem(foodEntity, station.interactingCook);
-                station.food.set(station.food.indexOf(foodEntity), null);
-                Mappers.transform.get(foodEntity).scale.set(1, 1);
-                Gdx.app.log("Picked up", Mappers.food.get(foodEntity).type.toString());
+                if (controllable.currentFood.pushItem(foodEntity, station.interactingCook)) {
+                    station.food.set(station.food.indexOf(foodEntity), null);
+                    Mappers.transform.get(foodEntity).scale.set(1, 1);
+                    Gdx.app.log("Picked up", Mappers.food.get(foodEntity).type.toString());
+                }
                 return;
             }
         }
@@ -251,7 +257,7 @@ public class StationSystem extends IteratingSystem {
                 FoodComponent food = Mappers.food.get(foodEntity);
                 // Process the food into it's next form
                 food.type = Station.recipeMap.get(station.type).get(food.type);
-                Mappers.texture.get(foodEntity).region = factory.getFoodTexture(food.type);
+                Mappers.texture.get(foodEntity).region = EntityFactory.getFoodTexture(food.type);
                 foodEntity.remove(CookingComponent.class);
                 Gdx.app.log("Food ready", food.type.name());
             } else if (ready) {

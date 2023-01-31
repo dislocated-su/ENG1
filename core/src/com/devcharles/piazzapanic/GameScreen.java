@@ -11,17 +11,16 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.componentsystems.StationSystem;
 import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
 import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
+import com.devcharles.piazzapanic.componentsystems.InventoryUpdateSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
-import com.devcharles.piazzapanic.scene2d.CookCarryHud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.MapLoader;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 import com.devcharles.piazzapanic.scene2d.Hud;
-
 import box2dLight.RayHandler;
 
 public class GameScreen implements Screen {
@@ -36,19 +35,18 @@ public class GameScreen implements Screen {
 
     private PiazzaPanic game;
 
-    public int total_cooks;
-
     private Hud hud;
-    private CookCarryHud cookCarryHud;
+
     private InputMultiplexer multiplexer;
 
     private RayHandler rayhandler;
 
     private MapLoader mapLoader;
 
-    public GameScreen(PiazzaPanic game, int total_cooks) {
+    private Integer[] reputationPoints = { 3 };
+
+    public GameScreen(PiazzaPanic game) {
         this.game = game;
-        this.total_cooks = total_cooks;
 
         kbInput = new KeyboardInput();
 
@@ -61,7 +59,9 @@ public class GameScreen implements Screen {
         rayhandler = new RayHandler(world);
 
         EntityFactory factory = new EntityFactory(engine, world);
-        factory.cutFood(null);
+        EntityFactory.cutFood(null);
+
+        hud = new Hud(game.batch, this, game, reputationPoints);
 
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
@@ -74,28 +74,22 @@ public class GameScreen implements Screen {
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints));
         engine.addSystem(new CarryItemsSystem());
+        engine.addSystem(new InventoryUpdateSystem(hud));
 
         world.setContactListener(new WorldContactListener());
-
-        hud = new Hud(game.batch, this, game);
-
-        //cookCarryHud = new CookCarryHud(game.batch);
-
 
         // set the input processor
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
-        multiplexer.addProcessor(hud.gameStage);
-        Gdx.input.setInputProcessor(multiplexer);
-
+        multiplexer.addProcessor(hud.stage);
 
     }
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(this.multiplexer);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
@@ -104,9 +98,17 @@ public class GameScreen implements Screen {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        engine.update(delta);
-        game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
-        hud.update(delta);
+        if (hud.paused) {
+            engine.update(0);
+        }else {
+            engine.update(delta);
+        }
+
+        game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+
+        if (!kbInput.disableHud) {
+            hud.update(delta);
+        }
     }
 
     @Override
@@ -117,14 +119,14 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
-
+        kbInput.clearInputs();
+        Gdx.input.setInputProcessor(hud.stage);
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub
-
+        kbInput.clearInputs();
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override

@@ -18,10 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.devcharles.piazzapanic.scene2d.Tutorial;
+import com.devcharles.piazzapanic.scene2d.Slideshow;
 
-
-public class MainMenuScreen extends ApplicationAdapter implements Screen{
+public class MainMenuScreen extends ApplicationAdapter implements Screen {
 
     final PiazzaPanic game;
     OrthographicCamera camera;
@@ -42,7 +41,6 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
 
         skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
 
         Label.LabelStyle menuLabelStyle = new Label.LabelStyle();
         gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
@@ -54,16 +52,16 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
         root.setFillParent(true);
         stage.addActor(root);
 
-        //Begin layout
+        // Begin layout
         root.add(title).expandX().padBottom(120);
         root.row();
         TextButton startGameButton = new TextButton("Start game", skin);
         root.add(startGameButton);
 
-        //Checks if button is clicked
-        startGameButton.addListener(new ClickListener(){
+        // Checks if button is clicked
+        startGameButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new Tutorial(0, null, game, 1));
+                game.setScreen(new Slideshow(game, Slideshow.Type.tutorial));
                 dispose();
             }
         });
@@ -71,7 +69,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -95,7 +93,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen{
 
     }
 
-    public void dispose () {
+    public void dispose() {
         skin.dispose();
         stage.dispose();
     }

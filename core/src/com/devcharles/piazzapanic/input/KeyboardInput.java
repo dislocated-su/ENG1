@@ -15,20 +15,38 @@ public class KeyboardInput implements InputProcessor {
 
     public boolean interact;
 
+    public boolean disableHud;
+
+    public void clearInputs() {
+        left = false;
+        right = false;
+        up = false;
+        down = false;
+        changeCooks = false;
+        putDown = false;
+        pickUp = false;
+        interact = false;
+        disableHud = false;
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         boolean processed = true;
         switch (keycode) {
             case Keys.LEFT:
+            case Keys.A:
                 left = true;
                 break;
             case Keys.RIGHT:
+            case Keys.D:
                 right = true;
                 break;
             case Keys.UP:
+            case Keys.W:
                 up = true;
                 break;
             case Keys.DOWN:
+            case Keys.S:
                 down = true;
                 break;
             case Keys.F:
@@ -43,6 +61,8 @@ public class KeyboardInput implements InputProcessor {
             case Keys.Q:
                 interact = true;
                 break;
+            case Keys.H:
+                disableHud = true;
             default:
                 processed = false;
         }
@@ -54,15 +74,19 @@ public class KeyboardInput implements InputProcessor {
         boolean processed = true;
         switch (keycode) {
             case Keys.LEFT:
+            case Keys.A:
                 left = false;
                 break;
             case Keys.RIGHT:
+            case Keys.D:
                 right = false;
                 break;
             case Keys.UP:
+            case Keys.W:
                 up = false;
                 break;
             case Keys.DOWN:
+            case Keys.S:
                 down = false;
                 break;
             case Keys.E:
@@ -76,6 +100,8 @@ public class KeyboardInput implements InputProcessor {
             case Keys.Q:
                 interact = false;
                 break;
+            case Keys.H:
+                disableHud = false;
             default:
                 processed = false;
         }
