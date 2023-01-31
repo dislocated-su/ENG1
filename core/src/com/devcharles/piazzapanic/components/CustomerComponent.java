@@ -10,7 +10,7 @@ public class CustomerComponent implements Component, Poolable {
     public FoodType order = null;
     public Entity interactingCook = null;
     public Entity food = null;
-    public GdxTimer timer = new GdxTimer(60000, false, true);
+    public GdxTimer timer = new GdxTimer(90000, false, true);
 
     @Override
     public void reset() {

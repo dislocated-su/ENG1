@@ -37,16 +37,16 @@ public class KeyboardInput implements InputProcessor {
             case Keys.A:
                 left = true;
                 break;
-                case Keys.RIGHT:
-                case Keys.D:
+            case Keys.RIGHT:
+            case Keys.D:
                 right = true;
                 break;
-                case Keys.UP:
-                case Keys.W:
+            case Keys.UP:
+            case Keys.W:
                 up = true;
                 break;
-                case Keys.DOWN:
-                case Keys.S:
+            case Keys.DOWN:
+            case Keys.S:
                 down = true;
                 break;
             case Keys.F:

@@ -86,7 +86,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         exit = new TextButton("Exit", skin);
         exit.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen((PiazzaPanic) game, 2));
+                game.setScreen(new GameScreen((PiazzaPanic) game));
                 dispose();
             }
         });
@@ -168,23 +168,11 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         stage.getViewport().apply();
     }
 
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
     public void dispose() {
         skin.dispose();
         stage.dispose();
     }
+
+    @Override
+    public void hide() {}
 }

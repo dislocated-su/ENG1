@@ -35,7 +35,7 @@ public class CustomerAISystem extends IteratingSystem {
     private Map<Integer, Boolean> objectiveTaken;
 
     private World world;
-    private GdxTimer spawnTimer = new GdxTimer(45000, false, true);
+    private GdxTimer spawnTimer = new GdxTimer(30000, false, true);
     private EntityFactory factory;
     private int numOfCustomerTotal = 0;
     private Hud hud;

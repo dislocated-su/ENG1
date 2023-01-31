@@ -35,9 +35,8 @@ public class GameScreen implements Screen {
 
     private PiazzaPanic game;
 
-    public int total_cooks;
-
     private Hud hud;
+
     private InputMultiplexer multiplexer;
 
     private RayHandler rayhandler;
@@ -46,9 +45,8 @@ public class GameScreen implements Screen {
 
     private Integer[] reputationPoints = { 3 };
 
-    public GameScreen(PiazzaPanic game, int total_cooks) {
+    public GameScreen(PiazzaPanic game) {
         this.game = game;
-        this.total_cooks = total_cooks;
 
         kbInput = new KeyboardInput();
 
