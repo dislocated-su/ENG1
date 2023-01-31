@@ -34,20 +34,20 @@ import com.devcharles.piazzapanic.utility.box2d.Box2dRadiusProximity;
  */
 public class CustomerAISystem extends IteratingSystem {
 
-    private Map<Integer, Box2dLocation> objectives;
-    private Map<Integer, Boolean> objectiveTaken;
+    private final Map<Integer, Box2dLocation> objectives;
+    private final Map<Integer, Boolean> objectiveTaken;
 
-    private World world;
-    private GdxTimer spawnTimer = new GdxTimer(30000, false, true);
-    private EntityFactory factory;
+    private final World world;
+    private final GdxTimer spawnTimer = new GdxTimer(30000, false, true);
+    private final EntityFactory factory;
     private int numOfCustomerTotal = 0;
-    private Hud hud;
-    private Integer reputationPoints[];
+    private final Hud hud;
+    private final Integer[] reputationPoints;
     private final int CUSTOMER = 5;
     private boolean firstSpawn = true;
 
     // List of customers, on removal we move the other customers up a place (queueing).
-    private ArrayList<Entity> customers = new ArrayList<Entity>() {
+    private final ArrayList<Entity> customers = new ArrayList<Entity>() {
         @Override
         public boolean remove(Object o) {
             for (Entity entity : customers) {
@@ -63,7 +63,7 @@ public class CustomerAISystem extends IteratingSystem {
                 }
             }
             return super.remove(o);
-        };
+        }
     };
 
     /**
@@ -140,9 +140,6 @@ public class CustomerAISystem extends IteratingSystem {
                 reputationPoints[0]--;
             }
             customer.timer.stop();
-            if (!hud.won) {
-
-            }
         }
 
         if (customer.interactingCook != null) {
@@ -177,7 +174,6 @@ public class CustomerAISystem extends IteratingSystem {
 
     /**
      * Remove the customer from the {@link World} and remove their entity.
-     * @param customer
      */
     private void destroyCustomer(Entity customer) {
         getEngine().removeEntity(Mappers.customer.get(customer).food);
@@ -221,9 +217,6 @@ public class CustomerAISystem extends IteratingSystem {
 
     /**
      * Give customer food, send them away and remove the order from the list
-     * @param entity
-     * @param customer
-     * @param foodEntity
      */
     private void fulfillOrder(Entity entity, CustomerComponent customer, Entity foodEntity) {
 

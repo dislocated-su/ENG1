@@ -11,25 +11,25 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
  */
 public class WorldTilemapRenderer {
 
-    private TiledMap map;
+    private final TiledMap map;
 
-    private OrthogonalTiledMapRenderer renderer;
+    private final OrthogonalTiledMapRenderer renderer;
 
-    private OrthographicCamera camera;
+    private final OrthographicCamera camera;
 
     /**
      * Pixels per tile. The tileset we are using is 32x32, so this effectively doubles apparent size.
      */
     final int ppt = 16;
 
-    private TiledMapTileLayer floor;
-    private TiledMapTileLayer front_wall;
-    private TiledMapTileLayer station;
-    private TiledMapTileLayer countertop;
-    private TiledMapTileLayer back_wall;
+    private final TiledMapTileLayer floor;
+    private final TiledMapTileLayer front_wall;
+    private final TiledMapTileLayer station;
+    private final TiledMapTileLayer countertop;
+    private final TiledMapTileLayer back_wall;
 
-    private TiledMapTileLayer countertop_f;
-    private TiledMapTileLayer station_f;
+    private final TiledMapTileLayer countertop_f;
+    private final TiledMapTileLayer station_f;
 
     /**
      * Create a new renderer with existing {@link TiledMap}, camera and {@link SpriteBatch}.
