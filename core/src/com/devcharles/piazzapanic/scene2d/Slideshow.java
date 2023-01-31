@@ -59,7 +59,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         textures = new Texture[fileCount];
 
         for (int i = 0; i < fileCount; i++) {
-            textures[i] = new Texture(Gdx.files.internal(type.name() + "/page" + i + ".png"));
+            textures[i] = new Texture(Gdx.files.internal(type.name() + i + ".png"));
         }
 
         skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
