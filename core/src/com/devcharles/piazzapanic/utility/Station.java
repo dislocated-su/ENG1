@@ -1,13 +1,16 @@
 package com.devcharles.piazzapanic.utility;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
+/**
+ * Helper class for storing station recipes and {@link StationType} of the
+ * current station.
+ */
 public class Station {
 
     public StationType type;
@@ -45,6 +48,9 @@ public class Station {
             }, FoodType.salad);
         }
     };
+    /**
+     * Maps the stationType to recipes available to that station. This avoids excessive branching.
+     */
     public static Map<StationType, HashMap<FoodType, FoodType>> recipeMap = new HashMap<StationType, HashMap<FoodType, FoodType>>() {
         {
             put(StationType.grill, grillRecipes);
@@ -52,6 +58,10 @@ public class Station {
         }
     };
 
+    /**
+     * Named enumeration of the station types.
+     * The ids correspond to stationId in the TileMap object.
+     */
     public enum StationType {
         oven(1),
         grill(2),
@@ -67,6 +77,11 @@ public class Station {
             this.value = id;
         }
 
+        /**
+         * Get the id of this station type.
+         * 
+         * @return integer id.
+         */
         public int getValue() {
             return value;
         }

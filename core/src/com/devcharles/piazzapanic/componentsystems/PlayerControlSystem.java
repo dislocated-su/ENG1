@@ -10,6 +10,9 @@ import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.Mappers;
 
+/**
+ * Controls the one cook that has the PlayerComponent
+ */
 public class PlayerControlSystem extends IteratingSystem {
 
     KeyboardInput input;
@@ -26,6 +29,9 @@ public class PlayerControlSystem extends IteratingSystem {
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
 
+        // Collect toggleable inputs
+        // Those need to be toggled off once recieved to prevent registering the input
+        // twice
         if (this.changingCooks) {
             this.changingCooks = false;
             entity.add(this.playerComponent);

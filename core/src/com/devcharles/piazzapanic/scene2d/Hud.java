@@ -24,6 +24,9 @@ import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 
+/**
+ * HUD user interface rendering for the game, also includes the win screen.
+ */
 public class Hud extends ApplicationAdapter {
     public Stage stage;
     private Viewport viewport;
@@ -43,7 +46,7 @@ public class Hud extends ApplicationAdapter {
     Label reputationNameLabel;
     Label pausedNameLabel;
     BitmapFont uiFont, uiTitleFont;
-
+    // an image used as the background of recipe book and tutorial
     private Image photo;
 
     private Game game;
@@ -54,6 +57,13 @@ public class Hud extends ApplicationAdapter {
 
     private GameScreen gameScreen;
 
+    /**
+     * Create the hud.
+     * @param spriteBatch the batch to draw the HUD with
+     * @param savedGame reference to the screen drawing the hud to switch back to in case of screen transitions.
+     * @param game {@link PiazzaPanic} instance for switching screens.
+     * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
+     */
     public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints) {
         this.game = game;
         this.reputation = reputationPoints;
@@ -64,12 +74,12 @@ public class Hud extends ApplicationAdapter {
         stage = new Stage(viewport, spriteBatch);
         viewport.apply();
 
-        // Import the custom skin
+        // Import the custom skin with different fonts
         skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
         uiFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
         uiTitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
 
-        // Create generic style for labels
+        // Create generic style for labels with the different fonts
         hudLabelStyle = new Label.LabelStyle();
         hudLabelStyle.font = uiFont;
         titleLabelStyle = new Label.LabelStyle();
@@ -80,6 +90,7 @@ public class Hud extends ApplicationAdapter {
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Keys.ESCAPE) {
                     pauseToggled = true;
+                    // sets game to go bigscreen if F11 is pressed or sets it to go small screen
                 } else if (keycode == Keys.F11) {
                     Boolean fullScreen = Gdx.graphics.isFullscreen();
                     Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();
@@ -93,6 +104,7 @@ public class Hud extends ApplicationAdapter {
             }
         });
 
+        // Create the UI layout.
         createTables();
     }
 
@@ -102,12 +114,12 @@ public class Hud extends ApplicationAdapter {
         reputationLabel = new Label(String.format("%01d", reputation[0]), hudLabelStyle);
         timeNameLabel = new Label("Time", hudLabelStyle);
         reputationNameLabel = new Label("Reputation", hudLabelStyle);
-
+        // Creates a bunch of labels and sets the fontsize
         reputationLabel.setFontScale(fontScale + 0.1f);
         timerLabel.setFontScale(fontScale + 0.1f);
         timeNameLabel.setFontScale(fontScale + 0.1f);
         reputationNameLabel.setFontScale(fontScale + 0.1f);
-
+        // lays out timer and reputation
         tableTop = new Table();
         tableTop.top();
         tableTop.setFillParent(true);
@@ -126,21 +138,21 @@ public class Hud extends ApplicationAdapter {
         Label inv = new Label("Inventory", hudLabelStyle);
         inv.setFontScale(fontScale);
         tableBottomLabel.add(inv).padBottom(60);
-
+        // the pause screen
         tablePause = new Table();
         tablePause.setFillParent(true);
-        tablePause.setVisible(false);
+        tablePause.setVisible(false); // not visible by default
 
         pausedNameLabel = new Label("Game paused", titleLabelStyle);
         tablePause.add(pausedNameLabel).padBottom(30);
 
         tablePause.row();
-
-        TextButton unpauseButton = new TextButton("resume", skin);
+        // checks if resume button is clicked
+        TextButton resumeButton = new TextButton("Resume", skin);
         TextButton recipeBookButton = new TextButton("Recipe Book", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
-
-        unpauseButton.addListener(new ClickListener() {
+        
+        resumeButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 pauseToggled = true;
             }
@@ -148,7 +160,7 @@ public class Hud extends ApplicationAdapter {
         recipeBookButton.addListener(createListener(new Slideshow(game, Slideshow.Type.recipe, gameScreen)));
         tutorialButton.addListener(createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
 
-        tablePause.add(unpauseButton).width(240).height(70).padBottom(30);
+        tablePause.add(resumeButton).width(240).height(70).padBottom(30);
 
         tablePause.row();
 
@@ -166,6 +178,11 @@ public class Hud extends ApplicationAdapter {
         stage.addActor(tableBottomLabel);
     }
 
+    /**
+     * Update HUD inventory section.
+     * 
+     * @param inventory array of {@link FoodType} to display.
+     */
     public void updateInventory(FoodType[] inventory) {
         tableBottom.clear();
         tableBottom.bottom();
@@ -175,14 +192,20 @@ public class Hud extends ApplicationAdapter {
         for (int i = 0; i < inventory.length; i++) {
             TextureRegion region = EntityFactory.getFoodTexture(inventory[i]);
             if (region == null) {
-                Gdx.app.log("Texture is null", "");
+                Gdx.app.log("Texture is null", "");  // debugger can be ignored/removed idk do what you want
             } else {
+                // adds images of the items the controlled cook is holding into the inventory  
                 photo = new Image(region);
                 tableBottom.add(photo).width(64).height(64).center();
             }
         }
     }
 
+    /**
+     * Update the current orders HUD section.
+     * 
+     * @param orders array of {@link FoodType} to display.
+     */
     public void updateOrders(FoodType[] orders) {
         tableRight.clear();
         tableRight.right();
@@ -193,7 +216,7 @@ public class Hud extends ApplicationAdapter {
             if (region == null) {
                 Gdx.app.log("Texture is null", "");
             } else {
-
+                // adds all the orders onto the right of the screen with a little number
                 Label orderNumberLabel = new Label(String.format("%01d", i + 1), hudLabelStyle);
                 tableRight.add(orderNumberLabel).padRight(10);
                 photo = new Image(region);
@@ -203,6 +226,12 @@ public class Hud extends ApplicationAdapter {
         }
     }
 
+    /**
+     * Render the hud. If {@code triggerWin} is true when this runs, the Win screen
+     * will be shown.
+     * 
+     * @param deltaTime the time elapsed since last frame.
+     */
     public void update(float deltaTime) {
         if (paused) {
             if (pauseToggled) {
@@ -214,14 +243,14 @@ public class Hud extends ApplicationAdapter {
             return;
         }
         timeCounter += won ? 0 : deltaTime;
-        // Staggered to once per second using timeCounter.
+        // Staggered once per second using timeCounter makes it way faster
         if (timeCounter >= 1) {
             customerTimer++;
             timerLabel.setText(String.format("%03d", customerTimer));
             reputationLabel.setText(reputation[0]);
             if (triggerWin) {
                 triggerWin = false;
-                Win();
+                win();
             }
             if (pauseToggled) {
                 pauseToggled = false;
@@ -272,16 +301,19 @@ public class Hud extends ApplicationAdapter {
     public boolean won;
     public boolean triggerWin = false;
 
-    public void Win() {
+    /**
+     * Win screen
+     */
+    private void win() {
         won = true;
-
+        // winscreen table made
         stage.clear();
         Table centerTable = new Table();
         centerTable.setFillParent(true);
-
+        // labels given different fonts so it looks nicer
         Label congrats = new Label("Congratulations!", titleLabelStyle);
         Label congratsSubtitle = new Label("You won!", hudLabelStyle);
-
+        //colspan2 important! do some googling if you dont know what it does (scene2d)
         centerTable.add(congrats).padBottom(40).colspan(2);
         centerTable.row();
         centerTable.add(congratsSubtitle).padBottom(30).colspan(2);
@@ -315,9 +347,6 @@ public class Hud extends ApplicationAdapter {
 
     public void dispose() {
         stage.dispose();
-        // no! can u hear us? no
-        // maybe restart discord i have i sent you a photo on messages
-
     }
 
     private ClickListener createListener(final Screen screen) {

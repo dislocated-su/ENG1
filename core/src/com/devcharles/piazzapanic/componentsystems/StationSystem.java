@@ -23,6 +23,9 @@ import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Station;
 import com.devcharles.piazzapanic.utility.Station.StationType;
 
+/**
+ * This system manages player-station interaction and station food processing.
+ */
 public class StationSystem extends IteratingSystem {
 
     KeyboardInput input;
@@ -109,6 +112,9 @@ public class StationSystem extends IteratingSystem {
         }
     }
 
+    /**
+     * Try and process the food from the player.
+     */
     private void processStation(ControllableComponent controllable, StationComponent station) {
 
         if (controllable.currentFood.isEmpty()) {
@@ -131,14 +137,18 @@ public class StationSystem extends IteratingSystem {
             return;
         }
 
-        // Pop if off player stack
-        // Store in station
         int foodIndex = station.food.indexOf(null);
+
+        // If there is space on the station
         if (foodIndex != -1) {
+            // Pop if off player stack
+            // Store in station
             station.food.set(foodIndex, controllable.currentFood.pop());
         } else {
             return;
         }
+
+        // success
 
         CookingComponent cooking = getEngine().createComponent(CookingComponent.class);
 
@@ -146,12 +156,15 @@ public class StationSystem extends IteratingSystem {
 
         station.food.get(foodIndex).add(cooking);
 
-        // success
         Gdx.app.log("Food processed", String.format("%s turned into %s", food.type, result));
-        // Mappers.food.get(controllable.currentFood.peek()).type = result;
 
     }
 
+    /**
+     * Perform special action (flipping patties, etc.)
+     * 
+     * @param station the station the action is being performed on.
+     */
     private void interactStation(StationComponent station) {
         for (Entity food : station.food) {
             if (food == null || !Mappers.cooking.has(food)) {
@@ -172,6 +185,12 @@ public class StationSystem extends IteratingSystem {
         }
     }
 
+    /**
+     * Try to combine the ingredients at the top of the player's inventory stack
+     * (max 3) into a ready meal.
+     * 
+     * @param cook the cook whos inventory is being used for creating the food.
+     */
     private void processServe(Entity cook) {
         ControllableComponent controllable = Mappers.controllable.get(cook);
 
@@ -198,6 +217,10 @@ public class StationSystem extends IteratingSystem {
 
     }
 
+    /**
+     * Attempt to create a food.
+     * @param count number of ingredients to combine
+     */
     private FoodType tryServe(ControllableComponent controllable, int count) {
         Set<FoodType> ingredients = new HashSet<FoodType>();
         int i = 0;
@@ -213,6 +236,9 @@ public class StationSystem extends IteratingSystem {
         return Station.serveRecipes.get(ingredients);
     }
 
+    /**
+     * Destroy the top food in the inventory of a cook.
+     */
     private void processBin(ControllableComponent controllable) {
         if (controllable.currentFood.isEmpty()) {
             return;
@@ -222,6 +248,9 @@ public class StationSystem extends IteratingSystem {
         getEngine().removeEntity(e);
     }
 
+    /**
+     * Pick up ready food from a station
+     */
     private void stationPickup(StationComponent station, ControllableComponent controllable) {
         for (Entity foodEntity : station.food) {
             if (foodEntity != null && !Mappers.cooking.has(foodEntity)) {
@@ -235,6 +264,11 @@ public class StationSystem extends IteratingSystem {
         }
     }
 
+    /**
+     * Cook the food in the station. This progresses the timer in the food being cooked in the station.
+     * @param station
+     * @param deltaTime
+     */
     private void stationTick(StationComponent station, float deltaTime) {
         if (station.type == StationType.cutting_board && station.interactingCook == null) {
             return;

@@ -1,5 +1,7 @@
 package com.devcharles.piazzapanic.utility;
-
+/**
+ * Create a generic tuple.
+ */
 public class Pair<K, V> {
     public K first;
     public V second;

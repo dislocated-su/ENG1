@@ -16,7 +16,16 @@ public class FoodStack extends ArrayDeque<Entity> {
 
     public final int capacity = 12;
 
-    // Use this instead of push
+    /**
+     * Put a new food into inventory, use this instead of
+     * {@code FoodStack.push(Entity food)}
+     * as it binds the item location to the player and maintains a maximum inventory
+     * size of 12.
+     * 
+     * @param food
+     * @param cook
+     * @return
+     */
     public boolean pushItem(Entity food, Entity cook) {
         if (this.size() < capacity) {
             ItemComponent item = engine.createComponent(ItemComponent.class);
@@ -28,6 +37,9 @@ public class FoodStack extends ArrayDeque<Entity> {
         return false;
     }
 
+    /**
+     * Used internally, please use {@code FoodStack.pushItem(Entity food)} instead.
+     */
     @Override
     public void push(Entity food) {
         super.push(food);
@@ -35,6 +47,10 @@ public class FoodStack extends ArrayDeque<Entity> {
         return;
     }
 
+    
+    /* (non-Javadoc)
+     * @see java.util.ArrayDeque#pop()
+     */
     @Override
     public Entity pop() {
         Entity e = super.pop();

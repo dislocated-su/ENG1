@@ -28,6 +28,10 @@ import com.devcharles.piazzapanic.utility.box2d.MapBodyBuilder;
 
 import box2dLight.RayHandler;
 
+/**
+ * Loads and owns the {@link TiledMap} object. Creates entities from map
+ * metadata.
+ */
 public class MapLoader {
 
     public TiledMap map;
@@ -54,6 +58,14 @@ public class MapLoader {
 
     private Map<Integer, Box2dLocation> aiObjectives;
 
+    /**
+     * Load the {@link TiledMap} from a {@code .tmx} file.
+     * 
+     * @param path    Path to map file.
+     * @param ppt     Pixels per tile (default 16).
+     * @param factory {@link EntityFactory} instance to create entities based on the
+     *                map metadata.
+     */
     public MapLoader(String path, Integer ppt, EntityFactory factory) {
         if (ppt != null) {
             this.ppt = ppt;
@@ -67,10 +79,21 @@ public class MapLoader {
         this.factory = factory;
     }
 
+    /**
+     * 
+     * @param world The Box2D world instance to add bodies to.
+     * @return The bodies created from the map.
+     */
     public Array<Body> buildCollisions(World world) {
         return MapBodyBuilder.buildShapes(map, ppt, world);
     }
 
+    /**
+     * Create lights, spawnpoints, AI paths from map metadata.
+     * 
+     * @param engine     Ashley {@link Engine} instance.
+     * @param rayHandler {@link Rayhandler} to add lights to.
+     */
     public void buildFromObjects(Engine engine, RayHandler rayHandler) {
         MapObjects objects = map.getLayers().get(objectLayer).getObjects();
 
@@ -128,10 +151,23 @@ public class MapLoader {
         }
     }
 
+    /**
+     * Get the {@link Map} of objectives the AI can travel to.
+     * See the map file in the Tiled editor to preview ai objectives.
+     * 
+     * @return
+     */
     public Map<Integer, Box2dLocation> getObjectives() {
         return aiObjectives;
     }
 
+    /**
+     * Create station entities from map metadata. Metadata is given to the tile in
+     * Edit Tileset -> Tile Properties.
+     * 
+     * @param engine Ashley {@link Engine} instance.
+     * @param world The Box2D world instance to add sensor bodies to.
+     */
     public void buildStations(Engine engine, World world) {
         TiledMapTileLayer stations = (TiledMapTileLayer) (map.getLayers().get(stationLayer));
         TiledMapTileLayer stations_f = (TiledMapTileLayer) (map.getLayers().get(stationLayer + "_f"));

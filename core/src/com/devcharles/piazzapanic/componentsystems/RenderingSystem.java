@@ -68,16 +68,18 @@ public class RenderingSystem extends IteratingSystem {
             TextureComponent texture = Mappers.texture.get(entity);
             TransformComponent transform = Mappers.transform.get(entity);
 
+            // Hidden flag skips rendering
             if (transform.isHidden) {
                 continue;
             }
-
+            
             TextureRegion toRender = texture.region;
             Float rotation = null;
             boolean flip = false;
 
+            // If this is a station, update locations of the food.
             if (Mappers.station.has(entity)) {
-                renderStationFood(entity);
+                setFoodTransform(entity);
             }
 
             // If this is the player, update the camera position.
@@ -86,6 +88,7 @@ public class RenderingSystem extends IteratingSystem {
                 camera.position.x = (float) Math.round(camera.position.x * 1000f) / 1000f;
                 camera.position.y = (float) Math.round(camera.position.y * 1000f) / 1000f;
             }
+            // If this is an animated TextureRegion
             if (Mappers.animation.has(entity)) {
                 // Handle animation logic here
                 if (Mappers.walkingAnimation.has(entity)) {
@@ -100,18 +103,23 @@ public class RenderingSystem extends IteratingSystem {
                     } else if (Mappers.customer.has(entity) && Mappers.customer.get(entity).food != null) {
                         holdingCount = 1;
                     }
+                    // Set the rendering texture to the current frame of the animation.
                     toRender = walkAnimator.getFrame(transform.rotation, transform.isMoving, renderingAccumulator,
                             holdingCount);
 
                 } else {
+                    // Other animations can be handled like:
                     // Animation<TextureRegion> animation = anMap.get(entity).animation;
                     continue;
                 }
             }
-            if (toRender == null || transform.isHidden) {
+
+            // If by this point there is no texture, skip rendering.
+            if (toRender == null) {
                 continue;
             }
 
+            // Rendering logic.
             float width = toRender.getRegionWidth();
             float height = toRender.getRegionHeight();
 
@@ -121,6 +129,7 @@ public class RenderingSystem extends IteratingSystem {
             boolean tint = Mappers.tint.has(entity);
 
             if (tint) {
+                // Apply a tint for this draw call.
                 sb.setColor(Mappers.tint.get(entity).tint);
             }
 
@@ -142,9 +151,8 @@ public class RenderingSystem extends IteratingSystem {
         entities.clear();
     }
 
-    private void renderStationFood(Entity station) {
+    private void setFoodTransform(Entity station) {
         ArrayList<Entity> foods = Mappers.station.get(station).food;
-        // Station.StationType = Mappers.station.get(station).type;
 
         Vector3 stationPos = Mappers.transform.get(station).position;
 
@@ -157,6 +165,7 @@ public class RenderingSystem extends IteratingSystem {
 
             int order = foods.indexOf(entity);
 
+            // move food to different spots on the station
             switch (order) {
                 case 0:
                     foodPos.add(-0.5f, 0.65f, 0);
@@ -171,8 +180,10 @@ public class RenderingSystem extends IteratingSystem {
                     foodPos.add(0.7f, 0.65f, 0);
                     break;
             }
+
             TransformComponent transformFood = Mappers.transform.get(entity);
             transformFood.position.set(foodPos.cpy());
+            
             if (Mappers.station.get(station).type == StationType.cutting_board) {
                 transformFood.scale.set(0.4f, 0.4f);
             } else if (Mappers.station.get(station).type == StationType.oven) {

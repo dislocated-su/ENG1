@@ -16,7 +16,7 @@ public class KeyboardInput implements InputProcessor {
     public boolean interact;
 
     public boolean disableHud;
-
+    
     public void clearInputs() {
         left = false;
         right = false;

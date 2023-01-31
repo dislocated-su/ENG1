@@ -26,6 +26,10 @@ import com.badlogic.gdx.ai.utils.Location;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
+/**
+ * Box2D {@link Body} and logic for AI agents, the {@link Box2dSteeringBody} responds to
+ * inputs from a {@link SteeringBehavior}. If no behaviour is set, the body will not move.
+ */
 public class Box2dSteeringBody implements Steerable<Vector2> {
 
     Body body;

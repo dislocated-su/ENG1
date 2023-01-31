@@ -20,6 +20,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.scene2d.Slideshow;
 
+/**
+ * Main menu of the game, transitions the player to the Tutorial
+ * {@link Slideshow} on button press
+ */
 public class MainMenuScreen extends ApplicationAdapter implements Screen {
 
     final PiazzaPanic game;
@@ -32,10 +36,12 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     private Label title;
 
     public MainMenuScreen(final PiazzaPanic game) {
+
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
         batch = new SpriteBatch();
+
         sprite = new Sprite(new Texture(Gdx.files.internal("mainMenuImage.png")));
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -52,13 +58,12 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         root.setFillParent(true);
         stage.addActor(root);
 
-        // Begin layout
         root.add(title).expandX().padBottom(120);
         root.row();
         TextButton startGameButton = new TextButton("Start game", skin);
         root.add(startGameButton);
 
-        // Checks if button is clicked
+        // Checks if button is clicked and if clicked goes onto the tutorial
         startGameButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new Slideshow(game, Slideshow.Type.tutorial));
@@ -75,7 +80,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        // draws everything (dont change this order unless you know what youre doing)
         batch.begin();
         sprite.draw(batch);
         batch.end();

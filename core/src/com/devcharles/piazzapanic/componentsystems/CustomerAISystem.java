@@ -29,6 +29,9 @@ import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
 import com.devcharles.piazzapanic.utility.box2d.Box2dRadiusProximity;
 
+/**
+ * Controls the AI Customers, creates orders.
+ */
 public class CustomerAISystem extends IteratingSystem {
 
     private Map<Integer, Box2dLocation> objectives;
@@ -43,6 +46,7 @@ public class CustomerAISystem extends IteratingSystem {
     private final int CUSTOMER = 5;
     private boolean firstSpawn = true;
 
+    // List of customers, on removal we move the other customers up a place (queueing).
     private ArrayList<Entity> customers = new ArrayList<Entity>() {
         @Override
         public boolean remove(Object o) {
@@ -62,6 +66,14 @@ public class CustomerAISystem extends IteratingSystem {
         };
     };
 
+    /**
+     * Instantiate the system.
+     * @param objectives Map of objectives available
+     * @param world Box2D {@link World} for AI and disposing of customer entities.
+     * @param factory {@link EntityFactory} for creating new customers
+     * @param hud {@link HUD} for updating orders, reputation
+     * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
+     */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
             Integer[] reputationPoints) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
@@ -163,12 +175,20 @@ public class CustomerAISystem extends IteratingSystem {
         }
     }
 
+    /**
+     * Remove the customer from the {@link World} and remove their entity.
+     * @param customer
+     */
     private void destroyCustomer(Entity customer) {
         getEngine().removeEntity(Mappers.customer.get(customer).food);
         world.destroyBody(Mappers.b2body.get(customer).body);
         getEngine().removeEntity(customer);
     }
 
+    /**
+     * Give the customer an objetive to go to.
+     * @param locationID and id from {@link CustomerAISystem.objectives}
+     */
     private void makeItGoThere(AIAgentComponent aiAgent, int locationID) {
         objectiveTaken.put(aiAgent.currentObjective, false);
 
@@ -199,6 +219,12 @@ public class CustomerAISystem extends IteratingSystem {
         }
     }
 
+    /**
+     * Give customer food, send them away and remove the order from the list
+     * @param entity
+     * @param customer
+     * @param foodEntity
+     */
     private void fulfillOrder(Entity entity, CustomerComponent customer, Entity foodEntity) {
 
         Engine engine = getEngine();

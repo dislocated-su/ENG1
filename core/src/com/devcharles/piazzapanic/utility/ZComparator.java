@@ -4,10 +4,11 @@ import java.util.Comparator;
 
 import com.badlogic.ashley.core.Entity;
 
+/**
+ * Compares the entities by their Z coordinate. The z coordinate is only used
+ * manually changing render order, see https://en.wikipedia.org/wiki/Z-order.
+ */
 public class ZComparator implements Comparator<Entity> {
-
-    public ZComparator() {
-    }
 
     @Override
     public int compare(Entity entityA, Entity entityB) {

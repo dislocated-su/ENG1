@@ -50,12 +50,14 @@ public class GameScreen implements Screen {
 
         kbInput = new KeyboardInput();
 
+        // Create a world with no gravity.
         world = new World(new Vector2(0, 0), true);
 
         camera = new OrthographicCamera();
 
         engine = new PooledEngine();
 
+        // The rayhandler is responsible for rendering the lights.
         rayhandler = new RayHandler(world);
 
         EntityFactory factory = new EntityFactory(engine, world);
@@ -71,6 +73,7 @@ public class GameScreen implements Screen {
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera));
         engine.addSystem(new LightingSystem(rayhandler, camera));
+        // This can be commented in during debugging.
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
@@ -100,7 +103,7 @@ public class GameScreen implements Screen {
 
         if (hud.paused) {
             engine.update(0);
-        }else {
+        } else {
             engine.update(delta);
         }
 
@@ -131,8 +134,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

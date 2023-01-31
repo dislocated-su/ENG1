@@ -21,6 +21,9 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 
+/**
+ * A screen that displays a slideshow of images.
+ */
 public class Slideshow extends ApplicationAdapter implements Screen {
 
     OrthographicCamera camera;
@@ -29,6 +32,11 @@ public class Slideshow extends ApplicationAdapter implements Screen {
     private Batch batch;
     private Sprite sprite;
 
+    /**
+     * Slideshow type enumeration.
+     * To screate new slideshows, add their pages to the assets folder in the format
+     * {@code [type][PageNumber].png} and add a type to this enum.
+     */
     public enum Type {
         recipe,
         tutorial;
@@ -40,6 +48,12 @@ public class Slideshow extends ApplicationAdapter implements Screen {
 
     private TextButton leftButton, rightButton, exit;
 
+    /**
+     * Create a new slideshow screen.
+     * 
+     * @param game {@link PiazzaPanic} game instance for changing screens.
+     * @param type {@link Type} of slideshow to create.
+     */
     public Slideshow(final Game game, Type type) {
 
         camera = new OrthographicCamera();
@@ -51,8 +65,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         int fileCount = 0;
         if (type == Type.recipe) {
             fileCount = 2;
-        }
-        else if (type == Type.tutorial) {
+        } else if (type == Type.tutorial) {
             fileCount = 11;
         }
 
@@ -94,7 +107,13 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         updatePage();
         stage.addActor(buildTable());
     }
-
+    /**
+     * Create a new slideshow screen in a running game.
+     * 
+     * @param game {@link PiazzaPanic} game instance for changing screens.
+     * @param type {@link Type} of slideshow to create.
+     * @param savedScreen the {@link GameScreen} to return to after this screen is closed.
+     */
     public Slideshow(final Game game, Type type, final Screen savedScreen) {
         this(game, type);
 
@@ -174,5 +193,6 @@ public class Slideshow extends ApplicationAdapter implements Screen {
     }
 
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 }

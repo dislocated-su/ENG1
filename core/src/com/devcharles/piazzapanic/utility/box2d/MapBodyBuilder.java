@@ -22,18 +22,29 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Populates the world with bodies created from the obstacle layer. Used for
+ * creating collisions.
+ */
 public class MapBodyBuilder {
 
     // The pixels per tile. If your tiles are 16x16, this is set to 16f
-    private static float ppt = 0;
+    private static float ppt = 16;
 
+    /**
+     * Create collision boxes from the MapObjects on the Obstacle object layer.
+     * @param map {@link TiledMap} to create bodies from.
+     * @param pixels Pixels per tile (default 16).
+     * @param world Box2D {@link World} to create objects in.
+     * @return
+     */
     public static Array<Body> buildShapes(Map map, float pixels, World world) {
         ppt = pixels;
         MapObjects shadowedObjects = map.getLayers().get("Obstacles").getObjects();
 
         Array<Body> bodies = new Array<Body>();
 
-        for(MapObject object : shadowedObjects) {
+        for (MapObject object : shadowedObjects) {
 
             Shape shape = decideShape(object);
 
@@ -65,7 +76,7 @@ public class MapBodyBuilder {
             Body body = world.createBody(bd);
             Filter collisionFilter = new Filter();
             collisionFilter.categoryBits = CollisionCategory.NO_SHADOWBOUNDARY.getValue();
-            collisionFilter.maskBits = CollisionCategory.ENTITY.getValue(); 
+            collisionFilter.maskBits = CollisionCategory.ENTITY.getValue();
             body.createFixture(shape, 1).setFilterData(collisionFilter);
 
             bodies.add(body);
@@ -83,18 +94,14 @@ public class MapBodyBuilder {
         Shape shape;
 
         if (object instanceof RectangleMapObject) {
-            shape = getRectangle((RectangleMapObject)object);
-        }
-        else if (object instanceof PolygonMapObject) {
-            shape = getPolygon((PolygonMapObject)object);
-        }
-        else if (object instanceof PolylineMapObject) {
-            shape = getPolyline((PolylineMapObject)object);
-        }
-        else if (object instanceof CircleMapObject) {
-            shape = getCircle((CircleMapObject)object);
-        }
-        else {
+            shape = getRectangle((RectangleMapObject) object);
+        } else if (object instanceof PolygonMapObject) {
+            shape = getPolygon((PolygonMapObject) object);
+        } else if (object instanceof PolylineMapObject) {
+            shape = getPolyline((PolylineMapObject) object);
+        } else if (object instanceof CircleMapObject) {
+            shape = getCircle((CircleMapObject) object);
+        } else {
             return null;
         }
 
@@ -105,11 +112,11 @@ public class MapBodyBuilder {
         Rectangle rectangle = rectangleObject.getRectangle();
         PolygonShape polygon = new PolygonShape();
         Vector2 size = new Vector2((rectangle.x + rectangle.width * 0.5f) / ppt,
-                                   (rectangle.y + rectangle.height * 0.5f ) / ppt);
+                (rectangle.y + rectangle.height * 0.5f) / ppt);
         polygon.setAsBox(rectangle.width * 0.5f / ppt,
-                         rectangle.height * 0.5f / ppt,
-                         size,
-                         0.0f);
+                rectangle.height * 0.5f / ppt,
+                size,
+                0.0f);
         return polygon;
     }
 
@@ -146,7 +153,7 @@ public class MapBodyBuilder {
             worldVertices[i].y = vertices[i * 2 + 1] / ppt;
         }
 
-        ChainShape chain = new ChainShape(); 
+        ChainShape chain = new ChainShape();
         chain.createChain(worldVertices);
         return chain;
     }

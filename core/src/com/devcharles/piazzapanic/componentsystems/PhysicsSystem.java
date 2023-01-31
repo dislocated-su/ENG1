@@ -11,6 +11,10 @@ import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.utility.Mappers;
 
+/**
+ * Steps the Box2D world and maps the body positions to their
+ * TransformComponents to link physics and rendering.
+ */
 public class PhysicsSystem extends IteratingSystem {
 
     private World world;

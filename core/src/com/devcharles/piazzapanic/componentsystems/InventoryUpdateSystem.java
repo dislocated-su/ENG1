@@ -8,7 +8,9 @@ import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.Mappers;
-
+/**
+ * Links up the cook's inventory to the hud.
+ */
 public class InventoryUpdateSystem extends IteratingSystem {
 
     private Hud hud;
@@ -27,9 +29,7 @@ public class InventoryUpdateSystem extends IteratingSystem {
             if (Mappers.food.get(food).type != null) {
                 foods[i] = Mappers.food.get(food).type;
                 i++;
-            }
-
-            
+            }            
         }
         hud.updateInventory(foods);
         

@@ -10,6 +10,9 @@ import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Pair;
 
+/**
+ * Handles collision events, allows interactivity between the player and other objects.
+ */
 public class WorldContactListener implements ContactListener {
 
     @Override

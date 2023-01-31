@@ -1,6 +1,5 @@
 package com.devcharles.piazzapanic.utility;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,13 +8,21 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+/**
+ * Abstract class that helps with setting up animations for characters in the
+ * game.
+ * To use, initialise  each directional animation.
+ */
 public abstract class WalkAnimator {
 
-    ArrayList<Animation<TextureRegion>> walkRight = new ArrayList<>();
-    ArrayList<Animation<TextureRegion>> walkLeft = new ArrayList<>();
-    ArrayList<Animation<TextureRegion>> walkUp = new ArrayList<>();
-    ArrayList<Animation<TextureRegion>> walkDown = new ArrayList<>();
+    protected ArrayList<Animation<TextureRegion>> walkRight = new ArrayList<>();
+    protected ArrayList<Animation<TextureRegion>> walkLeft = new ArrayList<>();
+    protected ArrayList<Animation<TextureRegion>> walkUp = new ArrayList<>();
+    protected ArrayList<Animation<TextureRegion>> walkDown = new ArrayList<>();
 
+    /**
+     * All directions that the animations support.
+     */
     public enum Direction {
         left,
         right,
@@ -33,6 +40,7 @@ public abstract class WalkAnimator {
      * @param rotation  box2d body rotation
      * @param isMoving  whether the entity is moving or not
      * @param frameTime elapsed time for the animation
+     * @param holding   how many items the character is holding
      * @return A texture region to draw, and a rotation used for rendering the
      *         region.
      */
@@ -53,7 +61,13 @@ public abstract class WalkAnimator {
 
     private static int[] directions = { -135, -90, -45, 0, 45, 90, 135, 180 };
 
-    public static Direction rotationToDirection(float rotation) throws InvalidParameterException {
+    /**
+     * Approximate the Box2D rotation to the nearest mapped value.
+     * 
+     * @param rotation body rotation in degrees.
+     * @return {@link Direction} the character should be facing in.
+     */
+    public static Direction rotationToDirection(float rotation) {
 
         int orientation = Math.round(rotation);
 
@@ -74,15 +88,18 @@ public abstract class WalkAnimator {
 
         Direction dir = directionMap.get((int) Math.round(rotation));
 
-        if (dir == null) {
-            throw new InvalidParameterException("Unknown direction, must be specified in the directionMap.");
-        }
-
         return dir;
     }
 
-    // add textures to Walk Lists, made a function to avoid repeating code for
-    // different states
+    /**
+     * Generate Animations from a {@link Texture}, override this if you want to
+     * parse the texture spritesheet differently.
+     * 
+     * @param currentSheet The {@link Texture} containing all the frames of the
+     *                     animation.
+     * @param value        Variant of the spritesheet (0 -> walk, 1 -> hold one
+     *                     item, 2 -> hold crate)
+     */
     protected void addTextures(Texture currentSheet, int value) {
         // Split the spritesheet into separate textureregions
         TextureRegion[][] tmp = TextureRegion.split(currentSheet, 32, 32);
@@ -100,6 +117,7 @@ public abstract class WalkAnimator {
         walkUp.add(new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 3, 6)));
         walkRight.add(new Animation<TextureRegion>(0.1f, Arrays.copyOfRange(frames, 6, 10)));
 
+        // Create the left animation by copying and flipping textures.
         TextureRegion[] toCopy = walkRight.get(value).getKeyFrames();
         TextureRegion[] flippedRegions = new TextureRegion[toCopy.length];
 

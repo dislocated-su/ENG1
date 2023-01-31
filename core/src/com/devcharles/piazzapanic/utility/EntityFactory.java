@@ -78,7 +78,7 @@ public class EntityFactory {
     }
 
     /**
-     * Creates an controllable entity, and adds it to the engine.
+     * Creates cook entity, and adds it to the engine.
      * 
      * @return Reference to the entity.
      */
@@ -146,12 +146,15 @@ public class EntityFactory {
 
         engine.addEntity(entity);
 
-        //Mappers.controllable.get(entity).currentFood.pushItem(createFood(FoodType.burger), entity);
-        //Mappers.controllable.get(entity).currentFood.pushItem(createFood(FoodType.salad), entity);
-
         return entity;
     }
 
+    /**
+     * Create the food entity at 0,0.
+     * 
+     * @param foodType The type of food to create.
+     * @return reference to the {@link Entity}
+     */
     public Entity createFood(FoodType foodType) {
         Entity entity = engine.createEntity();
 
@@ -181,7 +184,17 @@ public class EntityFactory {
         return entity;
     }
 
-    public void createStation(Station.StationType type, Vector2 position, FoodType ingredientType) {
+    /**
+     * Create a station entity with interactable features enabled. This does not
+     * render the station as it is rendered in the tilemap.
+     * 
+     * @param type           Type of station to create. See
+     *                       {@link Station.StationType}.
+     * @param position       position vector (z is set to 0).
+     * @param ingredientType (optional) if this is an Ingredient station, which
+     *                       ingredient should it spawn.
+     */
+    public Entity createStation(Station.StationType type, Vector2 position, FoodType ingredientType) {
         Entity entity = engine.createEntity();
 
         float[] size = { 1f, 1f };
@@ -228,8 +241,14 @@ public class EntityFactory {
 
         engine.addEntity(entity);
 
+        return entity;
     }
 
+    /**
+     * Cut the food textures, run at game initialisation.
+     * 
+     * @param path (optional) custom path for food textures.
+     */
     public static void cutFood(String path) {
         if (path == null) {
             path = "v2/food.png";
@@ -256,10 +275,22 @@ public class EntityFactory {
         }
     }
 
+    /**
+     * Get the texture associated with a certain food.
+     * 
+     * @return {@link TextureRegion} of the food.
+     */
     public static TextureRegion getFoodTexture(FoodType type) {
         return foodTextures.get(type);
     }
 
+    /**
+     * Create an AI customer entity. The entity will not walk until it recieves a
+     * {@link com.badlogic.gdx.ai.steer.SteeringBehavior}.
+     * 
+     * @param position of the customer at spawn point.
+     * @return reference to the entity.
+     */
     public Entity createCustomer(Vector2 position) {
         Entity entity = engine.createEntity();
 
@@ -291,7 +322,6 @@ public class EntityFactory {
 
         // Create a steering body with no behaviour (to be set later)
         aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, true, 0.5f);
-        
 
         FoodType[] s = new FoodType[Station.serveRecipes.values().size()];
         s = Station.serveRecipes.values().toArray(s);

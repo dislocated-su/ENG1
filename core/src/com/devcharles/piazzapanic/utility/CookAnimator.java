@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+/**
+ * Animations specific to the cooks.
+ */
 public class CookAnimator extends WalkAnimator {
 
     CookAnimator() {
@@ -31,6 +34,9 @@ public class CookAnimator extends WalkAnimator {
     @Override
     public TextureRegion getFrame(float rotation, boolean isMoving, float frameTime, int holding) {
 
+        // holding > 1 -> 2
+        // holding == 1 -> 1
+        // 0 otherwise
         int index = holding > 1 ? 2 : (holding == 1 ? 1 : 0);
 
         Animation<TextureRegion> currentAnimation = walkDown.get(index);

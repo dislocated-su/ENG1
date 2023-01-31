@@ -6,6 +6,9 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
+/**
+ * Renders a {@link TiledMap} that is loaded using {@link MapLoader}.
+ */
 public class WorldTilemapRenderer {
 
     private TiledMap map;
@@ -14,6 +17,9 @@ public class WorldTilemapRenderer {
 
     private OrthographicCamera camera;
 
+    /**
+     * Pixels per tile. The tileset we are using is 32x32, so this effectively doubles apparent size.
+     */
     final int ppt = 16;
 
     private TiledMapTileLayer floor;
@@ -23,9 +29,15 @@ public class WorldTilemapRenderer {
     private TiledMapTileLayer back_wall;
 
     private TiledMapTileLayer countertop_f;
-
     private TiledMapTileLayer station_f;
 
+    /**
+     * Create a new renderer with existing {@link TiledMap}, camera and {@link SpriteBatch}.
+     * The renderer will not own any of these objects.
+     * @param map {@link Tiledmap} instance with required layers, see constructor. 
+     * @param mainCamera camera to render to. 
+     * @param batch spritebatch to use.
+     */
     public WorldTilemapRenderer(TiledMap map, OrthographicCamera mainCamera, SpriteBatch batch) {
         this.camera = mainCamera;
         this.map = map;
@@ -44,6 +56,9 @@ public class WorldTilemapRenderer {
 
     }
 
+    /**
+     * Render all layers that appear behind entities.
+     */
     public void renderBackground() {
         renderer.setView(camera);
         renderer.renderTileLayer(floor);
@@ -52,6 +67,9 @@ public class WorldTilemapRenderer {
         renderer.renderTileLayer(station);
     }
 
+    /**
+     * Render all layers that appear in front of entities.
+     */
     public void renderForeground() {
         renderer.setView(camera);
         renderer.renderTileLayer(countertop_f);
