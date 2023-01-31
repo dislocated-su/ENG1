@@ -34,7 +34,7 @@ public class WorldTilemapRenderer {
     /**
      * Create a new renderer with existing {@link TiledMap}, camera and {@link SpriteBatch}.
      * The renderer will not own any of these objects.
-     * @param map {@link Tiledmap} instance with required layers, see constructor. 
+     * @param map {@link TiledMap} instance with required layers, see constructor.
      * @param mainCamera camera to render to. 
      * @param batch spritebatch to use.
      */

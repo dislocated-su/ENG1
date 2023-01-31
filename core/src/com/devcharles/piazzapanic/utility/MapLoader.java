@@ -92,7 +92,7 @@ public class MapLoader {
      * Create lights, spawnpoints, AI paths from map metadata.
      * 
      * @param engine     Ashley {@link Engine} instance.
-     * @param rayHandler {@link Rayhandler} to add lights to.
+     * @param rayHandler {@link RayHandler} to add lights to.
      */
     public void buildFromObjects(Engine engine, RayHandler rayHandler) {
         MapObjects objects = map.getLayers().get(objectLayer).getObjects();

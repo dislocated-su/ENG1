@@ -30,10 +30,13 @@ import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.utility.box2d.Box2dSteeringBody;
 import com.devcharles.piazzapanic.utility.box2d.CollisionCategory;
 
+/**
+ * Factory pattern class that creates entities used in the game.
+ */
 public class EntityFactory {
 
-    private PooledEngine engine;
-    private World world;
+    private final PooledEngine engine;
+    private final World world;
 
     private FixtureDef movingFixtureDef;
     private BodyDef movingBodyDef;
@@ -46,7 +49,7 @@ public class EntityFactory {
         createDefinitions();
     }
 
-    private static Map<FoodType, TextureRegion> foodTextures = new HashMap<FoodType, TextureRegion>();
+    private static final Map<FoodType, TextureRegion> foodTextures = new HashMap<FoodType, TextureRegion>();
 
     /**
      * Create reusable definitions for bodies and fixtures. These can be then be
@@ -56,7 +59,7 @@ public class EntityFactory {
 
         // Moving bodies
 
-        // Bodydef
+        // BodyDef
         movingBodyDef = new BodyDef();
 
         movingBodyDef.type = BodyType.DynamicBody;
@@ -107,7 +110,7 @@ public class EntityFactory {
         // TODO: Set size in viewport units instead of scale
         texture.scale.set(0.1f, 0.1f);
 
-        // Box2d body
+        // Box2D body
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DynamicBody;
         bodyDef.linearDamping = 20f;
@@ -165,9 +168,7 @@ public class EntityFactory {
         FoodComponent food = engine.createComponent(FoodComponent.class);
 
         // Texture
-        TextureRegion tempRegion = getFoodTexture(foodType);
-
-        texture.region = tempRegion;
+        texture.region = getFoodTexture(foodType);
         // TODO: Set size in viewport units instead of scale
         texture.scale.set(0.05f, 0.05f);
 
@@ -211,7 +212,7 @@ public class EntityFactory {
         if (type == Station.StationType.ingredient) {
             station.ingredient = ingredientType;
         }
-        // Box2d body
+        // Box2D body
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.StaticBody;
         bodyDef.position.set(position.x, position.y);
@@ -285,7 +286,7 @@ public class EntityFactory {
     }
 
     /**
-     * Create an AI customer entity. The entity will not walk until it recieves a
+     * Create an AI customer entity. The entity will not walk until it receives a
      * {@link com.badlogic.gdx.ai.steer.SteeringBehavior}.
      * 
      * @param position of the customer at spawn point.
@@ -304,11 +305,11 @@ public class EntityFactory {
 
         CustomerComponent customer = engine.createComponent(CustomerComponent.class);
 
-        WalkingAnimationComponent walkingAnimaton = engine.createComponent(WalkingAnimationComponent.class);
+        WalkingAnimationComponent walkingAnimation = engine.createComponent(WalkingAnimationComponent.class);
 
         AIAgentComponent aiAgent = engine.createComponent(AIAgentComponent.class);
 
-        walkingAnimaton.animator = new CustomerAnimator();
+        walkingAnimation.animator = new CustomerAnimator();
 
         // Reuse existing body definition
         movingBodyDef.position.set(position.x, position.y);
@@ -330,12 +331,12 @@ public class EntityFactory {
 
         customer.order = FoodType.from(s[orderIndex].getValue());
 
-        Gdx.app.log("Order recieved", customer.order.name());
+        Gdx.app.log("Order received", customer.order.name());
         entity.add(b2dBody);
         entity.add(transform);
         entity.add(texture);
         entity.add(an);
-        entity.add(walkingAnimaton);
+        entity.add(walkingAnimation);
         entity.add(aiAgent);
         entity.add(customer);
         engine.addEntity(entity);
