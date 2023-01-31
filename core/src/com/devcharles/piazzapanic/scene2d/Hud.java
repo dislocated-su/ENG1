@@ -3,13 +3,13 @@ package com.devcharles.piazzapanic.scene2d;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -51,7 +51,7 @@ public class Hud extends ApplicationAdapter {
 
     private boolean pauseToggled = false;
     public boolean paused = false;
-    
+
     private GameScreen gameScreen;
 
     public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints) {
@@ -78,9 +78,16 @@ public class Hud extends ApplicationAdapter {
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                // TODO Auto-generated method stub
                 if (keycode == Keys.ESCAPE) {
                     pauseToggled = true;
+                } else if (keycode == Keys.F11) {
+                    Boolean fullScreen = Gdx.graphics.isFullscreen();
+                    Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();
+                    if (fullScreen == true) {
+                        Gdx.graphics.setWindowedMode(1280, 720);
+                    } else {
+                        Gdx.graphics.setFullscreenMode(currentMode);
+                    }
                 }
                 return true;
             }
@@ -101,11 +108,9 @@ public class Hud extends ApplicationAdapter {
         timeNameLabel.setFontScale(fontScale + 0.1f);
         reputationNameLabel.setFontScale(fontScale + 0.1f);
 
-        
         tableTop = new Table();
         tableTop.top();
         tableTop.setFillParent(true);
-
 
         tableTop.add(timeNameLabel).expandX().padTop(10);
         tableTop.add(reputationNameLabel).expandX().padTop(10);
@@ -134,7 +139,7 @@ public class Hud extends ApplicationAdapter {
         TextButton unpauseButton = new TextButton("Unpause", skin);
         TextButton recipeBookButton = new TextButton("Recipe Book", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
-        
+
         unpauseButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 pauseToggled = true;
@@ -142,7 +147,7 @@ public class Hud extends ApplicationAdapter {
         });
         recipeBookButton.addListener(createListener(new Slideshow(game, Slideshow.Type.recipe, gameScreen)));
         tutorialButton.addListener(createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
-        
+
         tablePause.add(unpauseButton).width(240).height(70).padBottom(30);
 
         tablePause.row();
@@ -150,8 +155,6 @@ public class Hud extends ApplicationAdapter {
         tablePause.add(recipeBookButton).width(240).height(70).padBottom(30);
         tablePause.row();
         tablePause.add(tutorialButton).width(240).height(70);
-
-    
 
         this.tableRight = new Table();
         this.tableBottom = new Table();
@@ -219,7 +222,7 @@ public class Hud extends ApplicationAdapter {
             if (triggerWin) {
                 triggerWin = false;
                 Win();
-            } 
+            }
             if (pauseToggled) {
                 pauseToggled = false;
                 this.pause();
@@ -245,20 +248,19 @@ public class Hud extends ApplicationAdapter {
         // Show the pause hud
         tablePause.setVisible(true);
 
-        //super.pause();
+        // super.pause();
     }
 
     @Override
     public void resume() {
         paused = false;
         gameScreen.resume();
-        
-        
+
         // Show the normal hud
         tableBottom.setVisible(true);
         tableRight.setVisible(true);
         tableTop.setVisible(true);
-        
+
         // Hide the pause hud
         tablePause.setVisible(false);
 
@@ -267,7 +269,6 @@ public class Hud extends ApplicationAdapter {
 
     public boolean won;
     public boolean triggerWin = false;
-
 
     public void Win() {
         won = true;

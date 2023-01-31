@@ -35,12 +35,13 @@ public class CustomerAISystem extends IteratingSystem {
     private Map<Integer, Boolean> objectiveTaken;
 
     private World world;
-    private GdxTimer spawnTimer = new GdxTimer(5000, false, true);
+    private GdxTimer spawnTimer = new GdxTimer(45000, false, true);
     private EntityFactory factory;
     private int numOfCustomerTotal = 0;
     private Hud hud;
     private Integer reputationPoints[];
-    private final int CUSTOMER = 1;
+    private final int CUSTOMER = 5;
+    private boolean firstSpawn = true;
 
     private ArrayList<Entity> customers = new ArrayList<Entity>() {
         @Override
@@ -80,7 +81,8 @@ public class CustomerAISystem extends IteratingSystem {
 
     @Override
     public void update(float deltaTime) {
-        if (spawnTimer.tick(deltaTime) && numOfCustomerTotal < CUSTOMER) {
+        if (firstSpawn || (spawnTimer.tick(deltaTime) && numOfCustomerTotal < CUSTOMER)) {
+            firstSpawn = false;
             Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
             customers.add(newCustomer);
             numOfCustomerTotal++;

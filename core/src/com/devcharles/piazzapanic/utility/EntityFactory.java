@@ -146,8 +146,8 @@ public class EntityFactory {
 
         engine.addEntity(entity);
 
-        Mappers.controllable.get(entity).currentFood.pushItem(createFood(FoodType.burger), entity);
-        Mappers.controllable.get(entity).currentFood.pushItem(createFood(FoodType.salad), entity);
+        //Mappers.controllable.get(entity).currentFood.pushItem(createFood(FoodType.burger), entity);
+        //Mappers.controllable.get(entity).currentFood.pushItem(createFood(FoodType.salad), entity);
 
         return entity;
     }

@@ -1,12 +1,9 @@
 package com.devcharles.piazzapanic.scene2d;
 
-import java.io.File;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,7 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 
@@ -46,6 +44,8 @@ public class Slideshow extends ApplicationAdapter implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
+        ScalingViewport viewport = new ScalingViewport(Scaling.fit, 1280, 720, camera);
+        viewport.apply();
         batch = new SpriteBatch();
 
         int fileCount = Gdx.files.internal("assets/" + type.name()).list().length;
@@ -57,7 +57,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         }
 
         skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage(viewport);
 
         // Begin layout
         leftButton = new TextButton("Page Left", skin);
@@ -124,7 +124,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
 
     private void updatePage() {
         sprite = new Sprite(textures[currentPage]);
-        sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        sprite.setSize(1280, 720);
 
         if (currentPage == 0) {
             leftButton.setVisible(false);
@@ -141,6 +141,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+        stage.getViewport().apply();
     }
 
     @Override
@@ -157,6 +158,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+        stage.getViewport().apply();
     }
 
     @Override
