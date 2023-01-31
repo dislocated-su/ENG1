@@ -57,10 +57,13 @@ public class Hud extends ApplicationAdapter {
         // Import the custom skin
         skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
         uiFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
+        uiTitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
 
         // Create generic style for labels
         hudLabelStyle = new Label.LabelStyle();
         hudLabelStyle.font = uiFont;
+        titleLabelStyle = new Label.LabelStyle();
+        titleLabelStyle.font = uiTitleFont;
 
         createTables(savedGame);
     }
@@ -178,41 +181,30 @@ public class Hud extends ApplicationAdapter {
         won = true;
 
         gameStage.clear();
-        Table centerTable = new Table().center();
+        Table centerTable = new Table();
         centerTable.setFillParent(true);
-
-        // Create generic style for labels
-
-        uiTitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
-
-        // Create generic style for labels
-        titleLabelStyle = new Label.LabelStyle();
-        titleLabelStyle.font = uiTitleFont;
 
         Label congrats = new Label("Congratulations!", titleLabelStyle);
         Label congratsSubtitle = new Label("You won!", hudLabelStyle);
 
-        centerTable.add(congrats).padBottom(40);
+        centerTable.add(congrats).padBottom(40).colspan(2);
         centerTable.row();
-        centerTable.add(congratsSubtitle).padBottom(30);
+        centerTable.add(congratsSubtitle).padBottom(30).colspan(2);
+
         centerTable.row();
 
-        centerTable.add(timeNameLabel).padBottom(50);
+        centerTable.add(timeNameLabel);
+        centerTable.add(reputationNameLabel);
 
-        centerTable.row().fill(0.8f, 0.1f).center();
-
-        centerTable.add(timeNameLabel).padBottom(25);
-        centerTable.add(reputationNameLabel).padBottom(25);
-
-        centerTable.row().fill(0.3f, 0.1f);
+        centerTable.row();
 
         centerTable.add(timerLabel);
-        centerTable.add(reputationLabel).padBottom(25);
+        centerTable.add(reputationLabel);
 
         centerTable.row();
 
         TextButton returnToMenuButton = new TextButton("Main menu", skin);
-        centerTable.add(returnToMenuButton).padTop(50);
+        centerTable.add(returnToMenuButton).width(240).height(70).padTop(50).colspan(2);
 
         returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
 

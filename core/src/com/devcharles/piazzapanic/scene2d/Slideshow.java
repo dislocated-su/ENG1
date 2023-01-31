@@ -111,13 +111,13 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         table.top();
         table.setFillParent(true);
 
-        table.add(exit).width(180).height(80).expandX().left();
+        table.add(exit).width(180).height(80).expandX().right().colspan(2);
 
-        table.row();
+        table.row().expandY();
 
-        table.add(leftButton).width(200).height(50).expandX().left();
+        table.add(leftButton).width(200).height(50).expandX().left().bottom();
 
-        table.add(rightButton).width(200).height(50).expandX().right();
+        table.add(rightButton).width(200).height(50).expandX().right().bottom();
 
         return table;
     }

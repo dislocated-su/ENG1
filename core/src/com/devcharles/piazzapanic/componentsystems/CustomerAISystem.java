@@ -40,7 +40,7 @@ public class CustomerAISystem extends IteratingSystem {
     private int numOfCustomerTotal = 0;
     private Hud hud;
     private Integer reputationPoints[];
-    private final int CUSTOMER = 2;
+    private final int CUSTOMER = 0;
 
     private ArrayList<Entity> customers = new ArrayList<Entity>() {
         @Override
