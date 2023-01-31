@@ -36,7 +36,6 @@ public class RenderingSystem extends IteratingSystem {
 
     public RenderingSystem(TiledMap map, SpriteBatch batch, OrthographicCamera camera) {
         super(Family.all(TransformComponent.class, TextureComponent.class).get());
-        // set up reuired objects
         this.sb = batch;
         this.camera = camera;
         this.mapRenderer = new WorldTilemapRenderer(map, camera, batch);
