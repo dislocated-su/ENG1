@@ -17,6 +17,18 @@ public class KeyboardInput implements InputProcessor {
 
     public boolean disableHud;
 
+    public void clearInputs() {
+        left = false;
+        right = false;
+        up = false;
+        down = false;
+        changeCooks = false;
+        putDown = false;
+        pickUp = false;
+        interact = false;
+        disableHud = false;
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         boolean processed = true;

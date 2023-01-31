@@ -4,11 +4,14 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -22,8 +25,8 @@ import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 
 public class Hud extends ApplicationAdapter {
-    public Stage gameStage;
-    private Viewport gameViewport;
+    public Stage stage;
+    private Viewport viewport;
     private Integer customerTimer = 000;
     private float timeCounter = 0;
     private Integer[] reputation;
@@ -33,26 +36,33 @@ public class Hud extends ApplicationAdapter {
 
     // A label is basically a widget
     LabelStyle hudLabelStyle;
+    LabelStyle titleLabelStyle;
     Label timerLabel;
     Label timeNameLabel;
     Label reputationLabel;
     Label reputationNameLabel;
-    LabelStyle titleLabelStyle;
+    Label pausedNameLabel;
     BitmapFont uiFont, uiTitleFont;
 
     private Image photo;
 
     private Game game;
-    private Table tableBottom, tableRight;
+    private Table tableBottom, tableRight, tableTop, tablePause;
+
+    private boolean pauseToggled = false;
+    public boolean paused = false;
+    
+    private GameScreen gameScreen;
 
     public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints) {
         this.game = game;
         this.reputation = reputationPoints;
+        this.gameScreen = savedGame;
 
         // Setup the viewport
-        gameViewport = new ScreenViewport(new OrthographicCamera(1280, 720));
-        gameStage = new Stage(gameViewport, spriteBatch);
-        gameViewport.apply();
+        viewport = new ScreenViewport(new OrthographicCamera(1280, 720));
+        stage = new Stage(viewport, spriteBatch);
+        viewport.apply();
 
         // Import the custom skin
         skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
@@ -65,10 +75,21 @@ public class Hud extends ApplicationAdapter {
         titleLabelStyle = new Label.LabelStyle();
         titleLabelStyle.font = uiTitleFont;
 
-        createTables(savedGame);
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                // TODO Auto-generated method stub
+                if (keycode == Keys.ESCAPE) {
+                    pauseToggled = true;
+                }
+                return true;
+            }
+        });
+
+        createTables();
     }
 
-    private void createTables(final GameScreen savedGame) {
+    private void createTables() {
 
         timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);
         reputationLabel = new Label(String.format("%01d", reputation[0]), hudLabelStyle);
@@ -80,25 +101,16 @@ public class Hud extends ApplicationAdapter {
         timeNameLabel.setFontScale(fontScale + 0.1f);
         reputationNameLabel.setFontScale(fontScale + 0.1f);
 
-        TextButton recipeBookButton = new TextButton("Recipe Book", skin);
-        TextButton tutorialButton = new TextButton("Tutorial", skin);
-
-        recipeBookButton.getLabel().setFontScale(fontScale);
-        tutorialButton.getLabel().setFontScale(fontScale);
-
-        recipeBookButton.addListener(createListener(new Slideshow(game, Slideshow.Type.recipe, savedGame)));
-        tutorialButton.addListener(createListener(new Slideshow(game, Slideshow.Type.tutorial, savedGame)));
-
-        Table tableTop = new Table();
+        
+        tableTop = new Table();
         tableTop.top();
         tableTop.setFillParent(true);
 
-        tableTop.add(recipeBookButton).width(180).height(50).left().top();
+
         tableTop.add(timeNameLabel).expandX().padTop(10);
         tableTop.add(reputationNameLabel).expandX().padTop(10);
 
         tableTop.row();
-        tableTop.add(tutorialButton).width(180).height(50).left().top();
         tableTop.add(timerLabel).expandX();
         tableTop.add(reputationLabel).expandX();
 
@@ -110,13 +122,45 @@ public class Hud extends ApplicationAdapter {
         inv.setFontScale(fontScale);
         tableBottomLabel.add(inv).padBottom(60);
 
+        tablePause = new Table();
+        tablePause.setFillParent(true);
+        tablePause.setVisible(false);
+
+        pausedNameLabel = new Label("Game paused", titleLabelStyle);
+        tablePause.add(pausedNameLabel).padBottom(30);
+
+        tablePause.row();
+
+        TextButton unpauseButton = new TextButton("Unpause", skin);
+        TextButton recipeBookButton = new TextButton("Recipe Book", skin);
+        TextButton tutorialButton = new TextButton("Tutorial", skin);
+        
+        unpauseButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                pauseToggled = true;
+            }
+        });
+        recipeBookButton.addListener(createListener(new Slideshow(game, Slideshow.Type.recipe, gameScreen)));
+        tutorialButton.addListener(createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
+        
+        tablePause.add(unpauseButton).width(240).height(70).padBottom(30);
+
+        tablePause.row();
+
+        tablePause.add(recipeBookButton).width(240).height(70).padBottom(30);
+        tablePause.row();
+        tablePause.add(tutorialButton).width(240).height(70);
+
+    
+
         this.tableRight = new Table();
         this.tableBottom = new Table();
 
-        gameStage.addActor(tableTop);
-        gameStage.addActor(tableRight);
-        gameStage.addActor(tableBottom);
-        gameStage.addActor(tableBottomLabel);
+        stage.addActor(tablePause);
+        stage.addActor(tableTop);
+        stage.addActor(tableRight);
+        stage.addActor(tableBottom);
+        stage.addActor(tableBottomLabel);
     }
 
     public void updateInventory(FoodType[] inventory) {
@@ -157,7 +201,17 @@ public class Hud extends ApplicationAdapter {
     }
 
     public void update(float deltaTime) {
+        if (paused) {
+            if (pauseToggled) {
+                pauseToggled = false;
+                this.resume();
+            }
+            stage.act();
+            stage.draw();
+            return;
+        }
         timeCounter += won ? 0 : deltaTime;
+        // Staggered to once per second using timeCounter.
         if (timeCounter >= 1) {
             customerTimer++;
             timerLabel.setText(String.format("%03d", customerTimer));
@@ -165,22 +219,60 @@ public class Hud extends ApplicationAdapter {
             if (triggerWin) {
                 triggerWin = false;
                 Win();
+            } 
+            if (pauseToggled) {
+                pauseToggled = false;
+                this.pause();
             }
-            timeCounter = 0;
+            timeCounter -= 1;
         }
 
-        gameStage.act();
-        gameStage.draw();
+        stage.act();
+        stage.draw();
 
+    }
+
+    @Override
+    public void pause() {
+        paused = true;
+        gameScreen.pause();
+
+        // Hide the normal hud
+        tableBottom.setVisible(false);
+        tableRight.setVisible(false);
+        tableTop.setVisible(false);
+
+        // Show the pause hud
+        tablePause.setVisible(true);
+
+        //super.pause();
+    }
+
+    @Override
+    public void resume() {
+        paused = false;
+        gameScreen.resume();
+        
+        
+        // Show the normal hud
+        tableBottom.setVisible(true);
+        tableRight.setVisible(true);
+        tableTop.setVisible(true);
+        
+        // Hide the pause hud
+        tablePause.setVisible(false);
+
+        super.resume();
     }
 
     public boolean won;
     public boolean triggerWin = false;
 
+
     public void Win() {
         won = true;
 
-        gameStage.clear();
+        stage.clear();
         Table centerTable = new Table();
         centerTable.setFillParent(true);
 
@@ -208,18 +300,18 @@ public class Hud extends ApplicationAdapter {
 
         returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
 
-        gameStage.addActor(centerTable);
+        stage.addActor(centerTable);
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        gameViewport.update(width, height, true);
-        gameViewport.apply();
+        viewport.update(width, height, true);
+        viewport.apply();
     }
 
     public void dispose() {
-        gameStage.dispose();
+        stage.dispose();
         // no! can u hear us? no
         // maybe restart discord i have i sent you a photo on messages
 

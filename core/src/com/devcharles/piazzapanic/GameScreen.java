@@ -85,7 +85,7 @@ public class GameScreen implements Screen {
         // set the input processor
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
-        multiplexer.addProcessor(hud.gameStage);
+        multiplexer.addProcessor(hud.stage);
 
     }
 
@@ -100,8 +100,13 @@ public class GameScreen implements Screen {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        engine.update(delta);
-        game.batch.setProjectionMatrix(hud.gameStage.getCamera().combined);
+        if (hud.paused) {
+            engine.update(0);
+        }else {
+            engine.update(delta);
+        }
+
+        game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 
         if (!kbInput.disableHud) {
             hud.update(delta);
@@ -116,14 +121,14 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
-
+        kbInput.clearInputs();
+        Gdx.input.setInputProcessor(hud.stage);
     }
 
     @Override
     public void resume() {
-        // TODO Auto-generated method stub
-
+        kbInput.clearInputs();
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
