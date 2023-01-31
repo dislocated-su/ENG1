@@ -47,7 +47,7 @@ public class Hud extends ApplicationAdapter {
     private Image photo;
 
     private Game game;
-    private Table tableBottom, tableRight, tableTop, tablePause;
+    private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel;
 
     private boolean pauseToggled = false;
     public boolean paused = false;
@@ -119,7 +119,7 @@ public class Hud extends ApplicationAdapter {
         tableTop.add(timerLabel).expandX();
         tableTop.add(reputationLabel).expandX();
 
-        Table tableBottomLabel = new Table();
+        tableBottomLabel = new Table();
         tableBottomLabel.bottom();
         tableBottomLabel.setFillParent(true);
 
@@ -136,7 +136,7 @@ public class Hud extends ApplicationAdapter {
 
         tablePause.row();
 
-        TextButton unpauseButton = new TextButton("Unpause", skin);
+        TextButton unpauseButton = new TextButton("resume", skin);
         TextButton recipeBookButton = new TextButton("Recipe Book", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
 
@@ -244,6 +244,7 @@ public class Hud extends ApplicationAdapter {
         tableBottom.setVisible(false);
         tableRight.setVisible(false);
         tableTop.setVisible(false);
+        tableBottomLabel.setVisible(false);
 
         // Show the pause hud
         tablePause.setVisible(true);
@@ -260,6 +261,7 @@ public class Hud extends ApplicationAdapter {
         tableBottom.setVisible(true);
         tableRight.setVisible(true);
         tableTop.setVisible(true);
+        tableBottomLabel.setVisible(true);
 
         // Hide the pause hud
         tablePause.setVisible(false);
