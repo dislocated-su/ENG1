@@ -19,15 +19,15 @@ public class LightBuilderTest {
     World world = new World(new Vector2(0, 0), true);
     RayHandler handler = new RayHandler(world);
 
-    assertFalse(handler.pointAtLight(1, 2));
+    assertFalse("The centre of the light should not be lit.", handler.pointAtLight(1, 2));
     PointLight light = LightBuilder.createPointLight(handler, 1, 2, Color.RED, 5f, true);
     handler.update();
-    assertTrue(handler.pointAtLight(1, 2));
+    assertTrue("The centre of the light should be lit.", handler.pointAtLight(1, 2));
 
-    assertEquals(light.getPosition(), new Vector2(1, 2));
-    assertEquals(light.getColor(), Color.RED);
-    assertEquals(light.getDistance(), 5f, 0.001f);
-    assertTrue(light.isSoft());
+    assertEquals("The light should be at a specific position.", light.getPosition(), new Vector2(1, 2));
+    assertEquals("The light should be red.", light.getColor(), Color.RED);
+    assertEquals("The light distance should be approximately 5.", light.getDistance(), 5f, 0.001f);
+    assertTrue("The light should be soft.", light.isSoft());
     // TODO: check for null RayHandler
   }
 
@@ -36,14 +36,14 @@ public class LightBuilderTest {
     World world = new World(new Vector2(0, 0), true);
     RayHandler handler = new RayHandler(world);
 
-    assertFalse(handler.pointAtLight(1, 2));
+    assertFalse("The centre of the light should not be lit.", handler.pointAtLight(1, 2));
     PointLight light = LightBuilder.createRoomLight(handler, 1, 2, Color.RED, 5f, true);
     handler.update();
-    assertTrue(handler.pointAtLight(1, 2));
+    assertTrue("The centre of the light should be lit.", handler.pointAtLight(1, 2));
 
-    assertEquals(light.getPosition(), new Vector2(1, 2));
-    assertEquals(light.getColor(), Color.RED);
-    assertEquals(light.getDistance(), 5f, 0.001f);
-    assertTrue(light.isXray());
+    assertEquals("The light should be at a specific position.", light.getPosition(), new Vector2(1, 2));
+    assertEquals("The light should be red.", light.getColor(), Color.RED);
+    assertEquals("The light distance should be approximately 5.", light.getDistance(), 5f, 0.001f);
+    assertTrue("The light should have xray turned on.", light.isXray());
   }
 }
