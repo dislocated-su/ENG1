@@ -4,9 +4,16 @@ sourceCompatibility = 1.7 // This was 1.6 in the original example
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
-sourceSets.main.resources.srcDirs = ["../assets"]
+//sourceSets.main.resources.srcDirs = ["../assets"]
 project.ext.assetsDir = new File("../assets")
 
 eclipse.project {
     name = appName + "-tests"
+}
+
+test {
+    File runningDir = new File('../assets/')
+    runningDir.mkdirs()
+    workingDir = runningDir
+    jvmArgs += "--add-opens=java.base/java.lang=ALL-UNNAMED"
 }

@@ -1,12 +1,9 @@
 package com.devcharles.piazzapanic;
 
-import static org.mockito.Mockito.mock;
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
-import com.badlogic.gdx.graphics.GL20;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,6 +13,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 
 public class GdxTestRunner extends BlockJUnit4ClassRunner implements ApplicationListener {
+
   private final Map<FrameworkMethod, RunNotifier> invokeInRender = new HashMap<>();
 
   public GdxTestRunner(Class<?> testClass) throws InitializationError {
@@ -23,7 +21,8 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
     HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
 
     new HeadlessApplication(this, conf);
-    Gdx.gl = mock(GL20.class);
+    Gdx.gl20 = new FakeGL20();
+    Gdx.gl = Gdx.gl20;
   }
 
   @Override
@@ -76,8 +75,9 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
       while (true) {
         Thread.sleep(10);
         synchronized (invokeInRender) {
-          if (invokeInRender.isEmpty())
+          if (invokeInRender.isEmpty()) {
             break;
+          }
         }
       }
     } catch (InterruptedException e) {
