@@ -4,59 +4,69 @@
 package com.devcharles.piazzapanic.utility;
 
 /**
- * Simple timer class suitable for this project.
- * Modified for this project.
+ * Simple timer class suitable for this project. Modified for this project.
+ *
  * @author tedigc
  */
 public class GdxTimer {
 
-    private int delay;
-    private int elapsed;
-    private boolean running;
-    private boolean looping;
+  private final int delay;
 
-    /**
-     * Create a timer.
-     * 
-     * @param delay   delay in milliseconds.
-     * @param running whether the timer is running when it's created
-     * @param looping does the timer restart itself after elapsing.
-     */
-    public GdxTimer(int delay, boolean running, boolean looping) {
-        this.delay = delay;
-        this.running = running;
-        this.looping = looping;
-    }
+  private int elapsed;
+  private boolean running;
+  private final boolean looping;
 
-    /**
-     * Progress the timer
-     * 
-     * @param delta time since last frame.
-     * @return Whether the timer is finished.
-     */
-    public boolean tick(float delta) {
-        if (running) {
-            elapsed += delta * 1000;
-            if (elapsed > delay) {
-                elapsed -= looping ? delay : 0;
-                return true;
-            }
-        }
-        return false;
-    }
+  /**
+   * Create a timer.
+   *
+   * @param delay   delay in milliseconds.
+   * @param running whether the timer is running when it's created
+   * @param looping does the timer restart itself after elapsing.
+   */
+  public GdxTimer(int delay, boolean running, boolean looping) {
+    this.delay = delay;
+    this.running = running;
+    this.looping = looping;
+  }
 
-    public void start() {
-        this.running = true;
+  /**
+   * Progress the timer
+   *
+   * @param delta time since last frame.
+   * @return Whether the timer is finished.
+   */
+  public boolean tick(float delta) {
+    if (running) {
+      elapsed += delta * 1000;
+      if (elapsed > delay) {
+        elapsed -= looping ? delay : 0;
+        return true;
+      }
     }
+    return false;
+  }
 
-    public void stop() {
-        this.running = false;
-    }
+  public void start() {
+    this.running = true;
+  }
 
-    /**
-     * Reset the timer. This does not stop it, for that use {@code GdxTimer.stop()}
-     */
-    public void reset() {
-        this.elapsed = 0;
-    }
+  public void stop() {
+    this.running = false;
+  }
+
+  /**
+   * Reset the timer. This does not stop it, for that use {@code GdxTimer.stop()}
+   */
+  public void reset() {
+    this.elapsed = 0;
+  }
+
+  public int getElapsed() {
+    return elapsed;
+  }
+
+  public boolean isRunning() {
+    return running;
+  }
+
 }
