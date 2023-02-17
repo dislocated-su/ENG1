@@ -1,9 +1,14 @@
 package com.devcharles.piazzapanic;
 
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
+import com.badlogic.gdx.graphics.GL20;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,7 +26,9 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
     HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
 
     new HeadlessApplication(this, conf);
-    Gdx.gl20 = new FakeGL20();
+    Gdx.gl20 = mock(GL20.class);
+    when(Gdx.gl20.glCheckFramebufferStatus(anyInt())).thenReturn(GL20.GL_FRAMEBUFFER_COMPLETE);
+
     Gdx.gl = Gdx.gl20;
   }
 
