@@ -3,9 +3,12 @@ package com.devcharles.piazzapanic.components;
 import static org.junit.Assert.*;
 
 import com.badlogic.ashley.core.Entity;
+import com.devcharles.piazzapanic.GdxTestRunner;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(GdxTestRunner.class)
 public class CustomerComponentTest {
 
   @Test
