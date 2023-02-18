@@ -9,53 +9,88 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.devcharles.piazzapanic.GdxTestRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(GdxTestRunner.class)
 public class Box2dRadiusProximityTest {
 
-  @Test
-  public void getSteerable() {
-    World world = new World(new Vector2(0, 0), true);
-    BodyDef def = new BodyDef();
-    FixtureDef fixtureDef = new FixtureDef();
-    CircleShape circle = new CircleShape();
-    circle.setRadius(0.5f);
-    fixtureDef.shape = circle;
+  private static class ProximitySteerable {
 
-    Body aiBody = world.createBody(def);
-    Box2dSteeringBody aiSteeringBody = new Box2dSteeringBody(aiBody, true, 2f);
-    Box2dRadiusProximity aiProximity = new Box2dRadiusProximity(aiSteeringBody, world, 2f);
+    public Box2dRadiusProximity ownerProximity;
+    public Body otherBody;
+    public Fixture otherFixture;
 
-    Body otherBody = world.createBody(def);
-    Fixture fixture = otherBody.createFixture(fixtureDef);
+    ProximitySteerable() {
+      World world = new World(new Vector2(0, 0), true);
+      BodyDef def = new BodyDef();
+      FixtureDef fixtureDef = new FixtureDef();
+      CircleShape circle = new CircleShape();
+      circle.setRadius(0.5f);
+      fixtureDef.shape = circle;
 
-    assertNull("AI proximity should not find steering body on other fixture.",
-        aiProximity.getSteerable(fixture));
-    fixture.getBody().setUserData("String");
-    assertNull("AI proximity should not crash with other data types on other fixture.",
-        aiProximity.getSteerable(fixture));
-    Box2dSteeringBody otherSteeringBody = new Box2dSteeringBody(otherBody, true, 2f);
-    assertEquals("When steering body is initialised, it should be found in userData.",
-        aiProximity.getSteerable(fixture), otherSteeringBody);
+      Body ownerBody = world.createBody(def);
+      Box2dSteeringBody ownerSteeringBody = new Box2dSteeringBody(ownerBody, true, 2f);
+      ownerBody.setTransform(0, 0, 0);
+      ownerProximity = new Box2dRadiusProximity(ownerSteeringBody, world, 2f);
+
+      otherBody = world.createBody(def);
+      otherFixture = otherBody.createFixture(fixtureDef);
+    }
   }
 
   @Test
-  public void accept() {
-    World world = new World(new Vector2(0, 0), true);
-    BodyDef def = new BodyDef();
-    Body ownerBody = world.createBody(def);
-    Box2dSteeringBody ownerSteeringBody = new Box2dSteeringBody(ownerBody, true, 2f);
-    ownerBody.setTransform(0, 0, 0);
+  public void testGetSteerableInvalidUserData() {
+    ProximitySteerable data = new ProximitySteerable();
 
-    Body otherBody = world.createBody(def);
-    Box2dSteeringBody otherSteeringBody = new Box2dSteeringBody(otherBody, true, 2f);
-    otherBody.setTransform(5, 0, 0);
+    data.otherBody.setUserData("String");
+    assertNull("AI proximity should not crash with other data types on other fixture.",
+        data.ownerProximity.getSteerable(data.otherFixture));
+  }
 
-    Box2dRadiusProximity proximity = new Box2dRadiusProximity(ownerSteeringBody, world, 2f);
-    assertFalse("Other body should not be accepted as it should be out of range.",
-        proximity.accept(otherSteeringBody));
-    otherBody.setTransform(0, 0, 0);
+  @Test
+  public void testGetSteerableNullUserData() {
+    ProximitySteerable data = new ProximitySteerable();
+    assertNull("AI proximity should not find steering body on other fixture.",
+        data.ownerProximity.getSteerable(data.otherFixture));
+  }
+
+  @Test
+  public void testGetSteerableValidUserData() {
+    ProximitySteerable data = new ProximitySteerable();
+    Box2dSteeringBody otherSteeringBody = new Box2dSteeringBody(data.otherBody, true, 2f);
+    assertEquals("When steering body is initialised, it should be found in userData.",
+        data.ownerProximity.getSteerable(data.otherFixture), otherSteeringBody);
+  }
+
+  @Test
+  public void testAcceptInRange() {
+    ProximitySteerable data = new ProximitySteerable();
+    Box2dSteeringBody otherSteeringBody = new Box2dSteeringBody(data.otherBody, true, 2f);
+    data.otherBody.setTransform(0, 0, 0);
+
     assertTrue("Other body should be accepted as it should be in range.",
-        proximity.accept(otherSteeringBody));
+        data.ownerProximity.accept(otherSteeringBody));
+  }
+
+  @Test
+  public void testAcceptOutOfRange() {
+    ProximitySteerable data = new ProximitySteerable();
+    Box2dSteeringBody otherSteeringBody = new Box2dSteeringBody(data.otherBody, true, 2f);
+    data.otherBody.setTransform(5, 0, 0);
+
+    assertFalse("Other body should not be accepted as it should be out of range.",
+        data.ownerProximity.accept(otherSteeringBody));
+  }
+
+  @Test
+  public void testAcceptBorderRange() {
+    ProximitySteerable data = new ProximitySteerable();
+    Box2dSteeringBody otherSteeringBody = new Box2dSteeringBody(data.otherBody, true, 2f);
+    data.otherBody.setTransform(4, 0, 0);
+
+    assertTrue("Other body should be accepted as it should be just in range.",
+        data.ownerProximity.accept(otherSteeringBody));
   }
 }
