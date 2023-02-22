@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.devcharles.piazzapanic.AssetTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-02-22T16:44:51" hostname="MATT-LAPTOP" time="0.003">
+  <properties/>
+  <testcase name="testDropeletAssetExists" classname="com.devcharles.piazzapanic.AssetTests" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
