@@ -16,7 +16,7 @@ public class GdxTimerTest {
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
         int incrementOriginalTime = spawnTimer.getElapsed()+1000;
         spawnTimer.tick(1);
-        assertEquals(incrementOriginalTime,spawnTimer.getElapsed());
+        assertEquals("Expect timer to increment by 1.",incrementOriginalTime,spawnTimer.getElapsed());
     }
 
     @Test
@@ -24,7 +24,7 @@ public class GdxTimerTest {
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
         int incrementOriginalTime = spawnTimer.getElapsed();
         spawnTimer.tick(0);
-        assertEquals(incrementOriginalTime,spawnTimer.getElapsed());
+        assertEquals("Expect no time to be added.",incrementOriginalTime,spawnTimer.getElapsed());
     }
 
     @Test
@@ -32,7 +32,7 @@ public class GdxTimerTest {
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
         int incrementOriginalTime = spawnTimer.getElapsed()+1000;
         spawnTimer.tick(31);
-        assertEquals(incrementOriginalTime,spawnTimer.getElapsed());
+        assertEquals("Expect timer to reset after 30s and continue.",incrementOriginalTime,spawnTimer.getElapsed());
     }
 
     @Test
@@ -40,7 +40,7 @@ public class GdxTimerTest {
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
         int incrementOriginalTime = (int) (spawnTimer.getElapsed()+0.1);
         spawnTimer.tick(0.0001f);
-        assertEquals(incrementOriginalTime,spawnTimer.getElapsed());
+        assertEquals("Expect timer to increase by a small amount.",incrementOriginalTime,spawnTimer.getElapsed());
     }
 
     @Test
@@ -48,41 +48,41 @@ public class GdxTimerTest {
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
         int incrementOriginalTime = spawnTimer.getElapsed()+970000;
         spawnTimer.tick(1000);
-        assertEquals(incrementOriginalTime,spawnTimer.getElapsed());
+        assertEquals("Expect timer to increase by large amount while resetting to 0 after 30s.",incrementOriginalTime,spawnTimer.getElapsed());
     }
 
     @Test
     public void tickTestNotRunning() {
         GdxTimer spawnTimer = new GdxTimer(30000, false, true);
         int incrementOriginalTime = spawnTimer.getElapsed();
-        assertFalse(spawnTimer.tick(10));
+        assertFalse("Expect timer to not increase.",spawnTimer.tick(10));
         spawnTimer.tick(10);
-        assertEquals(incrementOriginalTime,spawnTimer.getElapsed());
+        assertEquals("Expect time to be 0.",incrementOriginalTime,spawnTimer.getElapsed());
     }
     @Test
     public void tickTestGetRunningFalse(){
         GdxTimer spawnTimer = new GdxTimer(30000, false, true);
-        assertFalse(spawnTimer.isRunning());
+        assertFalse("Expect timer to not be running.",spawnTimer.isRunning());
     }
 
     @Test
     public void tickTestGetRunningTrue(){
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
-        assertTrue(spawnTimer.isRunning());
+        assertTrue("Expect timer to run as expected.",spawnTimer.isRunning());
     }
 
     @Test
     public void tickTestStart(){
         GdxTimer spawnTimer = new GdxTimer(30000, false, true);
         spawnTimer.start();
-        assertTrue(spawnTimer.isRunning());
+        assertTrue("Expect timer to have started.",spawnTimer.isRunning());
     }
 
     @Test
     public void tickTestStop(){
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
         spawnTimer.stop();
-        assertFalse(spawnTimer.isRunning());
+        assertFalse("Expect timer to stop.",spawnTimer.isRunning());
     }
 
     @Test
@@ -90,6 +90,6 @@ public class GdxTimerTest {
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
         spawnTimer.tick(1000);
         spawnTimer.reset();
-        assertEquals(0,spawnTimer.getElapsed());
+        assertEquals("Expect timer to go to 0.",0,spawnTimer.getElapsed());
     }
 }
