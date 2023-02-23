@@ -32,7 +32,7 @@ public class GdxTimerTest {
         GdxTimer spawnTimer = new GdxTimer(30000, true, true);
         int incrementOriginalTime = spawnTimer.getElapsed()+1000;
         spawnTimer.tick(31);
-        assertEquals("Expect timer to reset after 30s and continue.",incrementOriginalTime,spawnTimer.getElapsed());
+        assertEquals("Expect timer to reset after 30s then continue.",incrementOriginalTime,spawnTimer.getElapsed());
     }
 
     @Test
