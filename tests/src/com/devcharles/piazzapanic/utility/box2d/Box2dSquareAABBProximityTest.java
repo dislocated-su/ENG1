@@ -18,13 +18,14 @@ import org.junit.runner.RunWith;
 @RunWith(GdxTestRunner.class)
 public class Box2dSquareAABBProximityTest {
 
-  private static class ProximitySteerable {
+  private static class ProximitySteerableTestClass {
 
     public Box2dRadiusProximity ownerProximity;
+    public Box2dSteeringBody ownerSteeringBody;
     public Body otherBody;
     public Fixture otherFixture;
 
-    ProximitySteerable() {
+    ProximitySteerableTestClass() {
       World world = new World(new Vector2(0, 0), true);
       BodyDef def = new BodyDef();
       FixtureDef fixtureDef = new FixtureDef();
@@ -33,7 +34,7 @@ public class Box2dSquareAABBProximityTest {
       fixtureDef.shape = circle;
 
       Body ownerBody = world.createBody(def);
-      Box2dSteeringBody ownerSteeringBody = new Box2dSteeringBody(ownerBody, true, 2f);
+      ownerSteeringBody = new Box2dSteeringBody(ownerBody, true, 2f);
       ownerBody.setTransform(0, 0, 0);
       ownerProximity = new Box2dRadiusProximity(ownerSteeringBody, world, 2f);
 
@@ -116,7 +117,8 @@ public class Box2dSquareAABBProximityTest {
     otherBody.createFixture(fixtureDef);
     new Box2dSteeringBody(otherBody, true, 2f);
 
-    assertEquals("There should be one other body within range", 1, ownerProximity.findNeighbors(proximityCallback));
+    assertEquals("There should be one other body within range", 1,
+        ownerProximity.findNeighbors(proximityCallback));
   }
 
   @Test
@@ -139,11 +141,12 @@ public class Box2dSquareAABBProximityTest {
     otherBody.createFixture(fixtureDef);
     new Box2dSteeringBody(otherBody, true, 2f);
 
-    assertEquals("There should be no other body within range", 0, ownerProximity.findNeighbors(proximityCallback));
+    assertEquals("There should be no other body within range", 0,
+        ownerProximity.findNeighbors(proximityCallback));
   }
 
   @Test
-  public void prepareAABB() {
+  public void testPrepareAABB() {
     AABB aabb = new AABB();
     Vector2 position = new Vector2(1, 2);
     float detectionRadius = 2f;
@@ -165,7 +168,7 @@ public class Box2dSquareAABBProximityTest {
 
   @Test
   public void testGetSteerableInvalidUserData() {
-    ProximitySteerable data = new ProximitySteerable();
+    ProximitySteerableTestClass data = new ProximitySteerableTestClass();
 
     data.otherBody.setUserData("String");
     assertNull("AI proximity should not crash with other data types on other fixture.",
@@ -174,14 +177,14 @@ public class Box2dSquareAABBProximityTest {
 
   @Test
   public void testGetSteerableNullUserData() {
-    ProximitySteerable data = new ProximitySteerable();
+    ProximitySteerableTestClass data = new ProximitySteerableTestClass();
     assertNull("AI proximity should not find steering body on other fixture.",
         data.ownerProximity.getSteerable(data.otherFixture));
   }
 
   @Test
   public void testGetSteerableValidUserData() {
-    ProximitySteerable data = new ProximitySteerable();
+    ProximitySteerableTestClass data = new ProximitySteerableTestClass();
     Box2dSteeringBody otherSteeringBody = new Box2dSteeringBody(data.otherBody, true, 2f);
     assertEquals("When steering body is initialised, it should be found in userData.",
         otherSteeringBody, data.ownerProximity.getSteerable(data.otherFixture));
@@ -190,13 +193,28 @@ public class Box2dSquareAABBProximityTest {
 
   @Test
   public void testAccept() {
-    ProximitySteerable data = new ProximitySteerable();
+    ProximitySteerableTestClass data = new ProximitySteerableTestClass();
     Box2dSteeringBody otherSteeringBody = new Box2dSteeringBody(data.otherBody, true, 2f);
     assertTrue("Any steering body should be accepted.",
         data.ownerProximity.accept(otherSteeringBody));
   }
 
   @Test
-  public void reportFixture() {
+  public void testReportFixtureValidSteeringBody() {
+    ProximitySteerableTestClass data = new ProximitySteerableTestClass();
+    new Box2dSteeringBody(data.otherBody, true, 2f); // Add steering body to fixture
+    data.ownerProximity.behaviorCallback = new Separation<>(data.ownerSteeringBody,
+        data.ownerProximity);
+    assertTrue("Expect report fixture to return true as there is a valid steering body.",
+        data.ownerProximity.reportFixture(data.otherFixture));
+  }
+
+  @Test
+  public void testReportFixtureNoSteeringBody() {
+    ProximitySteerableTestClass data = new ProximitySteerableTestClass();
+    data.ownerProximity.behaviorCallback = new Separation<>(data.ownerSteeringBody,
+        data.ownerProximity);
+    assertFalse("Expect report fixture to not find a steerable and return false",
+        data.ownerProximity.reportFixture(data.otherFixture));
   }
 }
