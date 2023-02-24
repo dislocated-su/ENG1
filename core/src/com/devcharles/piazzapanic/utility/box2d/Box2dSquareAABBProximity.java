@@ -110,10 +110,9 @@ public class Box2dSquareAABBProximity implements Proximity<Vector2>, QueryCallba
     aabb.upperY = position.y + detectionRadius;
   }
 
-  @SuppressWarnings("unchecked")
   protected Steerable<Vector2> getSteerable(Fixture fixture) {
-    if (fixture.getBody().getUserData() instanceof Steerable<?>) {
-      return (Steerable<Vector2>) fixture.getBody().getUserData();
+    if (fixture.getBody().getUserData() instanceof Box2dSteeringBody) {
+      return (Box2dSteeringBody) fixture.getBody().getUserData();
     } else {
       return null;
     }
