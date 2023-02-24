@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 public class AssetTests {
 
     @Test
-    public void testDropeletAssetExists() throws Exception {
+    public void testDropletAssetExists() throws Exception {
         assertTrue("Check existance of droplet assets", Gdx.files.internal("v2/food.png").exists());
     }
 }
