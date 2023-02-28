@@ -80,7 +80,7 @@ public class CustomerAISystem extends IteratingSystem {
 
         this.hud = hud;
         this.objectives = objectives;
-        this.objectiveTaken = new HashMap<Integer, Boolean>();
+        this.objectiveTaken = new HashMap<>();
         this.reputationPoints = reputationPoints;
 
         // Use a reference to the world to destroy box2d bodies when despawning
@@ -182,7 +182,7 @@ public class CustomerAISystem extends IteratingSystem {
     }
 
     /**
-     * Give the customer an objetive to go to.
+     * Give the customer an objective to go to.
      * @param locationID and id from {@link CustomerAISystem.objectives}
      */
     private void makeItGoThere(AIAgentComponent aiAgent, int locationID) {
@@ -190,17 +190,17 @@ public class CustomerAISystem extends IteratingSystem {
 
         Box2dLocation there = objectives.get(locationID);
 
-        Arrive<Vector2> arrive = new Arrive<Vector2>(aiAgent.steeringBody)
+        Arrive<Vector2> arrive = new Arrive<>(aiAgent.steeringBody)
                 .setTimeToTarget(0.1f)
                 .setArrivalTolerance(0.25f)
                 .setDecelerationRadius(2)
                 .setTarget(there);
 
         Proximity<Vector2> proximity = new Box2dRadiusProximity(aiAgent.steeringBody, world, 1f);
-        CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<Vector2>(
+        CollisionAvoidance<Vector2> collisionAvoidance = new CollisionAvoidance<>(
                 aiAgent.steeringBody, proximity);
 
-        PrioritySteering<Vector2> prioritySteering = new PrioritySteering<Vector2>(aiAgent.steeringBody)
+        PrioritySteering<Vector2> prioritySteering = new PrioritySteering<>(aiAgent.steeringBody)
                 .add(collisionAvoidance)
                 .add(arrive);
 

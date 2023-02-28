@@ -8,11 +8,11 @@ project.ext.assetsDir = new File("../assets")
 import org.gradle.internal.os.OperatingSystem
 
 task run(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
+    mainClass = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue = true
+    ignoreExitValue = true as JavaExecSpec
 
     if (OperatingSystem.current() == OperatingSystem.MAC_OS) {
         // Required to run on macOS
@@ -21,11 +21,11 @@ task run(dependsOn: classes, type: JavaExec) {
 }
 
 task debug(dependsOn: classes, type: JavaExec) {
-    main = project.mainClassName
+    mainClass = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue = true
+    ignoreExitValue = true as JavaExecSpec
     debug = true
 }
 

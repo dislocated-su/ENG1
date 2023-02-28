@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class AssetTest {
 
   @Test
-  public void mainMenuImageExists() {
+  public void testMainMenuImageExists() {
     assertTrue("This test will only pass when mainMenuImage.png exists",
         Gdx.files.internal("mainMenuImage.png").exists());
   }

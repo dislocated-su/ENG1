@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 public class CustomerComponentTest {
 
   @Test
-  public void reset() {
+  public void testReset() {
     CustomerComponent testValue = new CustomerComponent();
     CustomerComponent defaultValue = new CustomerComponent();
 
