@@ -59,6 +59,7 @@ public class GameScreen implements Screen {
 
         // The rayhandler is responsible for rendering the lights.
         rayhandler = new RayHandler(world);
+        rayhandler.setAmbientLight(0.4f);
 
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
