@@ -5,13 +5,16 @@ import static org.mockito.Mockito.mock;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.ai.steer.SteeringBehavior;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.GdxTestRunner;
+import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
 import java.util.HashMap;
 import org.junit.Test;
@@ -78,8 +81,30 @@ public class CustomerAISystemTest {
 
     system.destroyCustomer(null);
   }
+
   @Test
-  public void makeItGoThere() {
+  public void testMakeItGoThere() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+    HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
+    objectives.put(1, new Box2dLocation());
+    CustomerAISystem system = new CustomerAISystem(objectives, world,
+        factory, mock(Hud.class), new Integer[]{});
+    engine.addSystem(system);
+    Entity customer = factory.createCustomer(Vector2.Zero);
+    AIAgentComponent aiAgentComponent = Mappers.aiAgent.get(customer);
+
+    assertNull("There should be no steering behaviour.",
+        aiAgentComponent.steeringBody.getSteeringBehavior());
+
+    system.makeItGoThere(aiAgentComponent, -1);
+    SteeringBehavior<Vector2> oldBehaviour = aiAgentComponent.steeringBody.getSteeringBehavior();
+    assertNotNull("There should be steering behaviour.", oldBehaviour);
+
+    system.makeItGoThere(aiAgentComponent, 0);
+    assertNotEquals("The steering behaviour should be different.", oldBehaviour,
+        aiAgentComponent.steeringBody.getSteeringBehavior());
   }
 
   @Test
