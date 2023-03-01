@@ -29,7 +29,7 @@ public class CustomerAISystemTest {
   }
 
   @Test
-  public void testDestroyCustomer() {
+  public void testDestroyCustomerValid() {
     World world = new World(Vector2.Zero, true);
     PooledEngine engine = new PooledEngine();
     EntityFactory factory = new EntityFactory(engine, world);
@@ -54,6 +54,30 @@ public class CustomerAISystemTest {
     assertEquals("Customer should not have a physical representation", 0, world.getBodyCount());
   }
 
+  @Test(expected = NullPointerException.class)
+  public void testDestroyCustomerInvalidEntity() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+    CustomerAISystem system = new CustomerAISystem(new HashMap<Integer, Box2dLocation>(), world,
+        factory, mock(Hud.class), new Integer[]{});
+    engine.addSystem(system);
+    Entity customer = new Entity();
+
+    system.destroyCustomer(customer);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void testDestroyCustomerNull() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+    CustomerAISystem system = new CustomerAISystem(new HashMap<Integer, Box2dLocation>(), world,
+        factory, mock(Hud.class), new Integer[]{});
+    engine.addSystem(system);
+
+    system.destroyCustomer(null);
+  }
   @Test
   public void makeItGoThere() {
   }
