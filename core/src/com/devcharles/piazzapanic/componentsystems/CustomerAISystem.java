@@ -47,7 +47,7 @@ public class CustomerAISystem extends IteratingSystem {
   private boolean firstSpawn = true;
 
   // List of customers, on removal we move the other customers up a place (queueing).
-  private final ArrayList<Entity> customers = new ArrayList<Entity>() {
+  protected final ArrayList<Entity> customers = new ArrayList<Entity>() {
     @Override
     public boolean remove(Object o) {
       for (Entity entity : customers) {

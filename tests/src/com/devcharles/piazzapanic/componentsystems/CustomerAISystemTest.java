@@ -109,5 +109,22 @@ public class CustomerAISystemTest {
 
   @Test
   public void fulfillOrder() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+    CustomerAISystem system = new CustomerAISystem(new HashMap<Integer, Box2dLocation>(), world,
+        factory, mock(Hud.class), new Integer[]{});
+    engine.addSystem(system);
+    Entity customer = factory.createCustomer(Vector2.Zero);
+    Entity food = factory.createFood(FoodType.from(1));
+    CustomerComponent customerComponent = Mappers.customer.get(customer);
+    customerComponent.order = FoodType.burger;
+
+    system.customers.add(customer);
+    system.fulfillOrder(customer, customerComponent, food);
+    assertEquals("There should be no more customers.", 0, system.customers.size());
+    assertFalse("Timer should be stopped.", customerComponent.timer.isRunning());
+    assertEquals("Customer's food should be the same as the food above.", food,
+        customerComponent.food);
   }
 }
