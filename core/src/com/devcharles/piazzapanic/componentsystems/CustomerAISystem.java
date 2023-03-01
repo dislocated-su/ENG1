@@ -95,7 +95,9 @@ public class CustomerAISystem extends IteratingSystem {
 
   @Override
   public void update(float deltaTime) {
-    if (firstSpawn || (spawnTimer.tick(deltaTime) && numOfCustomerTotal < CUSTOMER)) {
+    // Ensure timer actually ticks, and is not short-circuited by firstSpawn being true
+    boolean timerComplete = spawnTimer.tick(deltaTime);
+    if (firstSpawn || (timerComplete && numOfCustomerTotal < CUSTOMER)) {
       firstSpawn = false;
       Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
       customers.add(newCustomer);

@@ -12,6 +12,7 @@ import com.devcharles.piazzapanic.GdxTestRunner;
 import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.Mappers;
@@ -25,10 +26,102 @@ public class CustomerAISystemTest {
 
   @Test
   public void update() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+    HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
+    objectives.put(-2, new Box2dLocation());
+    objectives.put(0, new Box2dLocation());
+    objectives.put(1, new Box2dLocation());
+    CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
+        new Integer[]{3});
+    engine.addSystem(system);
+
+    assertEquals("There should be no customers to start with.", 0, system.customers.size());
+    engine.update(1f);
+    assertEquals("There should be a customer on the first frame.", 1, system.customers.size());
+    engine.update(29f);
+    assertEquals("There should still be 1 customer as the timer is not bigger than the delay.", 1,
+        system.customers.size());
+    engine.update(0.001f);
+    assertEquals("There should be 2 customers on the very next frame past the limit.", 2,
+        system.customers.size());
   }
 
   @Test
-  public void processEntity() {
+  public void testProcessEntityLoseReputation() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+
+    HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
+    objectives.put(-2, new Box2dLocation());
+    objectives.put(0, new Box2dLocation());
+
+    Integer[] reputationPoints = new Integer[]{3};
+    CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
+        reputationPoints);
+    engine.addSystem(system);
+
+    engine.update(1f);
+    system.processEntity(system.customers.get(0), 91f);
+    assertEquals("Reputation should decrease after over 90 seconds.", 2,
+        reputationPoints[0].intValue());
+  }
+
+  @Test
+  public void testProcessEntityExitsWithFood() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+
+    HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
+    objectives.put(-2, new Box2dLocation());
+    objectives.put(-1, new Box2dLocation());
+    objectives.put(0, new Box2dLocation());
+
+    Integer[] reputationPoints = new Integer[]{3};
+    CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
+        reputationPoints);
+    engine.addSystem(system);
+
+    engine.update(1f);
+    Entity customer = system.customers.get(0);
+    TransformComponent transformComponent = Mappers.transform.get(customer);
+    CustomerComponent customerComponent = Mappers.customer.get(customer);
+    transformComponent.position.x = 1f;
+    customerComponent.food = factory.createFood(FoodType.burger);
+    system.processEntity(system.customers.get(0), 1f);
+
+    assertEquals("When the customer is to the right of the objective with food, it should be gone",
+        0, engine.getEntities().size());
+  }
+
+  @Test
+  public void testProcessEntityChefInteract() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+
+    HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
+    objectives.put(-2, new Box2dLocation());
+    objectives.put(-1, new Box2dLocation());
+    objectives.put(0, new Box2dLocation());
+
+    Integer[] reputationPoints = new Integer[]{3};
+    CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
+        reputationPoints);
+    engine.addSystem(system);
+
+    engine.update(1f);
+    Entity customer = system.customers.get(0);
+    CustomerComponent customerComponent = Mappers.customer.get(customer);
+    customerComponent.interactingCook = factory.createCook(0, 0);
+    system.processEntity(system.customers.get(0), 1f);
+
+    // TODO: Test if player component exists or not
+    // TODO: Test if the cook has any food
+    // TODO: Test if the food matches the order
   }
 
   @Test
