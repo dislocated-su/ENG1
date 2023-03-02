@@ -1,0 +1,70 @@
+{
+    "activeFile": "map.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "b_kitchen.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
+        "kitchen.tmx": {
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 37,
+                "y": 312.66666666666663
+            }
+        },
+        "kitchen.tmx#b_kitchen": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "map.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 6,
+            "viewCenter": {
+                "x": 834.3333333333333,
+                "y": 771.3333333333333
+            }
+        },
+        "objects.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "tileset_32.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "tileset_321.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        }
+    },
+    "last.exportedFilePath": "C:/Users/rossh/OneDrive/My Documents/GitHub/ENG1/assets/v2",
+    "last.externalTilesetPath": "C:/Users/rossh/OneDrive/My Documents/GitHub/ENG1/assets/v2",
+    "last.imagePath": "D:/src/ENG1/assets/v2",
+    "map.lastUsedExportFilter": "All Files (*)",
+    "openFiles": [
+        "map.tmx",
+        "objects.tsx",
+        "tileset_32.tsx"
+    ],
+    "project": "",
+    "property.type": "int",
+    "recentFiles": [
+        "tileset_32.tsx",
+        "objects.tsx",
+        "map.tmx",
+        "tileset_321.tsx",
+        "b_kitchen.tsx",
+        "kitchen.tmx"
+    ],
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 2,
+    "tileset.spacing": 4
+}
