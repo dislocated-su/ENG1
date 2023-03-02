@@ -22,21 +22,15 @@ public class YComparatorTest {
         World world = new World(new Vector2(0,0),true);
         PooledEngine engine = new PooledEngine();
         TransformComponent transform = engine.createComponent(TransformComponent.class);
-        B2dBodyComponent body = engine.createComponent(B2dBodyComponent.class);
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(1,2);
-
-        body.body = world.createBody(bodyDef);
 
         YComparator YComparator = new YComparator();
 
         Entity a = new Entity();
         Entity b = new Entity();
 
-        a.add(body);
+        transform.position.y = 1;
+
         a.add(transform);
-        b.add(body);
         b.add(transform);
 
         engine.addEntity(a);
@@ -51,26 +45,12 @@ public class YComparatorTest {
     @Test
     public void NotEqualTest() {
 
+
         World world = new World(new Vector2(0,0),true);
         PooledEngine engine = new PooledEngine();
 
         TransformComponent transformA = engine.createComponent(TransformComponent.class);
         TransformComponent transformB = engine.createComponent(TransformComponent.class);
-        B2dBodyComponent bodyA = engine.createComponent(B2dBodyComponent.class);
-        B2dBodyComponent bodyB = engine.createComponent(B2dBodyComponent.class);
-
-        BodyDef bodyDefA = new BodyDef();
-        bodyDefA.type = BodyDef.BodyType.StaticBody;
-        bodyDefA.position.set(1,4);
-
-        bodyA.body = world.createBody(bodyDefA);
-
-        BodyDef bodyDefB = new BodyDef();
-        bodyDefB.type = BodyDef.BodyType.StaticBody;
-        bodyDefB.position.set(2,2);
-
-
-        bodyB.body = world.createBody(bodyDefB);
 
 
         YComparator YComparator = new YComparator();
@@ -78,19 +58,36 @@ public class YComparatorTest {
         Entity a = new Entity();
         Entity b = new Entity();
 
-        a.add(bodyA);
         a.add(transformA);
-        b.add(bodyB);
         b.add(transformB);
+
+        a.getComponent(TransformComponent.class).position.y = 3.0f;
+        b.getComponent(TransformComponent.class).position.y = 6.0f;
 
         engine.addEntity(a);
         engine.addEntity(b);
 
-        int comp_value = YComparator.compare(a,b);
+        int comp_value_less = YComparator.compare(a,b);
 
-        assertNotEquals("Checks that they don't have the same y value", Math.round(Mappers.transform.get(a).position.y) ,
-                Math.round(Mappers.transform.get(b).position.y));
-        assertNotEquals("Checks to see if the comparator does not return a 0", 0, comp_value);
+        Entity c = new Entity();
+        Entity d = new Entity();
+
+        c.add(transformB);
+        d.add(transformA);
+
+        engine.addEntity(c);
+        engine.addEntity(d);
+
+        int comp_value_greater = YComparator.compare(c,d);
+
+        System.out.println(Math.round(Mappers.transform.get(a).position.y));
+        System.out.println(Math.round(Mappers.transform.get(b).position.y));
+        System.out.println(Math.round(Mappers.transform.get(c).position.y));
+        System.out.println(Math.round(Mappers.transform.get(d).position.y));
+
+        // Comparator returns a 1 if the first argument's Y is less
+        assertEquals("A 1 is returned if the first argument's Y is less ", 1, comp_value_less);
+        assertEquals("A 1 is returned if the first argument's Y is less ", -1, comp_value_greater);
 
     }
 
