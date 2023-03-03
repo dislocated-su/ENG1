@@ -43,7 +43,7 @@ public class MapBodyBuilder {
         ppt = pixels;
         MapObjects shadowedObjects = map.getLayers().get("Obstacles").getObjects();
 
-        Array<Body> bodies = new Array<Body>();
+        Array<Body> bodies = new Array<>();
 
         for (MapObject object : shadowedObjects) {
 
@@ -87,7 +87,7 @@ public class MapBodyBuilder {
         return bodies;
     }
 
-    static Shape decideShape(MapObject object) {
+    protected static Shape decideShape(MapObject object) {
         if (object instanceof TextureMapObject) {
             return null;
         }
@@ -109,7 +109,7 @@ public class MapBodyBuilder {
         return shape;
     }
 
-    static PolygonShape getRectangle(RectangleMapObject rectangleObject) {
+    protected static PolygonShape getRectangle(RectangleMapObject rectangleObject) {
         Rectangle rectangle = rectangleObject.getRectangle();
         PolygonShape polygon = new PolygonShape();
         Vector2 size = new Vector2((rectangle.x + rectangle.width * 0.5f) / ppt,
@@ -121,7 +121,7 @@ public class MapBodyBuilder {
         return polygon;
     }
 
-    static CircleShape getCircle(CircleMapObject circleObject) {
+    protected static CircleShape getCircle(CircleMapObject circleObject) {
         Circle circle = circleObject.getCircle();
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(circle.radius / ppt);
@@ -129,7 +129,7 @@ public class MapBodyBuilder {
         return circleShape;
     }
 
-    static PolygonShape getPolygon(PolygonMapObject polygonObject) {
+    protected static PolygonShape getPolygon(PolygonMapObject polygonObject) {
         PolygonShape polygon = new PolygonShape();
         float[] vertices = polygonObject.getPolygon().getTransformedVertices();
 
@@ -144,7 +144,7 @@ public class MapBodyBuilder {
         return polygon;
     }
 
-    static ChainShape getPolyline(PolylineMapObject polylineObject) {
+    protected static ChainShape getPolyline(PolylineMapObject polylineObject) {
         float[] vertices = polylineObject.getPolyline().getTransformedVertices();
         Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
