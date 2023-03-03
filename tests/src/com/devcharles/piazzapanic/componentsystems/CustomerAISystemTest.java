@@ -10,8 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.GdxTestRunner;
 import com.devcharles.piazzapanic.components.AIAgentComponent;
+import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
@@ -25,7 +27,7 @@ import org.junit.runner.RunWith;
 public class CustomerAISystemTest {
 
   @Test
-  public void update() {
+  public void testUpdate() {
     World world = new World(Vector2.Zero, true);
     PooledEngine engine = new PooledEngine();
     EntityFactory factory = new EntityFactory(engine, world);
@@ -98,7 +100,7 @@ public class CustomerAISystemTest {
   }
 
   @Test
-  public void testProcessEntityChefInteract() {
+  public void testProcessEntityChefInteractValidFood() {
     World world = new World(Vector2.Zero, true);
     PooledEngine engine = new PooledEngine();
     EntityFactory factory = new EntityFactory(engine, world);
@@ -117,11 +119,88 @@ public class CustomerAISystemTest {
     Entity customer = system.customers.get(0);
     CustomerComponent customerComponent = Mappers.customer.get(customer);
     customerComponent.interactingCook = factory.createCook(0, 0);
-    system.processEntity(system.customers.get(0), 1f);
+    customerComponent.interactingCook.add(engine.createComponent(PlayerComponent.class));
+    ControllableComponent cookComponent = Mappers.controllable.get(
+        customerComponent.interactingCook);
+    PlayerComponent playerComponent = Mappers.player.get(customerComponent.interactingCook);
+    playerComponent.putDown = true;
 
-    // TODO: Test if player component exists or not
-    // TODO: Test if the cook has any food
-    // TODO: Test if the food matches the order
+    Entity food = factory.createFood(customerComponent.order);
+    cookComponent.currentFood.pushItem(food, customerComponent.interactingCook);
+
+    assertNull("Customer should not have food.", customerComponent.food);
+    assertEquals("Cook should have a recipe.", food, cookComponent.currentFood.peek());
+    system.processEntity(customer, 1f);
+    assertEquals("Customer should now have the recipe.", food, customerComponent.food);
+    assertTrue("Cook should no longer have a recipe.", cookComponent.currentFood.isEmpty());
+    assertFalse("Player should not be putting down.", playerComponent.putDown);
+  }
+
+  @Test
+  public void testProcessEntityChefInteractNoPlayerComponent() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+
+    HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
+    objectives.put(-2, new Box2dLocation());
+    objectives.put(-1, new Box2dLocation());
+    objectives.put(0, new Box2dLocation());
+
+    Integer[] reputationPoints = new Integer[]{3};
+    CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
+        reputationPoints);
+    engine.addSystem(system);
+
+    engine.update(1f);
+    Entity customer = system.customers.get(0);
+    CustomerComponent customerComponent = Mappers.customer.get(customer);
+    customerComponent.interactingCook = factory.createCook(0, 0);
+
+    ControllableComponent cookComponent = Mappers.controllable.get(
+        customerComponent.interactingCook);
+    Entity food = factory.createFood(customerComponent.order);
+    cookComponent.currentFood.pushItem(food, customerComponent.interactingCook);
+
+    system.processEntity(customer, 1f);
+    assertEquals("The chef should not give an item if it is not the player.", 1,
+        cookComponent.currentFood.size());
+  }
+
+  @Test
+  public void testProcessEntityChefInteractInvalidFood() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+
+    HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
+    objectives.put(-2, new Box2dLocation());
+    objectives.put(-1, new Box2dLocation());
+    objectives.put(0, new Box2dLocation());
+
+    Integer[] reputationPoints = new Integer[]{3};
+    CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
+        reputationPoints);
+    engine.addSystem(system);
+
+    engine.update(1f);
+    Entity customer = system.customers.get(0);
+    CustomerComponent customerComponent = Mappers.customer.get(customer);
+    customerComponent.interactingCook = factory.createCook(0, 0);
+    customerComponent.interactingCook.add(engine.createComponent(PlayerComponent.class));
+    PlayerComponent playerComponent = Mappers.player.get(customerComponent.interactingCook);
+    playerComponent.putDown = true;
+
+    ControllableComponent cookComponent = Mappers.controllable.get(
+        customerComponent.interactingCook);
+    Entity food = factory.createFood(FoodType.tomato);
+    cookComponent.currentFood.pushItem(food, customerComponent.interactingCook);
+
+    system.processEntity(customer, 1f);
+    assertTrue("The food should be removed.",
+        cookComponent.currentFood.isEmpty());
+    assertFalse("Food should no longer exist.", engine.getEntities().contains(food, true));
+    assertNull("The customer should not have the food.", customerComponent.food);
   }
 
   @Test
@@ -201,7 +280,7 @@ public class CustomerAISystemTest {
   }
 
   @Test
-  public void fulfillOrder() {
+  public void testFulfillOrder() {
     World world = new World(Vector2.Zero, true);
     PooledEngine engine = new PooledEngine();
     EntityFactory factory = new EntityFactory(engine, world);
