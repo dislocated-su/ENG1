@@ -14,9 +14,4 @@ public class AssetTest {
     assertTrue("This test will only pass when mainMenuImage.png exists",
         Gdx.files.internal("mainMenuImage.png").exists());
   }
-
-  @Test
-  public void testShouldFail() {
-    fail("This should fail.");
-  }
 }
