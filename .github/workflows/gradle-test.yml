@@ -5,10 +5,12 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java Build JAR with Gradle
+name: JUnit Test with Gradle
 
 on:
   push:
+    branches: [ "main" ]
+  pull_request:
     branches: [ "main" ]
 
 permissions:
@@ -29,9 +31,12 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@3fbe033aaae657f011f88f29be9e65ed26bd29ef
         with:
-          arguments: desktop:dist
-      - name: Upload game JAR
-        uses: actions/upload-artifact@v3.1.2
+          arguments: test
+      - name: Test Reporter
+        uses: dorny/test-reporter@v1.6.0
+        if: success() || failure()
         with:
-          name: piazza-panic
-          path: desktop/build/libs/desktop-1.0.jar
+            name: JUnit Tests
+            path: tests/build/test-results/test/TEST-com.devcharles.piazzapanic.*.xml
+            reporter: java-junit
+
