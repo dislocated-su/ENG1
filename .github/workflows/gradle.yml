@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Create folder for jar
+      run: mkdir downloads
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
@@ -27,13 +29,11 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
-    - name: Run build with Gradle wrapper
-      run: ./gradlew build --scan
-    - name: Upload build reports
-      uses: actions/upload-artifact@v3
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
       with:
-        name: build-reports
-        path: build/reports/
+         name: jar-download
+         path: downloads
           
   release:
       runs-on: ubuntu-latest
