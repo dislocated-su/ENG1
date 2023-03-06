@@ -27,6 +27,10 @@ jobs:
         arguments: build
     - name: Execute gradle build
       run: ./gradlew build
+    - uses: actions/upload-artifact@v3
+      with:
+        name: my-artifact
+        path: path/to/artifact/ 
           
       
       
