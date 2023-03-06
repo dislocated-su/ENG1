@@ -27,11 +27,13 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
+    - name: make directory for jar
+      run: mkdir test
     - name: Upload library JAR
       uses: actions/upload-artifact@v3.1.2
       with:
           name: jarfile
-          path: lib.jar
+          path: test
           
   release:
       runs-on: ubuntu-latest
@@ -43,11 +45,11 @@ jobs:
         uses: actions/download-artifact@v3.0.2
         with:
           name: jarfile
-          path: lib.jar
+          path: test/jarfile.jar
       - name: Release
         uses: phuonghuynh/action-ghrelease@v1.1.0
         with:
-         files: lib.jar
+         files: test/jarfile.jar
       
       
     
