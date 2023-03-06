@@ -26,13 +26,14 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
-        build-root-directory: build/libs
         arguments: build
-    - name: Upload library JAR
-      uses: actions/upload-artifact@v3.1.2
+    - name: Run build with Gradle wrapper
+      run: ./gradlew build --scan
+    - name: Upload build reports
+      uses: actions/upload-artifact@v3
       with:
-          name: Package
-          path: build/libs
+        name: build-reports
+        path: build/reports/
           
   release:
       runs-on: ubuntu-latest
