@@ -40,11 +40,12 @@ jobs:
         contents: write
       steps:
       - name: Download a Build Artifact
-        uses: actions/download-artifact@v3.0.1
+        uses: actions/download-artifact@v3.0.2
         with:
-          name: lib.jar
+          name: jarfile
+          path: lib.jar
       - name: Release
-        uses: phuonghuynh/action-ghrelease@08c9010ba33d1fbafd7a06d35afebb93dd0b876a
+        uses: phuonghuynh/action-ghrelease@v1.1.0
         with:
          files: lib.jar
       
