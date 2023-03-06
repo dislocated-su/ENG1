@@ -11,13 +11,9 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-    - name: Create folder for jar
-      run: mkdir downloads
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
@@ -29,27 +25,7 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.2
-      with:
-         name: jar-download
-         path: downloads
           
-  release:
-      runs-on: ubuntu-latest
-      needs: ["build"]
-      permissions:
-        contents: write
-      steps:
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v3.0.2
-        with:
-          name: jarfile
-          path: test/jarfile.jar
-      - name: Release
-        uses: phuonghuynh/action-ghrelease@v1.1.0
-        with:
-         files: test/jarfile.jar
       
       
     
