@@ -26,7 +26,7 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
-        gradle-executable: build/libs
+        build-root-directory: build/libs
         arguments: build
     - name: Upload library JAR
       uses: actions/upload-artifact@v3.1.2
