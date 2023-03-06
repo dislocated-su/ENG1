@@ -38,7 +38,7 @@ jobs:
         with:
           name: lib.jar
       - name: Release
-        uses: softprops/action-gh-release@de2c0eb89...
+        uses: phuonghuynh/action-ghrelease@08c9010ba33d1fbafd7a06d35afebb93dd0b876a
         with:
          files: lib.jar
       
