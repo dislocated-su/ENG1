@@ -32,8 +32,8 @@ jobs:
     - name: Upload library JAR
       uses: actions/upload-artifact@v3.1.2
       with:
-          name: jarfile
-          path: test
+          name: Package
+          path: build/libs
           
   release:
       runs-on: ubuntu-latest
