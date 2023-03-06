@@ -30,6 +30,18 @@ jobs:
       with:
          name: test
          path: core
+  release:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v3.0.1
+        with:
+         name: lib.jar
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: lib.jar
+  
       
       
     
