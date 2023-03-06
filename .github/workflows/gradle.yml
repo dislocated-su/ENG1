@@ -28,9 +28,10 @@ jobs:
       with:
         arguments: build
     - name: Upload library JAR
-      uses: actions/upload-artifact@v3.1.1
+      uses: actions/upload-artifact@v3.1.2
       with:
           name: jarfile
+          path: lib.jar
           
   release:
       runs-on: ubuntu-latest
