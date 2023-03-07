@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(GdxTestRunner.class)
-public class FoodTests {
+public class CookTests {
 
     private EntityFactory entityFactory;
     private PooledEngine engine;
