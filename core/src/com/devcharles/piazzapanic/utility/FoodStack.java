@@ -59,7 +59,7 @@ public class FoodStack extends ArrayDeque<Entity> {
         return e;
     }
 
-    private void setVisibility(int size, Entity e) {
+    protected void setVisibility(int size, Entity e) {
         if (size > 1) {
             for (Entity food : this) {
                 Mappers.transform.get(food).isHidden = true;
