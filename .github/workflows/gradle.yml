@@ -39,10 +39,12 @@ jobs:
         uses: actions/download-artifact@v3.0.1
         with:
          name: lib.jar
+         tags: test
       - name: release
         uses: softprops/action-gh-release@v1
         with:
           files: lib.jar
+          tag: test
   
       
       
