@@ -87,7 +87,7 @@ public class YComparatorTest {
 
         // Comparator returns a 1 if the first argument's Y is less
         assertEquals("A 1 is returned if the first argument's Y is less ", 1, comp_value_less);
-        assertEquals("A 1 is returned if the first argument's Y is less ", -1, comp_value_greater);
+        assertEquals("A -1 is returned if the first argument's Y is greater ", -1, comp_value_greater);
 
     }
 

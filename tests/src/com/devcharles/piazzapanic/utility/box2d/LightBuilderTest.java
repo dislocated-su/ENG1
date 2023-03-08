@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 public class LightBuilderTest {
 
   @Test
-  public void createPointLight() {
+  public void testCreatePointLight() {
     World world = new World(new Vector2(0, 0), true);
     RayHandler handler = new RayHandler(world);
 
@@ -32,7 +32,7 @@ public class LightBuilderTest {
   }
 
   @Test
-  public void createRoomLight() {
+  public void testCreateRoomLight() {
     World world = new World(new Vector2(0, 0), true);
     RayHandler handler = new RayHandler(world);
 
