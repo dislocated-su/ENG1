@@ -31,19 +31,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.2
       with:
-         name: lib.jar
-         path: core
-  release:
-      runs-on: ubuntu-latest
-      needs: ["build"]
-      steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v3.0.1
-        with:
-         name: lib.jar
-         tag_name: test
-      - name: release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: lib.jar
-          tag_name: test
+         name: desktop-1.0.jar
+         path: desktop/build/libs
