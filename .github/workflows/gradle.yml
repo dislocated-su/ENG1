@@ -25,12 +25,7 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
-        arguments: build jacocoTestReport
-    - name: Upload JaCoCo coverage report as a workflow artifact
-      uses: actions/upload-artifact@v3.1.1
-      with:
-        name: jacoco-report
-        path: tests/build/reports/jacoco/test/html/
+        arguments: build
     - name: create desktop jar
       run: ./gradlew desktop:dist
     - name: Upload a Build Artifact
