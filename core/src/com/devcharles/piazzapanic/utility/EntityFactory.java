@@ -49,7 +49,7 @@ public class EntityFactory {
         createDefinitions();
     }
 
-    private static final Map<FoodType, TextureRegion> foodTextures = new HashMap<FoodType, TextureRegion>();
+    protected static final Map<FoodType, TextureRegion> foodTextures = new HashMap<>();
 
     /**
      * Create reusable definitions for bodies and fixtures. These can be then be
@@ -264,11 +264,8 @@ public class EntityFactory {
 
         // Flatten the array
         TextureRegion[] frames = new TextureRegion[rows * cols];
-        int index = 0;
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                frames[index++] = tmp[i][j];
-            }
+          System.arraycopy(tmp[i], 0, frames, i * cols, cols);
         }
 
         for (int i = 1; i < 14; i++) {
