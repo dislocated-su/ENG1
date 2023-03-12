@@ -15,11 +15,9 @@ import org.junit.runner.RunWith;
 @RunWith(GdxTestRunner.class)
 public class CarryItemsSystemTest {
 
-  private PooledEngine engine;
-
   @Test
   public void processEntityRightTest(){
-    engine = new PooledEngine();
+    PooledEngine engine = new PooledEngine();
     Entity entity = engine.createEntity();
     CarryItemsSystem system = new CarryItemsSystem();
     TransformComponent transform = engine.createComponent(TransformComponent.class);
@@ -35,7 +33,7 @@ public class CarryItemsSystemTest {
 
   @Test
   public void processEntityLeftTest(){
-    engine = new PooledEngine();
+    PooledEngine engine = new PooledEngine();
     Entity entity = engine.createEntity();
     CarryItemsSystem system = new CarryItemsSystem();
     TransformComponent transform = engine.createComponent(TransformComponent.class);
@@ -51,7 +49,7 @@ public class CarryItemsSystemTest {
 
   @Test
   public void processEntityUpTest(){
-    engine = new PooledEngine();
+    PooledEngine engine = new PooledEngine();
     Entity entity = engine.createEntity();
     CarryItemsSystem system = new CarryItemsSystem();
     TransformComponent transform = engine.createComponent(TransformComponent.class);
@@ -67,7 +65,7 @@ public class CarryItemsSystemTest {
 
   @Test
   public void processEntityDownTest(){
-    engine = new PooledEngine();
+    PooledEngine engine = new PooledEngine();
     Entity entity = engine.createEntity();
     CarryItemsSystem system = new CarryItemsSystem();
     TransformComponent transform = engine.createComponent(TransformComponent.class);
