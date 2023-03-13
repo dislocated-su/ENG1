@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.9" tiledversion="1.9.2" name="objects" tilewidth="32" tileheight="32" spacing="4" margin="2" tilecount="42" columns="6">
+<tileset version="1.10" tiledversion="1.10.0" name="objects" tilewidth="32" tileheight="32" spacing="4" margin="2" tilecount="42" columns="6">
  <image source="stations_chef_padded.png" width="216" height="252"/>
  <tile id="0">
   <properties>
@@ -104,6 +104,30 @@
  <tile id="33">
   <properties>
    <property name="stationID" type="int" value="7"/>
+  </properties>
+ </tile>
+ <tile id="36">
+  <properties>
+   <property name="ingredientType" type="int" value="14"/>
+   <property name="stationID" type="int" value="6"/>
+  </properties>
+ </tile>
+ <tile id="37">
+  <properties>
+   <property name="ingredientType" type="int" value="17"/>
+   <property name="stationID" type="int" value="6"/>
+  </properties>
+ </tile>
+ <tile id="39">
+  <properties>
+   <property name="ingredientType" type="int" value="24"/>
+   <property name="stationID" type="int" value="6"/>
+  </properties>
+ </tile>
+ <tile id="40">
+  <properties>
+   <property name="ingredientType" type="int" value="18"/>
+   <property name="stationID" type="int" value="6"/>
   </properties>
  </tile>
 </tileset>

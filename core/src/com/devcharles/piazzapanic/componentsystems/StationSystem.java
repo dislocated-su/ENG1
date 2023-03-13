@@ -75,6 +75,7 @@ public class StationSystem extends IteratingSystem {
                     case ingredient:
                         controllable.currentFood.pushItem(factory.createFood(station.ingredient),
                                 station.interactingCook);
+                        System.out.println(station.ingredient);
                         break;
                     case bin:
                         processBin(controllable);

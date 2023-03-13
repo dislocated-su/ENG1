@@ -271,7 +271,7 @@ public class EntityFactory {
             }
         }
 
-        for (int i = 1; i < 14; i++) {
+        for (int i = 1; i < 26; i++) {
             foodTextures.put(FoodType.from(i), frames[i]);
         }
     }
