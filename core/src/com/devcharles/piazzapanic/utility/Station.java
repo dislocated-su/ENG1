@@ -19,6 +19,10 @@ public class Station {
         {
             put(FoodType.formedPatty, FoodType.grilledPatty);
             put(FoodType.buns, FoodType.toastedBuns);
+
+            // new
+            put(FoodType.slicedPotato, FoodType.jacketPotato);
+            put(FoodType.tomatoCheeseDough, FoodType.pizza); // temp
         }
     };
 
@@ -28,6 +32,13 @@ public class Station {
             put(FoodType.lettuce, FoodType.slicedLettuce);
             put(FoodType.unformedPatty, FoodType.formedPatty);
             put(FoodType.onion, FoodType.slicedOnion);
+            put(FoodType.potato, FoodType.slicedPotato);
+            put(FoodType.cheese, FoodType.gratedCheese);
+
+            // new
+            put(FoodType.potato, FoodType.slicedPotato);
+            put(FoodType.dough, FoodType.rolledDough); // temp
+            put(FoodType.slicedTomato, FoodType.tomatoPaste); // temp
         }
     };
 
@@ -46,6 +57,27 @@ public class Station {
                     add(FoodType.slicedTomato);
                 }
             }, FoodType.salad);
+
+            // new
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.rolledDough);
+                    add(FoodType.tomatoPaste);
+                }
+            }, FoodType.tomatoDough);
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.tomatoDough);
+                    add(FoodType.gratedCheese);
+                }
+            }, FoodType.tomatoCheeseDough);
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.rolledDough);
+                    add(FoodType.tomatoPaste);
+                    add(FoodType.gratedCheese);
+                }
+            }, FoodType.tomatoCheeseDough);
         }
     };
     /**
