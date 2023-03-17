@@ -21,7 +21,7 @@ public class Station {
             put(FoodType.buns, FoodType.toastedBuns);
 
             // new
-            put(FoodType.slicedPotato, FoodType.jacketPotato);
+            put(FoodType.potato, FoodType.butterlessJacketPotato);
             put(FoodType.tomatoCheeseDough, FoodType.pizza); // temp
         }
     };
@@ -32,11 +32,9 @@ public class Station {
             put(FoodType.lettuce, FoodType.slicedLettuce);
             put(FoodType.unformedPatty, FoodType.formedPatty);
             put(FoodType.onion, FoodType.slicedOnion);
-            put(FoodType.potato, FoodType.slicedPotato);
             put(FoodType.cheese, FoodType.gratedCheese);
 
             // new
-            put(FoodType.potato, FoodType.slicedPotato);
             put(FoodType.dough, FoodType.rolledDough); // temp
             put(FoodType.slicedTomato, FoodType.tomatoPaste); // temp
         }
@@ -78,6 +76,12 @@ public class Station {
                     add(FoodType.gratedCheese);
                 }
             }, FoodType.tomatoCheeseDough);
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.butterlessJacketPotato);
+                    add(FoodType.butter);
+                }
+            }, FoodType.jacketPotato);
         }
     };
     /**
