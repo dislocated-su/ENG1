@@ -1,12 +1,16 @@
 package com.devcharles.piazzapanic;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
+import java.util.NoSuchElementException;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.core.Entity;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
@@ -16,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.math.Vector2;
 
 @RunWith(GdxTestRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FoodStackTests {
 
     /*
@@ -42,17 +47,33 @@ public class FoodStackTests {
 
     @Test
     public void pushItemEmptyStackTest() throws Exception {
-        stack.pushItem(burger, cook);
-        assertTrue("check burger entity is pushed on to the stack", stack.contains(burger));
         stack.clear();
+        assertTrue("check pushItem method returns true", stack.pushItem(burger, cook));
+        assertTrue("check burger entity is pushed on to the stack", stack.contains(burger));
     }
 
     @Test
     public void pushItemFullStackTest() throws Exception {
-
-        for (int i = 0; i < 12; i++) {
-
+        stack.clear();
+        for (int i = 0; i < stack.capacity; i++) {
+            stack.pushItem(burger, cook);
         }
-        stack.pushItem(burger, cook);
+        assertFalse("check pushItem method returns false", stack.pushItem(burger, cook));
     }
+
+    @Test
+    public void popItemStackTest() throws Exception {
+        stack.clear();
+        for (int i = 0; i < stack.capacity; i++) {
+            stack.pushItem(burger, cook);
+        }
+        assertTrue("check popped entity is returned", stack.pop() instanceof Entity);
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void popItemEmptyStackTest() throws Exception {
+        stack.clear();
+        stack.pop();
+    }
+
 }
