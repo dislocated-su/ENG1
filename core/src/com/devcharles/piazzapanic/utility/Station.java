@@ -15,14 +15,17 @@ public class Station {
 
     public StationType type;
 
+    public static HashMap<FoodType, FoodType> ovenRecipes = new HashMap<FoodType, FoodType>() {
+        {
+            put(FoodType.potato, FoodType.butterlessJacketPotato);
+            put(FoodType.tomatoCheeseDough, FoodType.pizza);
+        }
+    };
+
     public static HashMap<FoodType, FoodType> grillRecipes = new HashMap<FoodType, FoodType>() {
         {
             put(FoodType.formedPatty, FoodType.grilledPatty);
             put(FoodType.buns, FoodType.toastedBuns);
-
-            // new
-            put(FoodType.slicedPotato, FoodType.jacketPotato);
-            put(FoodType.tomatoCheeseDough, FoodType.pizza); // temp
         }
     };
 
@@ -32,13 +35,11 @@ public class Station {
             put(FoodType.lettuce, FoodType.slicedLettuce);
             put(FoodType.unformedPatty, FoodType.formedPatty);
             put(FoodType.onion, FoodType.slicedOnion);
-            put(FoodType.potato, FoodType.slicedPotato);
             put(FoodType.cheese, FoodType.gratedCheese);
 
             // new
-            put(FoodType.potato, FoodType.slicedPotato);
-            put(FoodType.dough, FoodType.rolledDough); // temp
-            put(FoodType.slicedTomato, FoodType.tomatoPaste); // temp
+            put(FoodType.dough, FoodType.rolledDough);
+            put(FoodType.slicedTomato, FoodType.tomatoPaste);
         }
     };
 
@@ -78,6 +79,12 @@ public class Station {
                     add(FoodType.gratedCheese);
                 }
             }, FoodType.tomatoCheeseDough);
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.butterlessJacketPotato);
+                    add(FoodType.butter);
+                }
+            }, FoodType.jacketPotato);
         }
     };
     /**
@@ -85,6 +92,7 @@ public class Station {
      */
     public static Map<StationType, HashMap<FoodType, FoodType>> recipeMap = new HashMap<StationType, HashMap<FoodType, FoodType>>() {
         {
+            put(StationType.oven, ovenRecipes);
             put(StationType.grill, grillRecipes);
             put(StationType.cutting_board, cuttingBoardRecipes);
         }

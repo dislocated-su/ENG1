@@ -24,7 +24,7 @@ public class FoodComponent implements Component {
         slicedOnion(12),
         salad(13),
         potato(14),
-        slicedPotato(15),
+        butterlessJacketPotato(15),
         jacketPotato(16),
         butter(17),
         dough(18),
