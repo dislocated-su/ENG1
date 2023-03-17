@@ -15,6 +15,13 @@ public class Station {
 
     public StationType type;
 
+    public static HashMap<FoodType, FoodType> ovenRecipes = new HashMap<FoodType, FoodType>() {
+        {
+            put(FoodType.potato, FoodType.butterlessJacketPotato);
+            put(FoodType.tomatoCheeseDough, FoodType.pizza);
+        }
+    };
+
     public static HashMap<FoodType, FoodType> grillRecipes = new HashMap<FoodType, FoodType>() {
         {
             put(FoodType.formedPatty, FoodType.grilledPatty);
@@ -28,6 +35,11 @@ public class Station {
             put(FoodType.lettuce, FoodType.slicedLettuce);
             put(FoodType.unformedPatty, FoodType.formedPatty);
             put(FoodType.onion, FoodType.slicedOnion);
+            put(FoodType.cheese, FoodType.gratedCheese);
+
+            // new
+            put(FoodType.dough, FoodType.rolledDough);
+            put(FoodType.slicedTomato, FoodType.tomatoPaste);
         }
     };
 
@@ -46,6 +58,33 @@ public class Station {
                     add(FoodType.slicedTomato);
                 }
             }, FoodType.salad);
+
+            // new
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.rolledDough);
+                    add(FoodType.tomatoPaste);
+                }
+            }, FoodType.tomatoDough);
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.tomatoDough);
+                    add(FoodType.gratedCheese);
+                }
+            }, FoodType.tomatoCheeseDough);
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.rolledDough);
+                    add(FoodType.tomatoPaste);
+                    add(FoodType.gratedCheese);
+                }
+            }, FoodType.tomatoCheeseDough);
+            put(new HashSet<FoodType>() {
+                {
+                    add(FoodType.butterlessJacketPotato);
+                    add(FoodType.butter);
+                }
+            }, FoodType.jacketPotato);
         }
     };
     /**
@@ -53,6 +92,7 @@ public class Station {
      */
     public static Map<StationType, HashMap<FoodType, FoodType>> recipeMap = new HashMap<StationType, HashMap<FoodType, FoodType>>() {
         {
+            put(StationType.oven, ovenRecipes);
             put(StationType.grill, grillRecipes);
             put(StationType.cutting_board, cuttingBoardRecipes);
         }
