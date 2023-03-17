@@ -12,19 +12,17 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.scene2d.Slideshow;
+import com.sun.tools.javac.comp.Check;
 
 /**
- * Main menu of the game, transitions the player to the Tutorial
+ * Endless menu screen for selecting easy, normal or hard difficulty, transitions the player to the Tutorial
  * {@link Slideshow} on button press
  */
-public class MainMenuScreen extends ApplicationAdapter implements Screen {
+public class EndlessMenuScreen extends ApplicationAdapter implements Screen {
 
     final PiazzaPanic game;
     OrthographicCamera camera;
@@ -36,8 +34,9 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     private BitmapFont subtitleFont;
     private Label title;
     private Label subtitle;
+    private TextButton toggleDifficulty;
 
-    public MainMenuScreen(final PiazzaPanic game) {
+    public EndlessMenuScreen(final PiazzaPanic game) {
 
         this.game = game;
         camera = new OrthographicCamera();
@@ -54,12 +53,12 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         Label.LabelStyle subtitleLabelStyle = new Label.LabelStyle();
         gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
         subtitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
-        subtitleFont.getData().setScale(2,2);
+        subtitleFont.getData().setScale((float) 1.5,(float) 1.5);
         menuLabelStyle.font = gamesFont;
         subtitleLabelStyle.font=subtitleFont;
 
         title = new Label("Piazza Panic", menuLabelStyle);
-        subtitle = new Label("Select Gamemode", subtitleLabelStyle);
+        subtitle = new Label("Endless mode - Toggle Difficulty", subtitleLabelStyle);
         Table root = new Table();
         root.setFillParent(true);
         stage.addActor(root);
@@ -67,27 +66,43 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         root.row();
         root.add(subtitle).expandX().padBottom(50);
         root.row();
-        TextButton startScenarioButton = new TextButton("Scenario", skin);
-        TextButton loadGameButton = new TextButton("Resume game", skin);
-        TextButton startEndlessButton = new TextButton("Endless", skin);
-        loadGameButton.setDisabled(true);
-        root.add(startScenarioButton);
+        toggleDifficulty = new TextButton("Easy", skin);
+        TextButton backButton = new TextButton("Back", skin);
+        TextButton startButton = new TextButton("Start", skin);
+        startButton.setDisabled(true);
+        root.add(toggleDifficulty).padBottom(50);
         root.row();
-        root.add(startEndlessButton);
+        root.add(backButton);
         root.row();
-        root.add(loadGameButton).padTop(50);
+        root.add(startButton);
 
         // Checks if button is clicked and if clicked goes onto the tutorial
-        startScenarioButton.addListener(new ClickListener() {
+        startButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new ScenarioMenuScreen(game));
-                dispose();
+                // TODO Start endless mode with specified difficulty.
             }
         });
 
-        startEndlessButton.addListener(new ClickListener() {
+        // Toggles difficulty of endless game mode
+        toggleDifficulty.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new EndlessMenuScreen(game));
+
+                if(toggleDifficulty.getText().toString().equals("Easy")){
+                    toggleDifficulty.setText("Normal");
+                }
+                else if(toggleDifficulty.getText().toString().equals("Normal")){
+                    toggleDifficulty.setText("Hard");
+                }
+                else if(toggleDifficulty.getText().toString().equals("Hard")) {
+                    toggleDifficulty.setText("Easy");
+                }
+            }
+        });
+
+        // Checks if the back button is clicked and then goes back to main menu screen.
+        backButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game));
                 dispose();
             }
         });
@@ -113,12 +128,10 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
-
     @Override
     public void hide() {
 
     }
-
     public void dispose() {
         skin.dispose();
         stage.dispose();
