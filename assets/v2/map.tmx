@@ -424,25 +424,25 @@
    </properties>
    <point/>
   </object>
-  <object id="90" x="1072" y="840">
+  <object id="90" x="1027" y="842">
    <properties>
     <property name="lightID" type="int" value="1"/>
    </properties>
    <point/>
   </object>
-  <object id="93" x="1040" y="840">
+  <object id="93" x="894" y="848">
    <properties>
     <property name="lightID" type="int" value="1"/>
    </properties>
    <point/>
   </object>
-  <object id="94" x="1008" y="840">
+  <object id="94" x="831" y="846">
    <properties>
     <property name="lightID" type="int" value="1"/>
    </properties>
    <point/>
   </object>
-  <object id="95" x="1104" y="840">
+  <object id="95" x="1092" y="840">
    <properties>
     <property name="lightID" type="int" value="1"/>
    </properties>
