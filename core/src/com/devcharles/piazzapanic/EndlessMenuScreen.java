@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.scene2d.Slideshow;
-import com.sun.tools.javac.comp.Check;
 
 /**
  * Endless menu screen for selecting easy, normal or hard difficulty, transitions the player to the Tutorial
