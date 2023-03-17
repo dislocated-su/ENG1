@@ -290,7 +290,7 @@ public class StationSystem extends IteratingSystem {
                 cooking.timer.reset();
 
                 FoodComponent food = Mappers.food.get(foodEntity);
-                // Process the food into it's next form
+                // Process the food into its next form
                 food.type = Station.recipeMap.get(station.type).get(food.type);
                 Mappers.texture.get(foodEntity).region = EntityFactory.getFoodTexture(food.type);
                 foodEntity.remove(CookingComponent.class);
