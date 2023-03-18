@@ -51,6 +51,28 @@ public class CustomerAISystemTest {
   }
 
   @Test
+  public void testEndlessQuickerSpawns() {
+    World world = new World(Vector2.Zero, true);
+    PooledEngine engine = new PooledEngine();
+    EntityFactory factory = new EntityFactory(engine, world);
+    HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
+    objectives.put(-2, new Box2dLocation());
+    objectives.put(0, new Box2dLocation());
+    objectives.put(1, new Box2dLocation());
+    CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
+        new Integer[]{3}, true);
+    engine.addSystem(system);
+
+    int initialDelay = system.spawnTimer.getDelay();
+    engine.update(1f);
+    assertEquals("The first delay should be the same as the default.", initialDelay,
+        system.spawnTimer.getDelay());
+    engine.update(29.001f);
+    assertTrue("The second and subsequent delays should be less than the default.",
+        system.spawnTimer.getDelay() < initialDelay);
+  }
+
+  @Test
   public void testProcessEntityLoseReputation() {
     World world = new World(Vector2.Zero, true);
     PooledEngine engine = new PooledEngine();
