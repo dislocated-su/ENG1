@@ -37,6 +37,8 @@ public class Hud extends ApplicationAdapter {
 
   private final float fontScale = 0.6f;
 
+  private boolean isEndless = false;
+
   // A label is basically a widget
   LabelStyle hudLabelStyle;
   LabelStyle titleLabelStyle;
@@ -56,6 +58,7 @@ public class Hud extends ApplicationAdapter {
   public boolean paused = false;
 
   private final Screen gameScreen;
+  private int numCustomersServed = 0;
 
   /**
    * Create the hud.
@@ -233,6 +236,13 @@ public class Hud extends ApplicationAdapter {
   }
 
   /**
+   * When an order is fulfilled, update the UI to know that it has happened.
+   */
+  public void incrementCompletedOrders() {
+    numCustomersServed++;
+  }
+
+  /**
    * Render the hud. If {@code triggerWin} is true when this runs, the Win screen will be shown.
    *
    * @param deltaTime the time elapsed since last frame.
@@ -315,9 +325,21 @@ public class Hud extends ApplicationAdapter {
     stage.clear();
     Table centerTable = new Table();
     centerTable.setFillParent(true);
+
     // labels given different fonts so it looks nicer
-    Label congrats = new Label("Congratulations!", titleLabelStyle);
-    Label congratsSubtitle = new Label("You won!", hudLabelStyle);
+    Label congrats;
+    Label congratsSubtitle;
+    if (isEndless) {
+      congrats = new Label("The End!", titleLabelStyle);
+      congratsSubtitle = new Label(
+          String.format("You served %d customers and lasted %03d seconds!", numCustomersServed,
+              customerTimer),
+          hudLabelStyle);
+    } else {
+      congrats = new Label("Congratulations!", titleLabelStyle);
+      congratsSubtitle = new Label("You won!", hudLabelStyle);
+    }
+
     //colspan2 important! do some googling if you dont know what it does (scene2d)
     centerTable.add(congrats).padBottom(40).colspan(2);
     centerTable.row();
@@ -360,5 +382,9 @@ public class Hud extends ApplicationAdapter {
         game.setScreen(screen);
       }
     };
+  }
+
+  public void setEndless(boolean endless) {
+    isEndless = endless;
   }
 }

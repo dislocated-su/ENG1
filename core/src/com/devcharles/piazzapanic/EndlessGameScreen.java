@@ -12,6 +12,7 @@ import com.devcharles.piazzapanic.componentsystems.StationSystem;
 public class EndlessGameScreen extends BaseGameScreen {
   public EndlessGameScreen(PiazzaPanic game, String mapPath) {
     super(game, mapPath);
+    hud.setEndless(true);
     engine.addSystem(new PhysicsSystem(world));
     engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera));
     engine.addSystem(new LightingSystem(rayhandler, camera));

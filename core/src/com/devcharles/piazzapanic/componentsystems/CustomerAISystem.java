@@ -38,7 +38,7 @@ public class CustomerAISystem extends IteratingSystem {
   private final Map<Integer, Boolean> objectiveTaken;
 
   private final World world;
-  private final GdxTimer spawnTimer = new GdxTimer(5000, false, true);
+  private final GdxTimer spawnTimer = new GdxTimer(30000, false, true);
   private final EntityFactory factory;
   private int totalCustomers = 0;
   private final Hud hud;
@@ -130,6 +130,8 @@ public class CustomerAISystem extends IteratingSystem {
 
     if (!isEndless && !hud.won && customers.size() == 0 && totalCustomers == MAX_CUSTOMERS) {
       hud.triggerWin = true;
+    } else if (isEndless && reputationPoints[0] == 0) {
+      hud.triggerWin = true;
     }
 
     super.update(deltaTime);
@@ -154,7 +156,7 @@ public class CustomerAISystem extends IteratingSystem {
 
     aiAgent.steeringBody.update(deltaTime);
 
-    // lower reputation points if they have waited longer than time alloted (1 min)
+    // lower reputation points if they have waited longer than time allotted (1 min)
     if (customer.timer.tick(deltaTime)) {
       if (reputationPoints[0] > 0) {
         reputationPoints[0]--;
@@ -259,5 +261,6 @@ public class CustomerAISystem extends IteratingSystem {
     customer.timer.reset();
 
     customers.remove(entity);
+    hud.incrementCompletedOrders();
   }
 }
