@@ -36,7 +36,7 @@ public class CustomerAISystemTest {
     objectives.put(0, new Box2dLocation());
     objectives.put(1, new Box2dLocation());
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
-        new Integer[]{3});
+        new Integer[]{3}, false);
     engine.addSystem(system);
 
     assertEquals("There should be no customers to start with.", 0, system.customers.size());
@@ -62,7 +62,7 @@ public class CustomerAISystemTest {
 
     Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
-        reputationPoints);
+        reputationPoints, false);
     engine.addSystem(system);
 
     engine.update(1f);
@@ -84,7 +84,7 @@ public class CustomerAISystemTest {
 
     Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
-        reputationPoints);
+        reputationPoints, false);
     engine.addSystem(system);
 
     engine.update(1f);
@@ -112,7 +112,7 @@ public class CustomerAISystemTest {
 
     Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
-        reputationPoints);
+        reputationPoints, false);
     engine.addSystem(system);
 
     engine.update(1f);
@@ -149,7 +149,7 @@ public class CustomerAISystemTest {
 
     Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
-        reputationPoints);
+        reputationPoints, false);
     engine.addSystem(system);
 
     engine.update(1f);
@@ -180,7 +180,7 @@ public class CustomerAISystemTest {
 
     Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
-        reputationPoints);
+        reputationPoints, false);
     engine.addSystem(system);
 
     engine.update(1f);
@@ -209,7 +209,7 @@ public class CustomerAISystemTest {
     PooledEngine engine = new PooledEngine();
     EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(new HashMap<Integer, Box2dLocation>(), world,
-        factory, mock(Hud.class), new Integer[]{});
+        factory, mock(Hud.class), new Integer[]{}, false);
     engine.addSystem(system);
     Entity customer = factory.createCustomer(Vector2.Zero);
     Entity food = factory.createFood(FoodType.from(1));
@@ -235,7 +235,7 @@ public class CustomerAISystemTest {
     PooledEngine engine = new PooledEngine();
     EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(new HashMap<Integer, Box2dLocation>(), world,
-        factory, mock(Hud.class), new Integer[]{});
+        factory, mock(Hud.class), new Integer[]{}, false);
     engine.addSystem(system);
     Entity customer = new Entity();
 
@@ -248,7 +248,7 @@ public class CustomerAISystemTest {
     PooledEngine engine = new PooledEngine();
     EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(new HashMap<Integer, Box2dLocation>(), world,
-        factory, mock(Hud.class), new Integer[]{});
+        factory, mock(Hud.class), new Integer[]{}, false);
     engine.addSystem(system);
 
     system.destroyCustomer(null);
@@ -262,7 +262,7 @@ public class CustomerAISystemTest {
     HashMap<Integer, Box2dLocation> objectives = new HashMap<>();
     objectives.put(1, new Box2dLocation());
     CustomerAISystem system = new CustomerAISystem(objectives, world,
-        factory, mock(Hud.class), new Integer[]{});
+        factory, mock(Hud.class), new Integer[]{}, false);
     engine.addSystem(system);
     Entity customer = factory.createCustomer(Vector2.Zero);
     AIAgentComponent aiAgentComponent = Mappers.aiAgent.get(customer);
@@ -285,7 +285,7 @@ public class CustomerAISystemTest {
     PooledEngine engine = new PooledEngine();
     EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(new HashMap<Integer, Box2dLocation>(), world,
-        factory, mock(Hud.class), new Integer[]{});
+        factory, mock(Hud.class), new Integer[]{}, false);
     engine.addSystem(system);
     Entity customer = factory.createCustomer(Vector2.Zero);
     Entity food = factory.createFood(FoodType.from(1));

@@ -38,16 +38,18 @@ public class CustomerAISystem extends IteratingSystem {
   private final Map<Integer, Boolean> objectiveTaken;
 
   private final World world;
-  private final GdxTimer spawnTimer = new GdxTimer(30000, false, true);
+  private final GdxTimer spawnTimer = new GdxTimer(5000, false, true);
   private final EntityFactory factory;
-  private int numOfCustomerTotal = 0;
+  private int totalCustomers = 0;
   private final Hud hud;
   private final Integer[] reputationPoints;
-  private final int CUSTOMER = 5;
+  private final int MAX_CUSTOMERS = 5;
   private boolean firstSpawn = true;
+  private final boolean isEndless;
+  private int numQueuedCustomers = 0;
 
   // List of customers, on removal we move the other customers up a place (queueing).
-  protected final ArrayList<Entity> customers = new ArrayList<Entity>() {
+  protected final ArrayList<Entity> customers = new ArrayList<Entity>(MAX_CUSTOMERS) {
     @Override
     public boolean remove(Object o) {
       for (Entity entity : customers) {
@@ -74,16 +76,18 @@ public class CustomerAISystem extends IteratingSystem {
    * @param factory          {@link EntityFactory} for creating new customers
    * @param hud              {@link Hud} for updating orders, reputation
    * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
+   * @param isEndless        a boolean flag to decide whether there is a limit on customers
    */
   public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world,
       EntityFactory factory, Hud hud,
-      Integer[] reputationPoints) {
+      Integer[] reputationPoints, boolean isEndless) {
     super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
     this.hud = hud;
     this.objectives = objectives;
     this.objectiveTaken = new HashMap<>();
     this.reputationPoints = reputationPoints;
+    this.isEndless = isEndless;
 
     // Use a reference to the world to destroy box2d bodies when despawning
     // customers
@@ -97,11 +101,23 @@ public class CustomerAISystem extends IteratingSystem {
   public void update(float deltaTime) {
     // Ensure timer actually ticks, and is not short-circuited by firstSpawn being true
     boolean timerComplete = spawnTimer.tick(deltaTime);
-    if (firstSpawn || (timerComplete && numOfCustomerTotal < CUSTOMER)) {
+    if (timerComplete) {
+      numQueuedCustomers++;
+    }
+    int numCustomers = isEndless ? customers.size() : totalCustomers;
+    if (firstSpawn || (numQueuedCustomers > 0 && numCustomers < MAX_CUSTOMERS)) {
+      if (!firstSpawn) {
+        numQueuedCustomers--;
+        if (isEndless) {
+          spawnTimer.setDelay((int) (spawnTimer.getDelay() * 0.98f));
+          Gdx.app.log("Spawn Timer", String.valueOf(spawnTimer.getDelay()));
+        }
+      }
       firstSpawn = false;
+
       Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
       customers.add(newCustomer);
-      numOfCustomerTotal++;
+      totalCustomers++;
       Mappers.customer.get(newCustomer).timer.start();
     }
 
@@ -112,7 +128,7 @@ public class CustomerAISystem extends IteratingSystem {
       i++;
     }
 
-    if (!hud.won && customers.size() == 0 && numOfCustomerTotal == CUSTOMER) {
+    if (!isEndless && !hud.won && customers.size() == 0 && totalCustomers == MAX_CUSTOMERS) {
       hud.triggerWin = true;
     }
 
@@ -244,5 +260,4 @@ public class CustomerAISystem extends IteratingSystem {
 
     customers.remove(entity);
   }
-
 }
