@@ -100,7 +100,10 @@ gradle-app.setting
 /desktop/build/
 /html/build/
 /ios/build/
-/tests/build/
+/tests/build/*
+
+## ALLOW TEST REPORT
+!/tests/build/reports
 
 ## OS Specific
 .DS_Store
