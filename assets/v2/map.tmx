@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="60" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="100">
+<map version="1.10" tiledversion="1.10.0" orientation="orthogonal" renderorder="right-down" width="60" height="35" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="111">
  <tileset firstgid="1" source="tileset_32.tsx"/>
  <tileset firstgid="43" source="objects.tsx"/>
  <layer id="1" name="floor" width="60" height="35">
@@ -370,12 +370,84 @@
   <object id="53" x="992" y="704">
    <properties>
     <property name="aiobjective" type="int" value="0"/>
+    <property name="aislot" type="int" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="100" x="992" y="724">
+   <properties>
+    <property name="aiobjective" type="int" value="0"/>
+    <property name="aislot" type="int" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="101" x="992" y="684">
+   <properties>
+    <property name="aiobjective" type="int" value="0"/>
+    <property name="aislot" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="103" x="1068.5" y="684">
+   <properties>
+    <property name="aiobjective" type="int" value="1"/>
+    <property name="aislot" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="107" x="1068.5" y="724">
+   <properties>
+    <property name="aiobjective" type="int" value="1"/>
+    <property name="aislot" type="int" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="104" x="1120" y="684">
+   <properties>
+    <property name="aiobjective" type="int" value="2"/>
+    <property name="aislot" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="108" x="1120" y="724">
+   <properties>
+    <property name="aiobjective" type="int" value="2"/>
+    <property name="aislot" type="int" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="105" x="1167" y="684">
+   <properties>
+    <property name="aiobjective" type="int" value="3"/>
+    <property name="aislot" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="109" x="1167" y="724">
+   <properties>
+    <property name="aiobjective" type="int" value="3"/>
+    <property name="aislot" type="int" value="2"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="106" x="1216" y="684">
+   <properties>
+    <property name="aiobjective" type="int" value="4"/>
+    <property name="aislot" type="int" value="1"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="110" x="1216" y="724">
+   <properties>
+    <property name="aiobjective" type="int" value="4"/>
+    <property name="aislot" type="int" value="2"/>
    </properties>
    <point/>
   </object>
   <object id="54" x="1068.5" y="704">
    <properties>
     <property name="aiobjective" type="int" value="1"/>
+    <property name="aislot" type="int" value="0"/>
    </properties>
    <point/>
   </object>
@@ -442,18 +514,21 @@
   <object id="96" x="1167" y="704">
    <properties>
     <property name="aiobjective" type="int" value="3"/>
+    <property name="aislot" type="int" value="0"/>
    </properties>
    <point/>
   </object>
   <object id="97" x="1120" y="704">
    <properties>
     <property name="aiobjective" type="int" value="2"/>
+    <property name="aislot" type="int" value="0"/>
    </properties>
    <point/>
   </object>
   <object id="98" x="1216" y="704">
    <properties>
     <property name="aiobjective" type="int" value="4"/>
+    <property name="aislot" type="int" value="0"/>
    </properties>
    <point/>
   </object>

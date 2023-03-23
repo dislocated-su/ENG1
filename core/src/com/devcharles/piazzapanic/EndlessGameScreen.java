@@ -22,7 +22,7 @@ public class EndlessGameScreen extends BaseGameScreen {
     engine.addSystem(new StationSystem(kbInput, factory));
     engine.addSystem(
         new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,
-            true));
+            true, 1));
     engine.addSystem(new CarryItemsSystem());
     engine.addSystem(new InventoryUpdateSystem(hud));
   }
