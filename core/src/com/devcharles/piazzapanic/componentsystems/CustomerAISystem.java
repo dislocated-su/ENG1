@@ -1,5 +1,6 @@
 package com.devcharles.piazzapanic.componentsystems;
 
+import com.badlogic.gdx.math.MathUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -121,7 +122,7 @@ public class CustomerAISystem extends IteratingSystem {
       firstSpawn = false;
 
       ArrayList<Entity> group = new ArrayList<>();
-      for (int i = 0; i < maxGroupSize; i++) {
+      for (int i = 0; i < MathUtils.random(1, maxGroupSize); i++) {
         Entity newCustomer = factory.createCustomer(objectives.get(-2).get(0).getPosition());
         Mappers.aiAgent.get(newCustomer).slot = i;
         group.add(newCustomer);
@@ -131,12 +132,10 @@ public class CustomerAISystem extends IteratingSystem {
       totalCustomers++;
     }
 
-    FoodType[] orders = new FoodType[customers.size() * maxGroupSize];
-    int i = 0;
+    ArrayList<FoodType> orders = new ArrayList<>(customers.size() * maxGroupSize);
     for (ArrayList<Entity> group : customers) {
       for (Entity customer : group) {
-        orders[i] = Mappers.customer.get(customer).order;
-        i++;
+        orders.add(Mappers.customer.get(customer).order);
       }
     }
 
