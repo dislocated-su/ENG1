@@ -22,6 +22,7 @@ import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import java.util.ArrayList;
 
 /**
  * HUD user interface rendering for the game, also includes the win screen.
@@ -215,13 +216,13 @@ public class Hud extends ApplicationAdapter {
    *
    * @param orders array of {@link FoodType} to display.
    */
-  public void updateOrders(FoodType[] orders) {
+  public void updateOrders(ArrayList<FoodType> orders) {
     tableRight.clear();
     tableRight.right();
     tableRight.setFillParent(true);
 
-    for (int i = 0; i < orders.length; i++) {
-      TextureRegion region = EntityFactory.getFoodTexture(orders[i]);
+    for (int i = 0; i < orders.size(); i++) {
+      TextureRegion region = EntityFactory.getFoodTexture(orders.get(i));
       if (region == null) {
         Gdx.app.log("Texture is null", "");
       } else {
