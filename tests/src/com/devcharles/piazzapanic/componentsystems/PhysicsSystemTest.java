@@ -44,6 +44,7 @@ public class PhysicsSystemTest {
     float newBodyX = bodyC.body.getPosition().x;
     float newTransY = transform.position.y;
     float newBodyY = bodyC.body.getPosition().y;
+    assertTrue("Checks X value has changed from starting position and is positive.",newBodyX>0);
     assertEquals("Checks X of body and transform are equal is +X force",newBodyX,newTransX,0.01f);
     assertEquals("Checks Y of body and transform are equal is +X force",newBodyY,newTransY,0.01f);
     assertTrue("Checks transform is moving after force applied.", transform.isMoving);
@@ -67,12 +68,13 @@ public class PhysicsSystemTest {
     entity.add(bodyC);
     transform.position.set(new Vector3 (0,0,0));
     assertFalse("Checks transform is not moving before force applied.", transform.isMoving);
-    bodyC.body.applyForceToCenter(350.0f, 0.0f, true);
+    bodyC.body.applyForceToCenter(-350.0f, 0.0f, true);
     engine.update(0.25f);
     float newTransX = transform.position.x;
     float newBodyX = bodyC.body.getPosition().x;
     float newTransY = transform.position.y;
     float newBodyY = bodyC.body.getPosition().y;
+    assertTrue("Checks X value has changed from starting position and is negative.",newBodyX<0);
     assertEquals("Checks X of body and transform are equal is -X force",newBodyX,newTransX,0.01f);
     assertEquals("Checks Y of body and transform are equal is -X force",newBodyY,newTransY,0.01f);
     assertTrue("Checks transform is moving after force applied.", transform.isMoving);
@@ -102,6 +104,7 @@ public class PhysicsSystemTest {
     float newBodyX = bodyC.body.getPosition().x;
     float newTransY = transform.position.y;
     float newBodyY = bodyC.body.getPosition().y;
+    assertTrue("Checks Y value has changed from starting position and is positive.",newBodyY>0);
     assertEquals("Checks X of body and transform are equal is +Y force",newBodyX,newTransX,0.01f);
     assertEquals("Checks Y of body and transform are equal is +Y force",newBodyY,newTransY,0.01f);
     assertTrue("Checks transform is moving after force applied.", transform.isMoving);
@@ -131,6 +134,7 @@ public class PhysicsSystemTest {
     float newBodyX = bodyC.body.getPosition().x;
     float newTransY = transform.position.y;
     float newBodyY = bodyC.body.getPosition().y;
+    assertTrue("Checks X value has changed from starting position and is negative.",newBodyY<0);
     assertEquals("Checks X of body and transform are equal is -Y force",newBodyX,newTransX,0.01f);
     assertEquals("Checks Y of body and transform are equal is -Y force",newBodyY,newTransY,0.01f);
     assertTrue("Checks transform is moving after force applied.", transform.isMoving);
