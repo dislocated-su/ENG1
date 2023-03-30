@@ -43,7 +43,7 @@ public class CustomerAISystem extends IteratingSystem {
     private int numOfCustomerTotal = 0;
     private final Hud hud;
     private final Integer[] reputationPoints;
-    private final int CUSTOMER = 5;
+    private final int CUSTOMER = 6;
     private boolean firstSpawn = true;
 
     // List of customers, on removal we move the other customers up a place (queueing).
@@ -95,10 +95,16 @@ public class CustomerAISystem extends IteratingSystem {
     public void update(float deltaTime) {
         if (firstSpawn || (spawnTimer.tick(deltaTime) && numOfCustomerTotal < CUSTOMER)) {
             firstSpawn = false;
-            Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
-            customers.add(newCustomer);
-            numOfCustomerTotal++;
-            Mappers.customer.get(newCustomer).timer.start();
+
+            // Only add a customer is there is space in the queue.
+            // There are 5 queue spots on the map.
+            if(numOfCustomerTotal<5){
+                Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
+                customers.add(newCustomer);
+                numOfCustomerTotal++;
+                Mappers.customer.get(newCustomer).timer.start();
+            }
+
         }
 
         FoodType[] orders = new FoodType[customers.size()];
@@ -238,6 +244,7 @@ public class CustomerAISystem extends IteratingSystem {
         customer.timer.reset();
 
         customers.remove(entity);
+        numOfCustomerTotal--;
     }
 
 }
