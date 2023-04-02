@@ -4,7 +4,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,12 +15,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.devcharles.piazzapanic.BaseGameScreen;
 import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.saving.GameState;
 import java.util.ArrayList;
 
 /**
@@ -58,7 +60,7 @@ public class Hud extends ApplicationAdapter {
   private boolean pauseToggled = false;
   public boolean paused = false;
 
-  private final Screen gameScreen;
+  private final com.badlogic.gdx.Screen gameScreen;
   private int numCustomersServed = 0;
 
   /**
@@ -71,7 +73,7 @@ public class Hud extends ApplicationAdapter {
    * @param reputationPoints Must be an object to pass by reference, see <a
    *                         href="https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference">...</a>
    */
-  public Hud(SpriteBatch spriteBatch, final Screen savedGame, final Game game,
+  public Hud(SpriteBatch spriteBatch, final BaseGameScreen savedGame, final Game game,
       Integer[] reputationPoints) {
     this.game = game;
     this.reputation = reputationPoints;
@@ -107,6 +109,14 @@ public class Hud extends ApplicationAdapter {
           } else {
             Gdx.graphics.setFullscreenMode(currentMode);
           }
+        } else if (keycode == Keys.F3) {
+          GameState state = new GameState();
+          state.setFromEngine(savedGame.getEngine());
+          Json json = new Json();
+          System.out.println(json.prettyPrint(state));
+          String text = json.toJson(state, GameState.class);
+          GameState readState = json.fromJson(GameState.class, text);
+          System.out.println(readState);
         }
         return true;
       }
@@ -377,7 +387,7 @@ public class Hud extends ApplicationAdapter {
     stage.dispose();
   }
 
-  private ClickListener createListener(final Screen screen) {
+  private ClickListener createListener(final com.badlogic.gdx.Screen screen) {
     return new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         game.setScreen(screen);

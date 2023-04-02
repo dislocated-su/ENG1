@@ -112,23 +112,19 @@ public class MapLoader {
           switch (lightID) {
             case 0:
               LightBuilder.createPointLight(rayHandler, pos.x, pos.y,
-                  Color.TAN.cpy().sub(0, 0, 0, 0.25f),
-                  10, true);
+                  Color.TAN.cpy().sub(0, 0, 0, 0.25f), 10, true);
               break;
             case 1:
               LightBuilder.createPointLight(rayHandler, pos.x, pos.y,
-                  Color.TAN.cpy().sub(0, 0, 0, 0.5f),
-                  0.8f, false);
+                  Color.TAN.cpy().sub(0, 0, 0, 0.5f), 0.8f, false);
               break;
             case 2:
               LightBuilder.createRoomLight(rayHandler, pos.x, pos.y,
-                  Color.TAN.cpy().sub(0, 0, 0, 0.25f),
-                  25, true);
+                  Color.TAN.cpy().sub(0, 0, 0, 0.25f), 25, true);
               break;
             case 3:
               LightBuilder.createRoomLight(rayHandler, pos.x, pos.y,
-                  Color.TAN.cpy().sub(0, 0, 0, 0.25f),
-                  25, false);
+                  Color.TAN.cpy().sub(0, 0, 0, 0.25f), 25, false);
               break;
           }
 
@@ -189,25 +185,26 @@ public class MapLoader {
 
     Cell currentCell;
 
+    int id = 0;
     for (int i = 0; i < columns; i++) {
       for (int j = 0; j < rows; j++) {
         currentCell =
             stations.getCell(i, j) != null ? stations.getCell(i, j) : stations_f.getCell(i, j);
         if (currentCell != null) {
-          Object object = currentCell.getTile().getProperties().get(stationIdProperty);
-          if (object instanceof Integer) {
+          Integer object = currentCell.getTile().getProperties().get(stationIdProperty, Integer.class);
+          if (object != null) {
             StationType stationType = StationType.from((int) object);
 
             FoodType ingredientType = null;
 
             if (stationType == StationType.ingredient) {
-              ingredientType = FoodType
-                  .from(
-                      (Integer) currentCell.getTile().getProperties().get(ingredientTypeProperty));
+              ingredientType = FoodType.from(
+                  (Integer) currentCell.getTile().getProperties().get(ingredientTypeProperty));
             }
 
-            factory.createStation(stationType, new Vector2((i * 2) + 1, (j * 2) + 1),
+            factory.createStation(id, stationType, new Vector2((i * 2) + 1, (j * 2) + 1),
                 ingredientType);
+            id++;
           }
         }
       }

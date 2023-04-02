@@ -195,7 +195,7 @@ public class EntityFactory {
      * @param ingredientType (optional) if this is an Ingredient station, which
      *                       ingredient should it spawn.
      */
-    public Entity createStation(Station.StationType type, Vector2 position, FoodType ingredientType) {
+    public Entity createStation(int id, Station.StationType type, Vector2 position, FoodType ingredientType) {
         Entity entity = engine.createEntity();
 
         float[] size = { 1f, 1f };
@@ -207,6 +207,7 @@ public class EntityFactory {
         TransformComponent transform = engine.createComponent(TransformComponent.class);
 
         StationComponent station = engine.createComponent(StationComponent.class);
+        station.id = id;
         station.type = type;
 
         if (type == Station.StationType.ingredient) {

@@ -1,0 +1,46 @@
+package com.devcharles.piazzapanic.utility.saving;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.core.PooledEngine;
+import com.devcharles.piazzapanic.components.StationComponent;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class GameState {
+
+  private Integer customerTimer = 0;
+  private HashMap<Integer, StationComponent> stations = new HashMap<>();
+  private ArrayList<SavableCook> cooks = new ArrayList<>();
+  private ArrayList<SavableCustomer> customers = new ArrayList<>();
+
+
+  public Integer getCustomerTimer() {
+    return customerTimer;
+  }
+
+  public void setCustomerTimer(Integer customerTimer) {
+    this.customerTimer = customerTimer;
+  }
+
+  public void setFromEngine(PooledEngine engine) {
+    // Save stations
+    for (Entity stationEntity : engine.getEntitiesFor(Family.all(StationComponent.class).get())) {
+      StationComponent component = stationEntity.getComponent(StationComponent.class);
+      stations.put(component.id, component);
+      System.out.println(component.id);
+    }
+  }
+
+  public HashMap<Integer, StationComponent> getStations() {
+    return stations;
+  }
+
+  public ArrayList<SavableCook> getCooks() {
+    return cooks;
+  }
+
+  public ArrayList<SavableCustomer> getCustomers() {
+    return customers;
+  }
+}

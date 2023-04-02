@@ -96,6 +96,10 @@ public abstract class BaseGameScreen implements Screen {
     }
   }
 
+  public PooledEngine getEngine() {
+    return engine;
+  }
+
   @Override
   public void resize(int width, int height) {
     camera.setToOrtho(false, game.VIRTUAL_HEIGHT * width / (float) height, game.VIRTUAL_HEIGHT);
