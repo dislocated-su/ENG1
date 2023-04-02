@@ -115,7 +115,7 @@ public class StationSystem extends IteratingSystem {
     /**
      * Try and process the food from the player.
      */
-    private void processStation(ControllableComponent controllable, StationComponent station) {
+    void processStation(ControllableComponent controllable, StationComponent station) {
 
         if (controllable.currentFood.isEmpty()) {
             return;
@@ -165,7 +165,7 @@ public class StationSystem extends IteratingSystem {
      * 
      * @param station the station the action is being performed on.
      */
-    private void interactStation(StationComponent station) {
+    void interactStation(StationComponent station) {
         for (Entity food : station.food) {
             if (food == null || !Mappers.cooking.has(food)) {
                 continue;
@@ -191,7 +191,7 @@ public class StationSystem extends IteratingSystem {
      * 
      * @param cook the cook whos inventory is being used for creating the food.
      */
-    private void processServe(Entity cook) {
+    void processServe(Entity cook) {
         ControllableComponent controllable = Mappers.controllable.get(cook);
 
         if (controllable.currentFood.size() < 2) {
@@ -221,7 +221,7 @@ public class StationSystem extends IteratingSystem {
      * Attempt to create a food.
      * @param count number of ingredients to combine
      */
-    private FoodType tryServe(ControllableComponent controllable, int count) {
+    FoodType tryServe(ControllableComponent controllable, int count) {
         Set<FoodType> ingredients = new HashSet<FoodType>();
         int i = 0;
         for (Entity foodEntity : controllable.currentFood) {
@@ -239,7 +239,7 @@ public class StationSystem extends IteratingSystem {
     /**
      * Destroy the top food in the inventory of a cook.
      */
-    private void processBin(ControllableComponent controllable) {
+    void processBin(ControllableComponent controllable) {
         if (controllable.currentFood.isEmpty()) {
             return;
         }
@@ -251,7 +251,7 @@ public class StationSystem extends IteratingSystem {
     /**
      * Pick up ready food from a station
      */
-    private void stationPickup(StationComponent station, ControllableComponent controllable) {
+    void stationPickup(StationComponent station, ControllableComponent controllable) {
         for (Entity foodEntity : station.food) {
             if (foodEntity != null && !Mappers.cooking.has(foodEntity)) {
                 if (controllable.currentFood.pushItem(foodEntity, station.interactingCook)) {
@@ -269,7 +269,7 @@ public class StationSystem extends IteratingSystem {
      * @param station
      * @param deltaTime
      */
-    private void stationTick(StationComponent station, float deltaTime) {
+    void stationTick(StationComponent station, float deltaTime) {
         if (station.type == StationType.cutting_board && station.interactingCook == null) {
             return;
         }
