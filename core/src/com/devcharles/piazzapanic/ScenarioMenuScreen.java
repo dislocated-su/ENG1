@@ -78,9 +78,19 @@ public class ScenarioMenuScreen extends ApplicationAdapter implements Screen {
         // Checks if start button is clicked and if clicked goes onto the tutorial
         startButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println(numOfCustomers.getText());
-                game.setScreen(new Slideshow(game, Slideshow.Type.tutorial));
-                dispose();
+
+                try {
+                    if(Integer.parseInt(numOfCustomers.getText())>0) {
+                        game.setScreen(new GameScreen(game, Integer.parseInt(numOfCustomers.getText())));
+                        dispose();
+                    }
+                    else{
+                        throw new Exception();
+                    }
+                }
+                catch(Exception e){
+                    Gdx.app.log("Error","Number of customers must be a positive integer.");
+                }
             }
         });
 
