@@ -26,8 +26,6 @@ public class StationComponent implements Component, Json.Serializable {
     ArrayList<FoodType> foodTypes = new ArrayList<>(4);
     for (Entity entity : food) {
       if (entity == null) break;
-      FoodComponent foodComponent = entity.getComponent(FoodComponent.class);
-      foodTypes.add(foodComponent.type);
     }
     json.writeValue("foodTypes", foodTypes, ArrayList.class, FoodType.class);
     json.writeValue("ingredient", ingredient);

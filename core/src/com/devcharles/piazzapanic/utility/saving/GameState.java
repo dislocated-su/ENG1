@@ -3,7 +3,10 @@ package com.devcharles.piazzapanic.utility.saving;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
+import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.utility.Mappers;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,6 +32,14 @@ public class GameState {
       StationComponent component = stationEntity.getComponent(StationComponent.class);
       stations.put(component.id, component);
       System.out.println(component.id);
+    }
+
+    for (Entity cookEntity : engine.getEntitiesFor(
+        Family.all(TransformComponent.class, ControllableComponent.class).get())) {
+      SavableCook cook = new SavableCook();
+      cook.setTransformComponent(Mappers.transform.get(cookEntity));
+      cook.setSavableFoodStackFromEntities(Mappers.controllable.get(cookEntity).currentFood);
+      cooks.add(cook);
     }
   }
 
