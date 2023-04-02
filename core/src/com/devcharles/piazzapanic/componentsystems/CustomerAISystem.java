@@ -1,5 +1,6 @@
 package com.devcharles.piazzapanic.componentsystems;
 
+import com.badlogic.gdx.math.MathUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,32 +35,37 @@ import com.devcharles.piazzapanic.utility.box2d.Box2dRadiusProximity;
  */
 public class CustomerAISystem extends IteratingSystem {
 
-  private final Map<Integer, Box2dLocation> objectives;
+  private final Map<Integer, Map<Integer, Box2dLocation>> objectives;
   private final Map<Integer, Boolean> objectiveTaken;
 
   private final World world;
-  private final GdxTimer spawnTimer = new GdxTimer(30000, false, true);
+  protected final GdxTimer spawnTimer = new GdxTimer(30000, false, true);
   private final EntityFactory factory;
-  private int numOfCustomerTotal = 0;
+  private int totalCustomers = 0;
   private final Hud hud;
   private final Integer[] reputationPoints;
-  private final int CUSTOMER = 5;
+  private final int MAX_CUSTOMERS = 5;
   private boolean firstSpawn = true;
+  private final boolean isEndless;
+  private int numQueuedCustomers = 0;
+  private final int maxGroupSize;
 
   // List of customers, on removal we move the other customers up a place (queueing).
-  protected final ArrayList<Entity> customers = new ArrayList<Entity>() {
+  protected final ArrayList<ArrayList<Entity>> customers = new ArrayList<ArrayList<Entity>>(
+      MAX_CUSTOMERS) {
     @Override
     public boolean remove(Object o) {
-      for (Entity entity : customers) {
-        if (entity != o) {
-          AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
+      for (ArrayList<Entity> group : customers) {
+        if (group != o) {
+          for (Entity entity : group) {
+            AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
 
-          if (aiAgent.currentObjective - 1 >= 0) {
-            if (!objectiveTaken.get(aiAgent.currentObjective - 1)) {
-              makeItGoThere(aiAgent, aiAgent.currentObjective - 1);
+            if (aiAgent.currentObjective - 1 >= 0) {
+              if (!objectiveTaken.get(aiAgent.currentObjective - 1)) {
+                makeItGoThere(aiAgent, aiAgent.currentObjective - 1);
+              }
             }
           }
-
         }
       }
       return super.remove(o);
@@ -74,16 +80,20 @@ public class CustomerAISystem extends IteratingSystem {
    * @param factory          {@link EntityFactory} for creating new customers
    * @param hud              {@link Hud} for updating orders, reputation
    * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
+   * @param isEndless        a boolean flag to decide whether there is a limit on customers
+   * @param maxGroupSize     the maximum size of a single group of customers
    */
-  public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world,
+  public CustomerAISystem(Map<Integer, Map<Integer, Box2dLocation>> objectives, World world,
       EntityFactory factory, Hud hud,
-      Integer[] reputationPoints) {
+      Integer[] reputationPoints, boolean isEndless, int maxGroupSize) {
     super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
     this.hud = hud;
     this.objectives = objectives;
     this.objectiveTaken = new HashMap<>();
     this.reputationPoints = reputationPoints;
+    this.isEndless = isEndless;
+    this.maxGroupSize = maxGroupSize;
 
     // Use a reference to the world to destroy box2d bodies when despawning
     // customers
@@ -97,22 +107,41 @@ public class CustomerAISystem extends IteratingSystem {
   public void update(float deltaTime) {
     // Ensure timer actually ticks, and is not short-circuited by firstSpawn being true
     boolean timerComplete = spawnTimer.tick(deltaTime);
-    if (firstSpawn || (timerComplete && numOfCustomerTotal < CUSTOMER)) {
+    if (timerComplete) {
+      numQueuedCustomers++;
+    }
+    int numCustomers = isEndless ? customers.size() : totalCustomers;
+    if (firstSpawn || (numQueuedCustomers > 0 && numCustomers < MAX_CUSTOMERS)) {
+      if (!firstSpawn) {
+        numQueuedCustomers--;
+        if (isEndless) {
+          spawnTimer.setDelay((int) (spawnTimer.getDelay() * 0.98f));
+          Gdx.app.log("Spawn Timer", String.valueOf(spawnTimer.getDelay()));
+        }
+      }
       firstSpawn = false;
-      Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
-      customers.add(newCustomer);
-      numOfCustomerTotal++;
-      Mappers.customer.get(newCustomer).timer.start();
+
+      ArrayList<Entity> group = new ArrayList<>();
+      for (int i = 0; i < MathUtils.random(1, maxGroupSize); i++) {
+        Entity newCustomer = factory.createCustomer(objectives.get(-2).get(0).getPosition());
+        Mappers.aiAgent.get(newCustomer).slot = i;
+        group.add(newCustomer);
+        Mappers.customer.get(newCustomer).timer.start();
+      }
+      customers.add(group);
+      totalCustomers++;
     }
 
-    FoodType[] orders = new FoodType[customers.size()];
-    int i = 0;
-    for (Entity customer : customers) {
-      orders[i] = Mappers.customer.get(customer).order;
-      i++;
+    ArrayList<FoodType> orders = new ArrayList<>(customers.size() * maxGroupSize);
+    for (ArrayList<Entity> group : customers) {
+      for (Entity customer : group) {
+        orders.add(Mappers.customer.get(customer).order);
+      }
     }
 
-    if (!hud.won && customers.size() == 0 && numOfCustomerTotal == CUSTOMER) {
+    if (!isEndless && !hud.won && customers.size() == 0 && totalCustomers == MAX_CUSTOMERS) {
+      hud.triggerWin = true;
+    } else if (isEndless && reputationPoints[0] == 0) {
       hud.triggerWin = true;
     }
 
@@ -127,7 +156,8 @@ public class CustomerAISystem extends IteratingSystem {
     CustomerComponent customer = Mappers.customer.get(entity);
     TransformComponent transform = Mappers.transform.get(entity);
 
-    if (customer.food != null && transform.position.x >= (objectives.get(-1).getPosition().x - 2)) {
+    if (customer.food != null &&
+        transform.position.x >= (objectives.get(-1).get(0).getPosition().x - 2)) {
       destroyCustomer(entity);
       return;
     }
@@ -138,7 +168,7 @@ public class CustomerAISystem extends IteratingSystem {
 
     aiAgent.steeringBody.update(deltaTime);
 
-    // lower reputation points if they have waited longer than time alloted (1 min)
+    // lower reputation points if they have waited longer than time allotted (1 min)
     if (customer.timer.tick(deltaTime)) {
       if (reputationPoints[0] > 0) {
         reputationPoints[0]--;
@@ -193,7 +223,7 @@ public class CustomerAISystem extends IteratingSystem {
   protected void makeItGoThere(AIAgentComponent aiAgent, int locationID) {
     objectiveTaken.put(aiAgent.currentObjective, false);
 
-    Box2dLocation there = objectives.get(locationID);
+    Box2dLocation there = objectives.get(locationID).get(aiAgent.slot);
 
     Arrive<Vector2> arrive = new Arrive<>(aiAgent.steeringBody)
         .setTimeToTarget(0.1f)
@@ -241,8 +271,16 @@ public class CustomerAISystem extends IteratingSystem {
 
     customer.timer.stop();
     customer.timer.reset();
-
-    customers.remove(entity);
+    ArrayList<Entity> groupToRemove = null;
+    for (ArrayList<Entity> group : customers) {
+      group.remove(entity);
+      if (group.isEmpty()) {
+        groupToRemove = group;
+      }
+    }
+    if (groupToRemove != null) {
+      customers.remove(groupToRemove);
+    }
+    hud.incrementCompletedOrders();
   }
-
 }
