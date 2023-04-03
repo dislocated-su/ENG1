@@ -67,10 +67,14 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         TextButton startScenarioButton = new TextButton("Scenario", skin);
         TextButton loadGameButton = new TextButton("Resume game", skin);
         TextButton startEndlessButton = new TextButton("Endless", skin);
+        TextButton tutorialButton = new TextButton("Tutorial", skin);
+
         loadGameButton.setDisabled(true);
         root.add(startScenarioButton);
         root.row();
         root.add(startEndlessButton);
+        root.row();
+        root.add(tutorialButton);
         root.row();
         root.add(loadGameButton).padTop(50);
 
@@ -85,6 +89,12 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         startEndlessButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new EndlessMenuScreen(game));
+                dispose();
+            }
+        });
+        tutorialButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new Slideshow(game,Slideshow.Type.tutorial,new MainMenuScreen(game)));
                 dispose();
             }
         });

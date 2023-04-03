@@ -45,7 +45,7 @@ public class GameScreen implements Screen {
 
     private Integer[] reputationPoints = { 3 };
 
-    public GameScreen(PiazzaPanic game) {
+    public GameScreen(PiazzaPanic game, int numOfCustomers) {
         this.game = game;
 
         kbInput = new KeyboardInput();
@@ -78,7 +78,7 @@ public class GameScreen implements Screen {
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
 

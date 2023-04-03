@@ -43,7 +43,7 @@ public class CustomerAISystem extends IteratingSystem {
     private int numOfCustomerTotal = 0;
     private final Hud hud;
     private final Integer[] reputationPoints;
-    private final int CUSTOMER = 5;
+    private int CUSTOMER;
     private boolean firstSpawn = true;
 
     // List of customers, on removal we move the other customers up a place (queueing).
@@ -75,9 +75,10 @@ public class CustomerAISystem extends IteratingSystem {
      * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
      */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer[] reputationPoints) {
+            Integer[] reputationPoints, int customer) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
+        this.CUSTOMER=customer;
         this.hud = hud;
         this.objectives = objectives;
         this.objectiveTaken = new HashMap<Integer, Boolean>();
@@ -93,12 +94,18 @@ public class CustomerAISystem extends IteratingSystem {
 
     @Override
     public void update(float deltaTime) {
-        if (firstSpawn || (spawnTimer.tick(deltaTime) && numOfCustomerTotal < CUSTOMER)) {
+        if (firstSpawn || (spawnTimer.tick(deltaTime) && CUSTOMER > 0)) {
             firstSpawn = false;
-            Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
-            customers.add(newCustomer);
-            numOfCustomerTotal++;
-            Mappers.customer.get(newCustomer).timer.start();
+
+            // Only add a customer is there is space in the queue and there are customers still remaining.
+            // The number of customers in the queue cannot be more than the number of customers remaining.
+            // There are 5 queue spots on the map.
+            if(numOfCustomerTotal<5 && !(numOfCustomerTotal+1>CUSTOMER)){
+                Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
+                customers.add(newCustomer);
+                numOfCustomerTotal++;
+                Mappers.customer.get(newCustomer).timer.start();
+            }
         }
 
         FoodType[] orders = new FoodType[customers.size()];
@@ -108,7 +115,7 @@ public class CustomerAISystem extends IteratingSystem {
             i++;
         }
 
-        if (!hud.won && customers.size() == 0 && numOfCustomerTotal == CUSTOMER) {
+        if (!hud.won && customers.size() == 0 && CUSTOMER==0) {
             hud.triggerWin = true;
         }
 
@@ -238,6 +245,8 @@ public class CustomerAISystem extends IteratingSystem {
         customer.timer.reset();
 
         customers.remove(entity);
+        numOfCustomerTotal--;
+        CUSTOMER--;
     }
 
 }
