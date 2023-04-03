@@ -51,8 +51,8 @@ public class ScenarioMenuScreen extends ApplicationAdapter implements Screen {
         Label.LabelStyle menuLabelStyle = new Label.LabelStyle();
         Label.LabelStyle subtitleLabelStyle = new Label.LabelStyle();
         gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
-        subtitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
-        subtitleFont.getData().setScale((float) 1.5,(float)1.5);
+        subtitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
+        subtitleFont.getData().setScale((float) 0.7,(float)0.7);
         menuLabelStyle.font = gamesFont;
         subtitleLabelStyle.font=subtitleFont;
 
