@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -23,6 +26,8 @@ import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+
+import java.awt.*;
 
 /**
  * HUD user interface rendering for the game, also includes the win screen.
@@ -39,17 +44,23 @@ public class Hud extends ApplicationAdapter {
 
     // A label is basically a widget
     LabelStyle hudLabelStyle;
+    LabelStyle hudRedLabelStyle;
+    LabelStyle hudGreenLabelStyle;
     LabelStyle titleLabelStyle;
+
     Label timerLabel;
     Label timeNameLabel;
     Label reputationLabel;
     Label reputationNameLabel;
+    Label difficultyNameLabel;
+    Label difficultyLabel;
     Label pausedNameLabel;
     BitmapFont uiFont, uiTitleFont;
     // an image used as the background of recipe book and tutorial
     private Image photo;
 
     private Game game;
+    private GameScreen.Difficulty difficulty;
     private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel;
 
     private boolean pauseToggled = false;
@@ -64,10 +75,11 @@ public class Hud extends ApplicationAdapter {
      * @param game {@link PiazzaPanic} instance for switching screens.
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;
+        this.difficulty=difficulty;
 
         // Setup the viewport
         viewport = new ScreenViewport(new OrthographicCamera(1280, 720));
@@ -81,6 +93,12 @@ public class Hud extends ApplicationAdapter {
 
         // Create generic style for labels with the different fonts
         hudLabelStyle = new Label.LabelStyle();
+        hudRedLabelStyle = new Label.LabelStyle();
+        hudGreenLabelStyle = new Label.LabelStyle();
+        hudRedLabelStyle.font = uiFont;
+        hudGreenLabelStyle.font = uiFont;
+        hudRedLabelStyle.fontColor = Color.RED;
+        hudGreenLabelStyle.fontColor = Color.GREEN;
         hudLabelStyle.font = uiFont;
         titleLabelStyle = new Label.LabelStyle();
         titleLabelStyle.font = uiTitleFont;
@@ -112,13 +130,17 @@ public class Hud extends ApplicationAdapter {
 
         timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);
         reputationLabel = new Label(String.format("%01d", reputation[0]), hudLabelStyle);
+        difficultyLabel = new Label(difficulty.getDisplayName(),hudLabelStyle);
         timeNameLabel = new Label("Time", hudLabelStyle);
         reputationNameLabel = new Label("Reputation", hudLabelStyle);
+        difficultyNameLabel = new Label("Game Mode",hudLabelStyle);
         // Creates a bunch of labels and sets the fontsize
         reputationLabel.setFontScale(fontScale + 0.1f);
         timerLabel.setFontScale(fontScale + 0.1f);
         timeNameLabel.setFontScale(fontScale + 0.1f);
         reputationNameLabel.setFontScale(fontScale + 0.1f);
+        difficultyNameLabel.setFontScale(fontScale + 0.1f);
+        difficultyLabel.setFontScale(fontScale + 0.1f);
         // lays out timer and reputation
         tableTop = new Table();
         tableTop.top();
@@ -126,10 +148,12 @@ public class Hud extends ApplicationAdapter {
 
         tableTop.add(timeNameLabel).expandX().padTop(10);
         tableTop.add(reputationNameLabel).expandX().padTop(10);
+        tableTop.add(difficultyNameLabel).expandX().padTop(10);
 
         tableTop.row();
         tableTop.add(timerLabel).expandX();
         tableTop.add(reputationLabel).expandX();
+        tableTop.add(difficultyLabel).expandX();
 
         tableBottomLabel = new Table();
         tableBottomLabel.bottom();
@@ -206,7 +230,7 @@ public class Hud extends ApplicationAdapter {
      * 
      * @param orders array of {@link FoodType} to display.
      */
-    public void updateOrders(FoodType[] orders) {
+    public void updateOrders(FoodType[] orders, int[] orderTimes) {
         tableRight.clear();
         tableRight.right();
         tableRight.setFillParent(true);
@@ -218,9 +242,11 @@ public class Hud extends ApplicationAdapter {
             } else {
                 // adds all the orders onto the right of the screen with a little number
                 Label orderNumberLabel = new Label(String.format("%01d", i + 1), hudLabelStyle);
+                Label orderDueLabel = new Label(orderTimes[i]>0 ? Integer.toString(orderTimes[i]) : "0",orderTimes[i]>60 ? hudGreenLabelStyle : hudRedLabelStyle);
                 tableRight.add(orderNumberLabel).padRight(10);
                 photo = new Image(region);
-                tableRight.add(photo).width(64).height(64);
+                tableRight.add(photo).width(64).height(64).padRight(15);
+                tableRight.add(orderDueLabel).padRight(10);
                 tableRight.row().height(0);
             }
         }
