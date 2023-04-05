@@ -19,6 +19,6 @@ public class GameScreenTests {
     @Test
     public void constructorTest() throws Exception {
         // gamescreen completes all non-graphical initialization
-        gameScreen = new GameScreen(game);
+        gameScreen = new GameScreen(game,1);
     }
 }
