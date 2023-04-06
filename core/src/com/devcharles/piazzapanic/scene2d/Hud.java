@@ -26,6 +26,7 @@ import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.GdxTimer;
 
 import java.awt.*;
 
@@ -59,18 +60,20 @@ public class Hud extends ApplicationAdapter {
 
     Label difficultyLabel;
     Label pausedNameLabel;
+    Label infoMsgLabel;
     BitmapFont uiFont, uiTitleFont;
     // an image used as the background of recipe book and tutorial
     private Image photo;
 
     private Game game;
     private GameScreen.Difficulty difficulty;
-    private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel;
+    private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel, infoTable;
 
     private boolean pauseToggled = false;
     public boolean paused = false;
 
     private GameScreen gameScreen;
+    private GdxTimer infoTimer = new GdxTimer(2000,false,false);
 
     /**
      * Create the hud.
@@ -141,6 +144,7 @@ public class Hud extends ApplicationAdapter {
         difficultyNameLabel = new Label("Game Mode",hudLabelStyle);
         tillBalanceNameLabel = new Label("Till Balance",hudLabelStyle);
         tillBalanceLabel = new Label("0", hudRedLabelStyle);
+        infoMsgLabel = new Label("",titleLabelStyle);
         // Creates a bunch of labels and sets the fontsize
         reputationLabel.setFontScale(fontScale + 0.1f);
         timerLabel.setFontScale(fontScale + 0.1f);
@@ -150,6 +154,8 @@ public class Hud extends ApplicationAdapter {
         difficultyLabel.setFontScale(fontScale + 0.1f);
         tillBalanceNameLabel.setFontScale(fontScale + 0.1f);
         tillBalanceLabel.setFontScale(fontScale + 0.1f);
+        infoMsgLabel.setFontScale(fontScale);
+
         // lays out timer and reputation
         tableTop = new Table();
         tableTop.top();
@@ -205,12 +211,16 @@ public class Hud extends ApplicationAdapter {
 
         this.tableRight = new Table();
         this.tableBottom = new Table();
+        this.infoTable = new Table();
+        infoTable.setFillParent(true);
+        infoTable.add(infoMsgLabel);
 
         stage.addActor(tablePause);
         stage.addActor(tableTop);
         stage.addActor(tableRight);
         stage.addActor(tableBottom);
         stage.addActor(tableBottomLabel);
+        stage.addActor(infoTable);
     }
 
     /**
@@ -279,6 +289,12 @@ public class Hud extends ApplicationAdapter {
             stage.draw();
             return;
         }
+
+        if(infoTimer.tick(deltaTime)){
+            infoMsgLabel.setText("");
+            infoTimer.stop();
+            infoTimer.reset();
+        }
         timeCounter += won ? 0 : deltaTime;
         // Staggered once per second using timeCounter makes it way faster
         if (timeCounter >= 1) {
@@ -296,6 +312,7 @@ public class Hud extends ApplicationAdapter {
                 pauseToggled = false;
                 this.pause();
             }
+
             timeCounter -= 1;
         }
 
@@ -376,6 +393,11 @@ public class Hud extends ApplicationAdapter {
         returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
 
         stage.addActor(centerTable);
+    }
+
+    public void displayInfoMessage(String msg){
+        infoMsgLabel.setText(msg);
+        infoTimer.start();
     }
 
     @Override

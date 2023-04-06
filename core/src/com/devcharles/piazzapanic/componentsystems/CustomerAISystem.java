@@ -253,7 +253,12 @@ public class CustomerAISystem extends IteratingSystem {
 
         Engine engine = getEngine();
 
-        tillBalance[0]+=customer.order.getPrice();
+        float customerTip = getRandomCustomerTip(customer.order.getPrice());
+        if(customerTip>0){
+            hud.displayInfoMessage("Customer has tipped $ " + Float.toString(customerTip));
+        }
+
+        tillBalance[0]+=customer.order.getPrice() + customerTip;
         customer.order = null;
 
         ItemComponent heldItem = engine.createComponent(ItemComponent.class);
@@ -274,6 +279,11 @@ public class CustomerAISystem extends IteratingSystem {
         CUSTOMER--;
     }
 
+    /**
+     * Calculates how many customers should arrive at once.
+     * Weighted so that customers arrive alone most of the time.
+     * @return groupSize
+     */
     private int getRandomCustomerGroupSize(){
         if (difficulty== GameScreen.Difficulty.SCENARIO){return 1;}
         double x = Math.random();
@@ -281,5 +291,23 @@ public class CustomerAISystem extends IteratingSystem {
         if(x>=0.7 && x < 0.9){return 2;}
         if(x>=0.9){return 3;}
         return 1;
+    }
+
+    /**
+     * Calculates the amount a customer will tip.
+     * Customers will tip a random amount up to the price of their dish and
+     * will do so 20% of the time.
+     * In scenario mode there are no tips.
+     * @param dishPrice The price of the customer's meal which is used to determine their tip.
+     * @return The calculated tip.
+     */
+    private int getRandomCustomerTip(float dishPrice){
+        if (difficulty== GameScreen.Difficulty.SCENARIO){return 0;}
+        double x = Math.random();
+        if(x>0.8){
+            x = (1 + Math.random());
+            return Math.round((float) dishPrice * (float) x);
+        }
+        return 0;
     }
 }
