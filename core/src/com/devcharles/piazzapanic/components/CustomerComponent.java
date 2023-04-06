@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.components.PowerUpComponent.PowerUpType;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 
 public class CustomerComponent implements Component, Poolable {
@@ -11,6 +12,7 @@ public class CustomerComponent implements Component, Poolable {
     public Entity interactingCook = null;
     public Entity food = null;
     public GdxTimer timer = new GdxTimer(90000, false, true);
+    public PowerUpType powerUp = null;
 
     @Override
     public void reset() {
