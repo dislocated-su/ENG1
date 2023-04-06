@@ -8,6 +8,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
@@ -16,12 +17,7 @@ import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.GameScreen;
-import com.devcharles.piazzapanic.components.AIAgentComponent;
-import com.devcharles.piazzapanic.components.ControllableComponent;
-import com.devcharles.piazzapanic.components.CustomerComponent;
-import com.devcharles.piazzapanic.components.ItemComponent;
-import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.components.*;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
@@ -45,6 +41,7 @@ public class CustomerAISystem extends IteratingSystem {
     private final Hud hud;
     private final GameScreen.Difficulty difficulty;
     private final Integer[] reputationPoints;
+    private final Float[] tillBalance;
     private int CUSTOMER;
     private boolean firstSpawn = true;
 
@@ -77,7 +74,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
      */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty) {
+            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty, Float[] tillBalance) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.CUSTOMER=customer;
@@ -86,6 +83,7 @@ public class CustomerAISystem extends IteratingSystem {
         this.objectiveTaken = new HashMap<Integer, Boolean>();
         this.reputationPoints = reputationPoints;
         this.difficulty=difficulty;
+        this.tillBalance=tillBalance;
 
         // Use a reference to the world to destroy box2d bodies when despawning
         // customers
@@ -255,6 +253,7 @@ public class CustomerAISystem extends IteratingSystem {
 
         Engine engine = getEngine();
 
+        tillBalance[0]+=customer.order.getPrice();
         customer.order = null;
 
         ItemComponent heldItem = engine.createComponent(ItemComponent.class);

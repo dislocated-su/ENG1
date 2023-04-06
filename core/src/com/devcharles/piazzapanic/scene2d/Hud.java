@@ -38,6 +38,7 @@ public class Hud extends ApplicationAdapter {
     private Integer customerTimer = 000;
     private float timeCounter = 0;
     private Integer[] reputation;
+    private Float[] tillBalance;
     private Skin skin;
 
     private final float fontScale = 0.6f;
@@ -53,6 +54,9 @@ public class Hud extends ApplicationAdapter {
     Label reputationLabel;
     Label reputationNameLabel;
     Label difficultyNameLabel;
+    Label tillBalanceNameLabel;
+    Label tillBalanceLabel;
+
     Label difficultyLabel;
     Label pausedNameLabel;
     BitmapFont uiFont, uiTitleFont;
@@ -75,11 +79,12 @@ public class Hud extends ApplicationAdapter {
      * @param game {@link PiazzaPanic} instance for switching screens.
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty, Float[] tillBalance) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;
         this.difficulty=difficulty;
+        this.tillBalance=tillBalance;
 
         // Setup the viewport
         viewport = new ScreenViewport(new OrthographicCamera(1280, 720));
@@ -134,6 +139,8 @@ public class Hud extends ApplicationAdapter {
         timeNameLabel = new Label("Time", hudLabelStyle);
         reputationNameLabel = new Label("Reputation", hudLabelStyle);
         difficultyNameLabel = new Label("Game Mode",hudLabelStyle);
+        tillBalanceNameLabel = new Label("Till Balance",hudLabelStyle);
+        tillBalanceLabel = new Label("0", hudRedLabelStyle);
         // Creates a bunch of labels and sets the fontsize
         reputationLabel.setFontScale(fontScale + 0.1f);
         timerLabel.setFontScale(fontScale + 0.1f);
@@ -141,6 +148,8 @@ public class Hud extends ApplicationAdapter {
         reputationNameLabel.setFontScale(fontScale + 0.1f);
         difficultyNameLabel.setFontScale(fontScale + 0.1f);
         difficultyLabel.setFontScale(fontScale + 0.1f);
+        tillBalanceNameLabel.setFontScale(fontScale + 0.1f);
+        tillBalanceLabel.setFontScale(fontScale + 0.1f);
         // lays out timer and reputation
         tableTop = new Table();
         tableTop.top();
@@ -148,11 +157,13 @@ public class Hud extends ApplicationAdapter {
 
         tableTop.add(timeNameLabel).expandX().padTop(10);
         tableTop.add(reputationNameLabel).expandX().padTop(10);
+        tableTop.add(tillBalanceNameLabel).expandX().padTop(10);
         tableTop.add(difficultyNameLabel).expandX().padTop(10);
 
         tableTop.row();
         tableTop.add(timerLabel).expandX();
         tableTop.add(reputationLabel).expandX();
+        tableTop.add(tillBalanceLabel).expandX();
         tableTop.add(difficultyLabel).expandX();
 
         tableBottomLabel = new Table();
@@ -274,6 +285,9 @@ public class Hud extends ApplicationAdapter {
             customerTimer++;
             timerLabel.setText(String.format("%03d", customerTimer));
             reputationLabel.setText(reputation[0]);
+            tillBalanceLabel.setText(Float.toString(tillBalance[0]));
+            tillBalanceLabel.setStyle(tillBalance[0]>0 ? hudGreenLabelStyle : hudRedLabelStyle);
+
             if (triggerWin) {
                 triggerWin = false;
                 win();

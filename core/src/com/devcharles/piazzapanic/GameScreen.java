@@ -44,6 +44,7 @@ public class GameScreen implements Screen {
     private MapLoader mapLoader;
 
     private Integer[] reputationPoints = { 3 };
+    private Float[] tillBalance = {0f};
 
     public enum Difficulty {
         SCENARIO("Scenario",30000),
@@ -82,7 +83,7 @@ public class GameScreen implements Screen {
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
-        hud = new Hud(game.batch, this, game, reputationPoints,difficulty);
+        hud = new Hud(game.batch, this, game, reputationPoints,difficulty,tillBalance);
 
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
@@ -96,7 +97,7 @@ public class GameScreen implements Screen {
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
 
