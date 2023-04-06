@@ -5,6 +5,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -115,11 +116,11 @@ public class Hud extends ApplicationAdapter {
           state.setCustomerTimer(customerTimer);
           state.setNumCustomersServed(numCustomersServed);
 
+          FileHandle saveFile = Gdx.files.local(GameState.SAVE_LOCATION);
+
           Json json = new Json();
+          saveFile.writeString(json.toJson(state, GameState.class), false);
           System.out.println(json.prettyPrint(state));
-          String text = json.toJson(state, GameState.class);
-          GameState readState = json.fromJson(GameState.class, text);
-          System.out.println(readState);
         }
         return true;
       }

@@ -176,7 +176,7 @@ public class MapLoader {
    * @param engine Ashley {@link Engine} instance.
    * @param world  The Box2D world instance to add sensor bodies to.
    */
-  public void buildStations(Engine engine, World world) {
+  public Map<Integer, Entity> buildStations(Engine engine, World world) {
     TiledMapTileLayer stations = (TiledMapTileLayer) (map.getLayers().get(stationLayer));
     TiledMapTileLayer stations_f = (TiledMapTileLayer) (map.getLayers().get(stationLayer + "_f"));
 
@@ -185,29 +185,34 @@ public class MapLoader {
 
     Cell currentCell;
 
+    Map<Integer, Entity> stationsMap = new HashMap<>();
+
     int id = 0;
     for (int i = 0; i < columns; i++) {
       for (int j = 0; j < rows; j++) {
         currentCell =
             stations.getCell(i, j) != null ? stations.getCell(i, j) : stations_f.getCell(i, j);
-        if (currentCell != null) {
-          Integer object = currentCell.getTile().getProperties().get(stationIdProperty, Integer.class);
-          if (object != null) {
-            StationType stationType = StationType.from((int) object);
-
-            FoodType ingredientType = null;
-
-            if (stationType == StationType.ingredient) {
-              ingredientType = FoodType.from(
-                  (Integer) currentCell.getTile().getProperties().get(ingredientTypeProperty));
-            }
-
-            factory.createStation(id, stationType, new Vector2((i * 2) + 1, (j * 2) + 1),
-                ingredientType);
-            id++;
-          }
+        if (currentCell == null) {
+          continue;
         }
-      }
-    }
+        Integer object = currentCell.getTile().getProperties().get(stationIdProperty, Integer.class);
+        if (object == null) {
+          continue;
+        }
+        StationType stationType = StationType.from((int) object);
+
+        FoodType ingredientType = null;
+
+        if (stationType == StationType.ingredient) {
+          ingredientType = FoodType.from(
+              (Integer) currentCell.getTile().getProperties().get(ingredientTypeProperty));
+        }
+
+        stationsMap.put(id, factory.createStation(id, stationType, new Vector2((i * 2) + 1, (j * 2) + 1),
+            ingredientType));
+        id++;
+      } // Rows Loop
+    } // Columns Loop
+    return stationsMap;
   }
 }

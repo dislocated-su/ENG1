@@ -57,6 +57,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
 
     TextButton startScenarioModeBtn = new TextButton("Start scenario mode", skin);
     TextButton startEndlessModeBtn = new TextButton("Start endless mode", skin);
+    TextButton loadEndlessModeBtn = new TextButton("Load endless mode", skin);
 
     // Checks if button is clicked and if clicked goes onto the tutorial
     startScenarioModeBtn.addListener(new ClickListener() {
@@ -70,7 +71,15 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     startEndlessModeBtn.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         game.setScreen(
-            new Slideshow(game, Slideshow.Type.tutorial, new EndlessGameScreen(game, null)));
+            new Slideshow(game, Slideshow.Type.tutorial, new EndlessGameScreen(game, null, false)));
+        dispose();
+      }
+    });
+    // Checks if button is clicked and if clicked goes onto the tutorial
+    loadEndlessModeBtn.addListener(new ClickListener() {
+      public void clicked(InputEvent event, float x, float y) {
+        game.setScreen(
+            new Slideshow(game, Slideshow.Type.tutorial, new EndlessGameScreen(game, null, true)));
         dispose();
       }
     });
@@ -80,6 +89,8 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     root.add(startScenarioModeBtn);
     root.row();
     root.add(startEndlessModeBtn);
+    root.row();
+    root.add(loadEndlessModeBtn);
 
   }
 

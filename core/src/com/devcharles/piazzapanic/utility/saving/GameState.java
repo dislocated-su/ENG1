@@ -13,10 +13,12 @@ import java.util.HashMap;
 
 public class GameState {
 
+  public static String SAVE_LOCATION = "save.json";
+
   private Integer customerTimer = 0;
   private int numCustomersServed = 0;
-  private HashMap<Integer, SavableStation> stations = new HashMap<>();
-  private ArrayList<SavableCook> cooks = new ArrayList<>();
+  private final HashMap<String, SavableStation> stations = new HashMap<>();
+  private final ArrayList<SavableCook> cooks = new ArrayList<>();
   private SavableCustomerAISystem customerAISystem;
 
   public Integer getCustomerTimer() {
@@ -31,7 +33,7 @@ public class GameState {
     // Save stations
     for (Entity stationEntity : engine.getEntitiesFor(Family.all(StationComponent.class).get())) {
       StationComponent component = Mappers.station.get(stationEntity);
-      stations.put(component.id, SavableStation.from(component));
+      stations.put(String.valueOf(component.id), SavableStation.from(component));
     }
 
     // Save cooks
@@ -45,7 +47,7 @@ public class GameState {
     customerAISystem = SavableCustomerAISystem.from(engine.getSystem(CustomerAISystem.class));
   }
 
-  public HashMap<Integer, SavableStation> getStations() {
+  public HashMap<String, SavableStation> getStations() {
     return stations;
   }
 

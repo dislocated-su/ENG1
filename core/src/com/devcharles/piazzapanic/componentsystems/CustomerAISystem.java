@@ -108,8 +108,8 @@ public class CustomerAISystem extends IteratingSystem {
   public void loadFromSave(SavableCustomerAISystem savedSystem) {
     // Set objective taken.
     objectiveTaken.clear();
-    for (Integer key : savedSystem.objectiveTaken.keySet()) {
-      objectiveTaken.put(key, savedSystem.objectiveTaken.get(key));
+    for (Object key : savedSystem.objectiveTaken.keySet()) {
+      objectiveTaken.put(Integer.valueOf((String) key), savedSystem.objectiveTaken.get((String) key));
     }
 
     // Set spawn timer

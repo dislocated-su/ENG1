@@ -8,8 +8,8 @@ import java.util.ArrayDeque;
 
 public class SavableCook {
 
-  TransformComponent transformComponent;
-  ArrayDeque<SavableFood> foodStack = new ArrayDeque<>();
+  public TransformComponent transformComponent;
+  public ArrayDeque<SavableFood> foodStack = new ArrayDeque<>();
 
   public static SavableCook from(Entity cookEntity) {
     SavableCook cook = new SavableCook();
