@@ -45,7 +45,25 @@ public class GameScreen implements Screen {
 
     private Integer[] reputationPoints = { 3 };
 
-    public GameScreen(PiazzaPanic game, int numOfCustomers) {
+    public enum Difficulty {
+        SCENARIO("Scenario",30000),
+        ENDLESS_EASY("Endless - Easy",120000),
+        ENDLESS_NORMAL("Endless - Normal",60000),
+        ENDLESS_HARD("Endless - Hard",30000);
+
+        private String displayName;
+        private int spawnFrequency;
+        Difficulty(String displayName, int spawnFrequency){
+            this.displayName=displayName;
+            this.spawnFrequency=spawnFrequency;
+        }
+        public String getDisplayName(){
+            return this.displayName;
+        }
+        public int getSpawnFrequency(){ return this.spawnFrequency;}
+    }
+
+    public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty) {
         this.game = game;
 
         kbInput = new KeyboardInput();
@@ -64,7 +82,7 @@ public class GameScreen implements Screen {
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
-        hud = new Hud(game.batch, this, game, reputationPoints);
+        hud = new Hud(game.batch, this, game, reputationPoints,difficulty);
 
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
@@ -78,7 +96,7 @@ public class GameScreen implements Screen {
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
 
@@ -88,7 +106,6 @@ public class GameScreen implements Screen {
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.stage);
-
     }
 
     @Override
