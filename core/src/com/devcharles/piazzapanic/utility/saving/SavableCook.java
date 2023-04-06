@@ -3,6 +3,7 @@ package com.devcharles.piazzapanic.utility.saving;
 import com.badlogic.ashley.core.Entity;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.utility.FoodStack;
+import com.devcharles.piazzapanic.utility.Mappers;
 import java.util.ArrayDeque;
 
 public class SavableCook {
@@ -10,9 +11,11 @@ public class SavableCook {
   TransformComponent transformComponent;
   ArrayDeque<SavableFood> foodStack = new ArrayDeque<>();
 
-  public void setTransformComponent(
-      TransformComponent transformComponent) {
-    this.transformComponent = transformComponent;
+  public static SavableCook from(Entity cookEntity) {
+    SavableCook cook = new SavableCook();
+    cook.transformComponent = Mappers.transform.get(cookEntity);
+    cook.setSavableFoodStackFromEntities(Mappers.controllable.get(cookEntity).currentFood);
+    return cook;
   }
 
   public void setSavableFoodStackFromEntities(FoodStack stack) {

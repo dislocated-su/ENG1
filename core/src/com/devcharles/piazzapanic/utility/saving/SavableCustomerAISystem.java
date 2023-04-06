@@ -7,12 +7,12 @@ import java.util.Map;
 
 public class SavableCustomerAISystem {
 
-  Map<Integer, Boolean> objectiveTaken;
-  SavableTimer spawnTimer;
-  int totalCustomers;
-  boolean firstSpawn;
-  int numQueuedCustomers;
-  ArrayList<ArrayList<SavableCustomer>> customers;
+  public Map<Integer, Boolean> objectiveTaken;
+  public SavableTimer spawnTimer;
+  public int totalCustomers;
+  public boolean firstSpawn;
+  public int numQueuedCustomers;
+  public ArrayList<ArrayList<SavableCustomer>> customers;
 
   public static SavableCustomerAISystem from(CustomerAISystem system) {
     SavableCustomerAISystem savableSystem = new SavableCustomerAISystem();

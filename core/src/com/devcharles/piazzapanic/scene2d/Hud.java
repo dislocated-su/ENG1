@@ -112,6 +112,9 @@ public class Hud extends ApplicationAdapter {
         } else if (keycode == Keys.F3) {
           GameState state = new GameState();
           state.setFromEngine(savedGame.getEngine());
+          state.setCustomerTimer(customerTimer);
+          state.setNumCustomersServed(numCustomersServed);
+
           Json json = new Json();
           System.out.println(json.prettyPrint(state));
           String text = json.toJson(state, GameState.class);

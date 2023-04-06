@@ -14,9 +14,9 @@ import java.util.HashMap;
 public class GameState {
 
   private Integer customerTimer = 0;
-  private HashMap<Integer, StationComponent> stations = new HashMap<>();
+  private int numCustomersServed = 0;
+  private HashMap<Integer, SavableStation> stations = new HashMap<>();
   private ArrayList<SavableCook> cooks = new ArrayList<>();
-
   private SavableCustomerAISystem customerAISystem;
 
   public Integer getCustomerTimer() {
@@ -30,26 +30,38 @@ public class GameState {
   public void setFromEngine(PooledEngine engine) {
     // Save stations
     for (Entity stationEntity : engine.getEntitiesFor(Family.all(StationComponent.class).get())) {
-      StationComponent component = stationEntity.getComponent(StationComponent.class);
-      stations.put(component.id, component);
+      StationComponent component = Mappers.station.get(stationEntity);
+      stations.put(component.id, SavableStation.from(component));
     }
 
+    // Save cooks
     for (Entity cookEntity : engine.getEntitiesFor(
         Family.all(TransformComponent.class, ControllableComponent.class).get())) {
-      SavableCook cook = new SavableCook();
-      cook.setTransformComponent(Mappers.transform.get(cookEntity));
-      cook.setSavableFoodStackFromEntities(Mappers.controllable.get(cookEntity).currentFood);
+      SavableCook cook = SavableCook.from(cookEntity);
       cooks.add(cook);
     }
 
+    // Save customers
     customerAISystem = SavableCustomerAISystem.from(engine.getSystem(CustomerAISystem.class));
   }
 
-  public HashMap<Integer, StationComponent> getStations() {
+  public HashMap<Integer, SavableStation> getStations() {
     return stations;
   }
 
   public ArrayList<SavableCook> getCooks() {
     return cooks;
+  }
+
+  public SavableCustomerAISystem getCustomerAISystem() {
+    return customerAISystem;
+  }
+
+  public int getNumCustomersServed() {
+    return numCustomersServed;
+  }
+
+  public void setNumCustomersServed(int numCustomersServed) {
+    this.numCustomersServed = numCustomersServed;
   }
 }

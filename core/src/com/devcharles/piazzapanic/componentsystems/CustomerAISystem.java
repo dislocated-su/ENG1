@@ -1,6 +1,8 @@
 package com.devcharles.piazzapanic.componentsystems;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.devcharles.piazzapanic.utility.saving.SavableCustomer;
+import com.devcharles.piazzapanic.utility.saving.SavableCustomerAISystem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,6 +103,45 @@ public class CustomerAISystem extends IteratingSystem {
     this.factory = factory;
 
     spawnTimer.start();
+  }
+
+  public void loadFromSave(SavableCustomerAISystem savedSystem) {
+    // Set objective taken.
+    objectiveTaken.clear();
+    for (Integer key : savedSystem.objectiveTaken.keySet()) {
+      objectiveTaken.put(key, savedSystem.objectiveTaken.get(key));
+    }
+
+    // Set spawn timer
+    spawnTimer.setElapsed(savedSystem.spawnTimer.elapsed);
+    spawnTimer.setDelay(savedSystem.spawnTimer.delay);
+    if (savedSystem.spawnTimer.running) {
+      spawnTimer.start();
+    } else {
+      spawnTimer.stop();
+    }
+
+    // Set flags
+    totalCustomers = savedSystem.totalCustomers;
+    firstSpawn = savedSystem.firstSpawn;
+    numQueuedCustomers = savedSystem.numQueuedCustomers;
+
+    for (ArrayList<Entity> group : customers) {
+      for (Entity customer : group) {
+        destroyCustomer(customer);
+      }
+      group.clear();
+    }
+    customers.clear();
+
+    // Load customers
+    for (ArrayList<SavableCustomer> savedGroup : savedSystem.customers) {
+      ArrayList<Entity> group = new ArrayList<>(3);
+      for (SavableCustomer savedCustomer : savedGroup) {
+        group.add(savedCustomer.toEntity(factory));
+      }
+      customers.add(group);
+    }
   }
 
   @Override
