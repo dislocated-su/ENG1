@@ -5,11 +5,13 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.utils.Json;
 import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
 import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
@@ -55,23 +57,19 @@ public class EndlessGameScreen extends BaseGameScreen {
       }
 
       // Load cooks
-      ImmutableArray<Entity> cooks = engine.getEntitiesFor(
+      engine.removeAllEntities(
           Family.all(TransformComponent.class, ControllableComponent.class).get());
       for (int i = 0; i < gameSave.getCooks().size(); i++) {
         SavableCook savedCook = gameSave.getCooks().get(i);
-        Entity cook = cooks.get(i);
-        Body cookBody = Mappers.b2body.get(cook).body;
-        Vector3 transformPosition = savedCook.transformComponent.position;
-//        cookBody.getTransform().setPosition(new Vector2(transformPosition.x, transformPosition.y));
-        Mappers.transform.get(cook).copyValues(savedCook.transformComponent);
+        Entity cook = factory.createCook((int) savedCook.transformComponent.position.x,
+            (int) savedCook.transformComponent.position.y);
 
         ControllableComponent controllableComponent = Mappers.controllable.get(cook);
-        for (Entity entity : controllableComponent.currentFood) {
-          engine.removeEntity(entity);
-        }
-        controllableComponent.currentFood.clear();
         for (SavableFood savableFood : gameSave.getCooks().get(i).foodStack) {
           controllableComponent.currentFood.push(savableFood.toEntity(factory));
+        }
+        if (i == 0) {
+          cook.add(engine.createComponent(PlayerComponent.class));
         }
       }
 
