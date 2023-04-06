@@ -162,7 +162,7 @@ public class EntityFactoryTest {
     World world = new World(Vector2.Zero, true);
     EntityFactory factory = new EntityFactory(engine, world);
 
-    Entity customer = factory.createCustomer(Vector2.Zero);
+    Entity customer = factory.createCustomer(Vector2.Zero, null);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
             CustomerComponent.class, TextureComponent.class, AnimationComponent.class,

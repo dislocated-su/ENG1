@@ -286,11 +286,12 @@ public class EntityFactory {
     /**
      * Create an AI customer entity. The entity will not walk until it receives a
      * {@link com.badlogic.gdx.ai.steer.SteeringBehavior}.
-     * 
+     *
      * @param position of the customer at spawn point.
+     * @param foodType
      * @return reference to the entity.
      */
-    public Entity createCustomer(Vector2 position) {
+    public Entity createCustomer(Vector2 position, FoodType foodType) {
         Entity entity = engine.createEntity();
 
         B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);
@@ -327,7 +328,7 @@ public class EntityFactory {
 
         int orderIndex = ThreadLocalRandom.current().nextInt(0, s.length);
 
-        customer.order = FoodType.from(s[orderIndex].getValue());
+        customer.order = foodType == null ? FoodType.from(s[orderIndex].getValue()) : foodType;
 
         Gdx.app.log("Order received", customer.order.name());
         entity.add(b2dBody);

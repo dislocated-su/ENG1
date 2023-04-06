@@ -109,7 +109,7 @@ public class CustomerAISystem extends IteratingSystem {
     // Set objective taken.
     objectiveTaken.clear();
     for (Object key : savedSystem.objectiveTaken.keySet()) {
-      objectiveTaken.put(Integer.valueOf((String) key), savedSystem.objectiveTaken.get((String) key));
+      objectiveTaken.put(Integer.valueOf((String) key), savedSystem.objectiveTaken.get(key));
     }
 
     // Set spawn timer
@@ -138,7 +138,9 @@ public class CustomerAISystem extends IteratingSystem {
     for (ArrayList<SavableCustomer> savedGroup : savedSystem.customers) {
       ArrayList<Entity> group = new ArrayList<>(3);
       for (SavableCustomer savedCustomer : savedGroup) {
-        group.add(savedCustomer.toEntity(factory));
+        Entity newCustomer = savedCustomer.toEntity(factory);
+        group.add(newCustomer);
+        makeItGoThere(Mappers.aiAgent.get(newCustomer), savedCustomer.currentObjective);
       }
       customers.add(group);
     }
@@ -164,7 +166,7 @@ public class CustomerAISystem extends IteratingSystem {
 
       ArrayList<Entity> group = new ArrayList<>();
       for (int i = 0; i < MathUtils.random(1, maxGroupSize); i++) {
-        Entity newCustomer = factory.createCustomer(objectives.get(-2).get(0).getPosition());
+        Entity newCustomer = factory.createCustomer(objectives.get(-2).get(0).getPosition(), null);
         Mappers.aiAgent.get(newCustomer).slot = i;
         group.add(newCustomer);
         Mappers.customer.get(newCustomer).timer.start();
@@ -265,6 +267,9 @@ public class CustomerAISystem extends IteratingSystem {
     objectiveTaken.put(aiAgent.currentObjective, false);
 
     Box2dLocation there = objectives.get(locationID).get(aiAgent.slot);
+    if (there == null) {
+      there = objectives.get(locationID).get(0);
+    }
 
     Arrive<Vector2> arrive = new Arrive<>(aiAgent.steeringBody)
         .setTimeToTarget(0.1f)

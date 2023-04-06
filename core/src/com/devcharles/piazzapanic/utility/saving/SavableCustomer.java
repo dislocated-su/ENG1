@@ -13,8 +13,8 @@ public class SavableCustomer {
 
   TransformComponent transformComponent;
 
-  int currentObjective;
-  int slot;
+  public int currentObjective = 0;
+  int slot = 0;
 
   FoodType order;
   SavableFood food;
@@ -40,7 +40,7 @@ public class SavableCustomer {
 
   public Entity toEntity(EntityFactory factory) {
     Entity customer = factory.createCustomer(
-        new Vector2(transformComponent.position.x, transformComponent.position.y));
+        new Vector2(transformComponent.position.x, transformComponent.position.y), order);
     Mappers.transform.get(customer).copyValues(transformComponent);
 
     AIAgentComponent aiAgentComponent = Mappers.aiAgent.get(customer);
@@ -48,7 +48,6 @@ public class SavableCustomer {
     aiAgentComponent.slot = slot;
 
     CustomerComponent customerComponent = Mappers.customer.get(customer);
-    customerComponent.order = order;
     if (food != null) {
       customerComponent.food = food.toEntity(factory);
     }
