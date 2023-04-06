@@ -50,7 +50,7 @@ public class CustomerAISystem extends IteratingSystem {
   private int numQueuedCustomers = 0;
   private final int maxGroupSize;
 
-  // List of customers, on removal we move the other customers up a place (queueing).
+  // List of customer groups, on removal we move the other customers up a place (queueing).
   protected final ArrayList<ArrayList<Entity>> customers = new ArrayList<ArrayList<Entity>>(
       MAX_CUSTOMERS) {
     @Override
@@ -283,4 +283,29 @@ public class CustomerAISystem extends IteratingSystem {
     }
     hud.incrementCompletedOrders();
   }
+
+  public Map<Integer, Boolean> getObjectiveTaken() {
+    return objectiveTaken;
+  }
+
+  public GdxTimer getSpawnTimer() {
+    return spawnTimer;
+  }
+
+  public int getTotalCustomers() {
+    return totalCustomers;
+  }
+
+  public boolean isFirstSpawn() {
+    return firstSpawn;
+  }
+
+  public int getNumQueuedCustomers() {
+    return numQueuedCustomers;
+  }
+
+  public ArrayList<ArrayList<Entity>> getCustomers() {
+    return customers;
+  }
+
 }

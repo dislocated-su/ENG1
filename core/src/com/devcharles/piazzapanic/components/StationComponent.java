@@ -35,7 +35,7 @@ public class StationComponent implements Component, Json.Serializable {
   public void read(Json json, JsonValue jsonData) {
     id = jsonData.getInt("id", id);
     type = json.readValue(StationType.class, jsonData.get("type"));
-    ArrayList foodTypes = json.readValue(ArrayList.class, FoodType.class, new ArrayList(), jsonData.get("foodTypes"));
+    ArrayList foodTypes = json.readValue(ArrayList.class, FoodType.class, new ArrayList<FoodType>(), jsonData.get("foodTypes"));
     for (int i = 0; i < food.size(); i++) {
       if (food.get(i) != null) {
         if (foodTypes.size() <= i) {

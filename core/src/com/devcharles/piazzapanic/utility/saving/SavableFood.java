@@ -13,6 +13,9 @@ public class SavableFood {
   FoodComponent foodComponent;
 
   public static SavableFood from(Entity foodEntity) {
+    if (foodEntity == null) {
+      return null;
+    }
     SavableFood food = new SavableFood();
     food.transformComponent = Mappers.transform.get(foodEntity);
     food.foodComponent = Mappers.food.get(foodEntity);

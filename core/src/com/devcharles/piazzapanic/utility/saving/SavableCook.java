@@ -1,7 +1,6 @@
 package com.devcharles.piazzapanic.utility.saving;
 
 import com.badlogic.ashley.core.Entity;
-import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.utility.FoodStack;
 import java.util.ArrayDeque;

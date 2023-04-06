@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
 import com.devcharles.piazzapanic.utility.Mappers;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,8 +16,8 @@ public class GameState {
   private Integer customerTimer = 0;
   private HashMap<Integer, StationComponent> stations = new HashMap<>();
   private ArrayList<SavableCook> cooks = new ArrayList<>();
-  private ArrayList<SavableCustomer> customers = new ArrayList<>();
 
+  private SavableCustomerAISystem customerAISystem;
 
   public Integer getCustomerTimer() {
     return customerTimer;
@@ -31,7 +32,6 @@ public class GameState {
     for (Entity stationEntity : engine.getEntitiesFor(Family.all(StationComponent.class).get())) {
       StationComponent component = stationEntity.getComponent(StationComponent.class);
       stations.put(component.id, component);
-      System.out.println(component.id);
     }
 
     for (Entity cookEntity : engine.getEntitiesFor(
@@ -41,6 +41,8 @@ public class GameState {
       cook.setSavableFoodStackFromEntities(Mappers.controllable.get(cookEntity).currentFood);
       cooks.add(cook);
     }
+
+    customerAISystem = SavableCustomerAISystem.from(engine.getSystem(CustomerAISystem.class));
   }
 
   public HashMap<Integer, StationComponent> getStations() {
@@ -49,9 +51,5 @@ public class GameState {
 
   public ArrayList<SavableCook> getCooks() {
     return cooks;
-  }
-
-  public ArrayList<SavableCustomer> getCustomers() {
-    return customers;
   }
 }
