@@ -3,6 +3,7 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v[0-9]+.[0-9]+.[0-9]+" ]
   pull_request:
     branches: [ "main" ]
 
@@ -11,9 +12,7 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -27,3 +26,10 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
+    - name: create desktop jar
+      run: ./gradlew desktop:dist
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
+      with:
+         name: desktop-1.0.jar
+         path: desktop/build/libs

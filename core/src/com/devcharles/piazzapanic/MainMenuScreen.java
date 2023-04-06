@@ -33,7 +33,9 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     private Batch batch;
     private Sprite sprite;
     private BitmapFont gamesFont;
+    private BitmapFont subtitleFont;
     private Label title;
+    private Label subtitle;
 
     public MainMenuScreen(final PiazzaPanic game) {
 
@@ -49,24 +51,43 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         stage = new Stage(new ScreenViewport());
 
         Label.LabelStyle menuLabelStyle = new Label.LabelStyle();
+        Label.LabelStyle subtitleLabelStyle = new Label.LabelStyle();
         gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
+        subtitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
+        subtitleFont.getData().setScale(2,2);
         menuLabelStyle.font = gamesFont;
+        subtitleLabelStyle.font=subtitleFont;
 
         title = new Label("Piazza Panic", menuLabelStyle);
-
+        subtitle = new Label("Select Gamemode", subtitleLabelStyle);
         Table root = new Table();
         root.setFillParent(true);
         stage.addActor(root);
-
         root.add(title).expandX().padBottom(120);
         root.row();
-        TextButton startGameButton = new TextButton("Start game", skin);
-        root.add(startGameButton);
+        root.add(subtitle).expandX().padBottom(50);
+        root.row();
+        TextButton startScenarioButton = new TextButton("Scenario", skin);
+        TextButton loadGameButton = new TextButton("Resume game", skin);
+        TextButton startEndlessButton = new TextButton("Endless", skin);
+        loadGameButton.setDisabled(true);
+        root.add(startScenarioButton);
+        root.row();
+        root.add(startEndlessButton);
+        root.row();
+        root.add(loadGameButton).padTop(50);
 
         // Checks if button is clicked and if clicked goes onto the tutorial
-        startGameButton.addListener(new ClickListener() {
+        startScenarioButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new Slideshow(game, Slideshow.Type.tutorial));
+                game.setScreen(new ScenarioMenuScreen(game));
+                dispose();
+            }
+        });
+
+        startEndlessButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new EndlessMenuScreen(game));
                 dispose();
             }
         });
