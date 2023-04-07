@@ -132,6 +132,7 @@ public class Hud extends ApplicationAdapter {
 
   public void loadFromSave(GameState savedGame) {
     customerTimer = savedGame.getCustomerTimer();
+    timerLabel.setText(String.format("%03d", customerTimer));
     numCustomersServed = savedGame.getNumCustomersServed();
   }
 
