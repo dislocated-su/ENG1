@@ -53,10 +53,13 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         Label.LabelStyle menuLabelStyle = new Label.LabelStyle();
         Label.LabelStyle subtitleLabelStyle = new Label.LabelStyle();
         gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
+        subtitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
+        subtitleFont.getData().setScale(2,2);
         menuLabelStyle.font = gamesFont;
+        subtitleLabelStyle.font=subtitleFont;
 
         title = new Label("Piazza Panic", menuLabelStyle);
-        subtitle = new Label("Select Gamemode", menuLabelStyle);
+        subtitle = new Label("Select Gamemode", subtitleLabelStyle);
         Table root = new Table();
         root.setFillParent(true);
         stage.addActor(root);
