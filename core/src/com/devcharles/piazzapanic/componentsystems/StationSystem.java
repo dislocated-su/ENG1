@@ -200,10 +200,10 @@ public class StationSystem extends IteratingSystem {
         }
 
         int count = 2;
-        FoodType result = tryServe(controllable, count);
+        FoodType result = tryAssemble(controllable, count);
 
         if (result == null) {
-            result = tryServe(controllable, ++count);
+            result = tryAssemble(controllable, ++count);
             if (result == null) {
                 return;
             }
@@ -222,7 +222,7 @@ public class StationSystem extends IteratingSystem {
      * Attempt to create a food.
      * @param count number of ingredients to combine
      */
-    private FoodType tryServe(ControllableComponent controllable, int count) {
+    private FoodType tryAssemble(ControllableComponent controllable, int count) {
         Set<FoodType> ingredients = new HashSet<FoodType>();
         int i = 0;
         for (Entity foodEntity : controllable.currentFood) {
@@ -234,7 +234,7 @@ public class StationSystem extends IteratingSystem {
             i++;
         }
 
-        return Station.serveRecipes.get(ingredients);
+        return Station.assembleRecipes.get(ingredients);
     }
 
     /**
