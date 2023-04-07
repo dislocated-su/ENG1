@@ -75,6 +75,9 @@ public class EndlessGameScreen extends BaseGameScreen {
 
       // Load customerAISystem
       aiSystem.loadFromSave(gameSave.getCustomerAISystem());
+
+      // Load hud save details
+      hud.loadFromSave(gameSave);
     }
   }
 }

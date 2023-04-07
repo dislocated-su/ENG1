@@ -130,6 +130,11 @@ public class Hud extends ApplicationAdapter {
     createTables();
   }
 
+  public void loadFromSave(GameState savedGame) {
+    customerTimer = savedGame.getCustomerTimer();
+    numCustomersServed = savedGame.getNumCustomersServed();
+  }
+
   private void createTables() {
 
     timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);

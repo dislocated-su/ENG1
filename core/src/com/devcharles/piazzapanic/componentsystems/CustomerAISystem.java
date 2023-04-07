@@ -108,6 +108,8 @@ public class CustomerAISystem extends IteratingSystem {
   public void loadFromSave(SavableCustomerAISystem savedSystem) {
     // Set objective taken.
     objectiveTaken.clear();
+    // Event though objectiveTaken has a key of type Integer, the JSON loader loads it as a String,
+    // so type casting is necessary.
     for (Object key : savedSystem.objectiveTaken.keySet()) {
       objectiveTaken.put(Integer.valueOf((String) key), savedSystem.objectiveTaken.get(key));
     }
