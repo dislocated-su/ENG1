@@ -8,6 +8,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
@@ -16,12 +17,7 @@ import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.GameScreen;
-import com.devcharles.piazzapanic.components.AIAgentComponent;
-import com.devcharles.piazzapanic.components.ControllableComponent;
-import com.devcharles.piazzapanic.components.CustomerComponent;
-import com.devcharles.piazzapanic.components.ItemComponent;
-import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.components.*;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
@@ -45,6 +41,7 @@ public class CustomerAISystem extends IteratingSystem {
     private final Hud hud;
     private final GameScreen.Difficulty difficulty;
     private final Integer[] reputationPoints;
+    private final Float[] tillBalance;
     private int CUSTOMER;
     private boolean firstSpawn = true;
 
@@ -77,7 +74,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
      */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty) {
+            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty, Float[] tillBalance) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.CUSTOMER=customer;
@@ -86,6 +83,7 @@ public class CustomerAISystem extends IteratingSystem {
         this.objectiveTaken = new HashMap<Integer, Boolean>();
         this.reputationPoints = reputationPoints;
         this.difficulty=difficulty;
+        this.tillBalance=tillBalance;
 
         // Use a reference to the world to destroy box2d bodies when despawning
         // customers
@@ -255,6 +253,12 @@ public class CustomerAISystem extends IteratingSystem {
 
         Engine engine = getEngine();
 
+        float customerTip = getRandomCustomerTip(customer.order.getPrice());
+        if(customerTip>0){
+            hud.displayInfoMessage("Customer has tipped $ " + Float.toString(customerTip));
+        }
+
+        tillBalance[0]+=customer.order.getPrice() + customerTip;
         customer.order = null;
 
         ItemComponent heldItem = engine.createComponent(ItemComponent.class);
@@ -275,6 +279,11 @@ public class CustomerAISystem extends IteratingSystem {
         CUSTOMER--;
     }
 
+    /**
+     * Calculates how many customers should arrive at once.
+     * Weighted so that customers arrive alone most of the time.
+     * @return groupSize
+     */
     private int getRandomCustomerGroupSize(){
         if (difficulty== GameScreen.Difficulty.SCENARIO){return 1;}
         double x = Math.random();
@@ -282,5 +291,23 @@ public class CustomerAISystem extends IteratingSystem {
         if(x>=0.7 && x < 0.9){return 2;}
         if(x>=0.9){return 3;}
         return 1;
+    }
+
+    /**
+     * Calculates the amount a customer will tip.
+     * Customers will tip a random amount up to the price of their dish and
+     * will do so 20% of the time.
+     * In scenario mode there are no tips.
+     * @param dishPrice The price of the customer's meal which is used to determine their tip.
+     * @return The calculated tip.
+     */
+    private int getRandomCustomerTip(float dishPrice){
+        if (difficulty== GameScreen.Difficulty.SCENARIO){return 0;}
+        double x = Math.random();
+        if(x>0.8){
+            x = (1 + Math.random());
+            return Math.round((float) dishPrice * (float) x);
+        }
+        return 0;
     }
 }

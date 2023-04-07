@@ -26,6 +26,7 @@ import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.GdxTimer;
 
 import java.awt.*;
 
@@ -38,6 +39,7 @@ public class Hud extends ApplicationAdapter {
     private Integer customerTimer = 000;
     private float timeCounter = 0;
     private Integer[] reputation;
+    private Float[] tillBalance;
     private Skin skin;
 
     private final float fontScale = 0.6f;
@@ -53,20 +55,25 @@ public class Hud extends ApplicationAdapter {
     Label reputationLabel;
     Label reputationNameLabel;
     Label difficultyNameLabel;
+    Label tillBalanceNameLabel;
+    Label tillBalanceLabel;
+
     Label difficultyLabel;
     Label pausedNameLabel;
+    Label infoMsgLabel;
     BitmapFont uiFont, uiTitleFont;
     // an image used as the background of recipe book and tutorial
     private Image photo;
 
     private Game game;
     private GameScreen.Difficulty difficulty;
-    private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel;
+    private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel, infoTable;
 
     private boolean pauseToggled = false;
     public boolean paused = false;
 
     private GameScreen gameScreen;
+    private GdxTimer infoTimer = new GdxTimer(2000,false,false);
 
     /**
      * Create the hud.
@@ -75,11 +82,12 @@ public class Hud extends ApplicationAdapter {
      * @param game {@link PiazzaPanic} instance for switching screens.
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty, Float[] tillBalance) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;
         this.difficulty=difficulty;
+        this.tillBalance=tillBalance;
 
         // Setup the viewport
         viewport = new ScreenViewport(new OrthographicCamera(1280, 720));
@@ -134,6 +142,9 @@ public class Hud extends ApplicationAdapter {
         timeNameLabel = new Label("Time", hudLabelStyle);
         reputationNameLabel = new Label("Reputation", hudLabelStyle);
         difficultyNameLabel = new Label("Game Mode",hudLabelStyle);
+        tillBalanceNameLabel = new Label("Till Balance",hudLabelStyle);
+        tillBalanceLabel = new Label("0", hudRedLabelStyle);
+        infoMsgLabel = new Label("",titleLabelStyle);
         // Creates a bunch of labels and sets the fontsize
         reputationLabel.setFontScale(fontScale + 0.1f);
         timerLabel.setFontScale(fontScale + 0.1f);
@@ -141,6 +152,10 @@ public class Hud extends ApplicationAdapter {
         reputationNameLabel.setFontScale(fontScale + 0.1f);
         difficultyNameLabel.setFontScale(fontScale + 0.1f);
         difficultyLabel.setFontScale(fontScale + 0.1f);
+        tillBalanceNameLabel.setFontScale(fontScale + 0.1f);
+        tillBalanceLabel.setFontScale(fontScale + 0.1f);
+        infoMsgLabel.setFontScale(fontScale);
+
         // lays out timer and reputation
         tableTop = new Table();
         tableTop.top();
@@ -148,11 +163,13 @@ public class Hud extends ApplicationAdapter {
 
         tableTop.add(timeNameLabel).expandX().padTop(10);
         tableTop.add(reputationNameLabel).expandX().padTop(10);
+        tableTop.add(tillBalanceNameLabel).expandX().padTop(10);
         tableTop.add(difficultyNameLabel).expandX().padTop(10);
 
         tableTop.row();
         tableTop.add(timerLabel).expandX();
         tableTop.add(reputationLabel).expandX();
+        tableTop.add(tillBalanceLabel).expandX();
         tableTop.add(difficultyLabel).expandX();
 
         tableBottomLabel = new Table();
@@ -194,12 +211,16 @@ public class Hud extends ApplicationAdapter {
 
         this.tableRight = new Table();
         this.tableBottom = new Table();
+        this.infoTable = new Table();
+        infoTable.setFillParent(true);
+        infoTable.add(infoMsgLabel);
 
         stage.addActor(tablePause);
         stage.addActor(tableTop);
         stage.addActor(tableRight);
         stage.addActor(tableBottom);
         stage.addActor(tableBottomLabel);
+        stage.addActor(infoTable);
     }
 
     /**
@@ -268,12 +289,21 @@ public class Hud extends ApplicationAdapter {
             stage.draw();
             return;
         }
+
+        if(infoTimer.tick(deltaTime)){
+            infoMsgLabel.setText("");
+            infoTimer.stop();
+            infoTimer.reset();
+        }
         timeCounter += won ? 0 : deltaTime;
         // Staggered once per second using timeCounter makes it way faster
         if (timeCounter >= 1) {
             customerTimer++;
             timerLabel.setText(String.format("%03d", customerTimer));
             reputationLabel.setText(reputation[0]);
+            tillBalanceLabel.setText(Float.toString(tillBalance[0]));
+            tillBalanceLabel.setStyle(tillBalance[0]>0 ? hudGreenLabelStyle : hudRedLabelStyle);
+
             if (triggerWin) {
                 triggerWin = false;
                 win();
@@ -282,6 +312,7 @@ public class Hud extends ApplicationAdapter {
                 pauseToggled = false;
                 this.pause();
             }
+
             timeCounter -= 1;
         }
 
@@ -362,6 +393,11 @@ public class Hud extends ApplicationAdapter {
         returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
 
         stage.addActor(centerTable);
+    }
+
+    public void displayInfoMessage(String msg){
+        infoMsgLabel.setText(msg);
+        infoTimer.start();
     }
 
     @Override
