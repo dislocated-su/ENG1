@@ -324,9 +324,7 @@ public class EntityFactory {
         // Create a steering body with no behaviour (to be set later)
         aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, true, 0.5f);
 
-        FoodType[] s = new FoodType[Station.serveRecipes.values().size()];
-        s = Station.serveRecipes.values().toArray(s);
-
+        FoodType[] s = Station.serveRecipes;
         int orderIndex = ThreadLocalRandom.current().nextInt(0, s.length);
 
         customer.order = FoodType.from(s[orderIndex].getValue());
