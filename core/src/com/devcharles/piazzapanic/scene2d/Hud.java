@@ -61,7 +61,7 @@ public class Hud extends ApplicationAdapter {
   private boolean pauseToggled = false;
   public boolean paused = false;
 
-  private final com.badlogic.gdx.Screen gameScreen;
+  private final BaseGameScreen gameScreen;
   private int numCustomersServed = 0;
 
   /**
@@ -110,17 +110,6 @@ public class Hud extends ApplicationAdapter {
           } else {
             Gdx.graphics.setFullscreenMode(currentMode);
           }
-        } else if (keycode == Keys.F3) {
-          GameState state = new GameState();
-          state.setFromEngine(savedGame.getEngine());
-          state.setCustomerTimer(customerTimer);
-          state.setNumCustomersServed(numCustomersServed);
-
-          FileHandle saveFile = Gdx.files.local(GameState.SAVE_LOCATION);
-
-          Json json = new Json();
-          saveFile.writeString(json.toJson(state, GameState.class), false);
-          System.out.println(json.prettyPrint(state));
         }
         return true;
       }
@@ -128,6 +117,20 @@ public class Hud extends ApplicationAdapter {
 
     // Create the UI layout.
     createTables();
+  }
+
+  private void saveGame() {
+    System.out.println("hello?");
+    GameState state = new GameState();
+    state.setFromEngine(gameScreen.getEngine());
+    state.setCustomerTimer(customerTimer);
+    state.setNumCustomersServed(numCustomersServed);
+
+    FileHandle saveFile = Gdx.files.local(GameState.SAVE_LOCATION);
+
+    Json json = new Json();
+    saveFile.writeString(json.toJson(state, GameState.class), false);
+    System.out.println(json.prettyPrint(state));
   }
 
   public void loadFromSave(GameState savedGame) {
@@ -179,6 +182,7 @@ public class Hud extends ApplicationAdapter {
     TextButton resumeButton = new TextButton("Resume", skin);
     TextButton recipeBookButton = new TextButton("Recipe Book", skin);
     TextButton tutorialButton = new TextButton("Tutorial", skin);
+    TextButton saveButton = new TextButton("Save and Exit", skin);
 
     resumeButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
@@ -189,14 +193,21 @@ public class Hud extends ApplicationAdapter {
         createListener(new Slideshow(game, Slideshow.Type.recipe, gameScreen)));
     tutorialButton.addListener(
         createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
+    saveButton.addListener(new ClickListener() {
+      public void clicked(InputEvent event, float x, float y) {
+        saveGame();
+        Gdx.app.log("save", "Game is saved!");
+        game.setScreen(new MainMenuScreen((PiazzaPanic) game));
+      }
+    });
 
-    tablePause.add(resumeButton).width(240).height(70).padBottom(30);
-
+    tablePause.add(resumeButton).width(260).height(70).padBottom(30);
     tablePause.row();
-
-    tablePause.add(recipeBookButton).width(240).height(70).padBottom(30);
+    tablePause.add(recipeBookButton).width(260).height(70).padBottom(30);
     tablePause.row();
-    tablePause.add(tutorialButton).width(240).height(70);
+    tablePause.add(tutorialButton).width(260).height(70).padBottom(30);
+    tablePause.row();
+    tablePause.add(saveButton).width(260).height(70);
 
     this.tableRight = new Table();
     this.tableBottom = new Table();
@@ -284,15 +295,16 @@ public class Hud extends ApplicationAdapter {
       customerTimer++;
       timerLabel.setText(String.format("%03d", customerTimer));
       reputationLabel.setText(reputation[0]);
-      if (triggerWin) {
-        triggerWin = false;
-        win();
-      }
-      if (pauseToggled) {
-        pauseToggled = false;
-        this.pause();
-      }
       timeCounter -= 1;
+    }
+
+    if (triggerWin) {
+      triggerWin = false;
+      win();
+    }
+    if (pauseToggled) {
+      pauseToggled = false;
+      this.pause();
     }
 
     stage.act();
