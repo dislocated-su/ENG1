@@ -112,10 +112,10 @@ public class StationSystem extends IteratingSystem {
     }
   }
 
-  /**
-   * Try and process the food from the player.
-   */
-  private void processStation(ControllableComponent controllable, StationComponent station) {
+    /**
+     * Try and process the food from the player.
+     */
+    void processStation(ControllableComponent controllable, StationComponent station) {
 
     if (controllable.currentFood.isEmpty()) {
       return;
@@ -160,16 +160,16 @@ public class StationSystem extends IteratingSystem {
 
   }
 
-  /**
-   * Perform special action (flipping patties, etc.)
-   *
-   * @param station the station the action is being performed on.
-   */
-  private void interactStation(StationComponent station) {
-    for (Entity food : station.food) {
-      if (food == null || !Mappers.cooking.has(food)) {
-        continue;
-      }
+    /**
+     * Perform special action (flipping patties, etc.)
+     * 
+     * @param station the station the action is being performed on.
+     */
+    void interactStation(StationComponent station) {
+        for (Entity food : station.food) {
+            if (food == null || !Mappers.cooking.has(food)) {
+                continue;
+            }
 
       CookingComponent cooking = Mappers.cooking.get(food);
 
@@ -185,14 +185,14 @@ public class StationSystem extends IteratingSystem {
     }
   }
 
-  /**
-   * Try to combine the ingredients at the top of the player's inventory stack (max 3) into a ready
-   * meal.
-   *
-   * @param cook the cook whos inventory is being used for creating the food.
-   */
-  private void processServe(Entity cook) {
-    ControllableComponent controllable = Mappers.controllable.get(cook);
+    /**
+     * Try to combine the ingredients at the top of the player's inventory stack
+     * (max 3) into a ready meal.
+     * 
+     * @param cook the cook whos inventory is being used for creating the food.
+     */
+    void processServe(Entity cook) {
+        ControllableComponent controllable = Mappers.controllable.get(cook);
 
     if (controllable.currentFood.size() < 2) {
       return;
@@ -217,19 +217,18 @@ public class StationSystem extends IteratingSystem {
 
   }
 
-  /**
-   * Attempt to create a food.
-   *
-   * @param count number of ingredients to combine
-   */
-  private FoodType tryServe(ControllableComponent controllable, int count) {
-    Set<FoodType> ingredients = new HashSet<FoodType>();
-    int i = 0;
-    for (Entity foodEntity : controllable.currentFood) {
-      if (i > count - 1) {
-        break;
-      }
-      ingredients.add(Mappers.food.get(foodEntity).type);
+    /**
+     * Attempt to create a food.
+     * @param count number of ingredients to combine
+     */
+    FoodType tryServe(ControllableComponent controllable, int count) {
+        Set<FoodType> ingredients = new HashSet<FoodType>();
+        int i = 0;
+        for (Entity foodEntity : controllable.currentFood) {
+            if (i > count - 1) {
+                break;
+            }
+            ingredients.add(Mappers.food.get(foodEntity).type);
 
       i++;
     }
@@ -237,45 +236,43 @@ public class StationSystem extends IteratingSystem {
     return Station.serveRecipes.get(ingredients);
   }
 
-  /**
-   * Destroy the top food in the inventory of a cook.
-   */
-  private void processBin(ControllableComponent controllable) {
-    if (controllable.currentFood.isEmpty()) {
-      return;
-    }
+    /**
+     * Destroy the top food in the inventory of a cook.
+     */
+    void processBin(ControllableComponent controllable) {
+        if (controllable.currentFood.isEmpty()) {
+            return;
+        }
 
     Entity e = controllable.currentFood.pop();
     getEngine().removeEntity(e);
   }
 
-  /**
-   * Pick up ready food from a station
-   */
-  private void stationPickup(StationComponent station, ControllableComponent controllable) {
-    for (Entity foodEntity : station.food) {
-      if (foodEntity != null && !Mappers.cooking.has(foodEntity)) {
-        if (controllable.currentFood.pushItem(foodEntity, station.interactingCook)) {
-          station.food.set(station.food.indexOf(foodEntity), null);
-          Mappers.transform.get(foodEntity).scale.set(1, 1);
-          Gdx.app.log("Picked up", Mappers.food.get(foodEntity).type.toString());
+    /**
+     * Pick up ready food from a station
+     */
+    void stationPickup(StationComponent station, ControllableComponent controllable) {
+        for (Entity foodEntity : station.food) {
+            if (foodEntity != null && !Mappers.cooking.has(foodEntity)) {
+                if (controllable.currentFood.pushItem(foodEntity, station.interactingCook)) {
+                    station.food.set(station.food.indexOf(foodEntity), null);
+                    Mappers.transform.get(foodEntity).scale.set(1, 1);
+                    Gdx.app.log("Picked up", Mappers.food.get(foodEntity).type.toString());
+                }
+                return;
+            }
         }
-        return;
-      }
     }
-  }
 
-  /**
-   * Cook the food in the station. This progresses the timer in the food being cooked in the
-   * station.
-   *
-   * @param station
-   * @param deltaTime
-   */
-  private void stationTick(StationComponent station, float deltaTime) {
-    if (station.type == StationType.cutting_board && station.interactingCook == null) {
-      return;
-    }
+    /**
+     * Cook the food in the station. This progresses the timer in the food being cooked in the station.
+     * @param station
+     * @param deltaTime
+     */
+    void stationTick(StationComponent station, float deltaTime) {
+        if (station.type == StationType.cutting_board && station.interactingCook == null) {
+            return;
+        }
 
     for (Entity foodEntity : station.food) {
 
