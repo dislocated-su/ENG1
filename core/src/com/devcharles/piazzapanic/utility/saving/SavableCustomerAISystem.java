@@ -10,8 +10,9 @@ public class SavableCustomerAISystem {
   public Map<Integer, Boolean> objectiveTaken;
   public SavableTimer spawnTimer;
   public int totalCustomers;
-  public boolean firstSpawn;
-  public int numQueuedCustomers;
+  public boolean firstSpawn = false;
+  public int numQueuedCustomers = 0;
+  public float patienceModifier = 1f;
   public ArrayList<ArrayList<SavableCustomer>> customers;
 
   public static SavableCustomerAISystem from(CustomerAISystem system) {
@@ -21,6 +22,7 @@ public class SavableCustomerAISystem {
     savableSystem.totalCustomers = system.getTotalCustomers();
     savableSystem.firstSpawn = system.isFirstSpawn();
     savableSystem.numQueuedCustomers = system.getNumQueuedCustomers();
+    savableSystem.patienceModifier = system.getPatienceModifier();
 
     ArrayList<ArrayList<Entity>> customers = system.getCustomers();
     savableSystem.customers = new ArrayList<>(customers.size());

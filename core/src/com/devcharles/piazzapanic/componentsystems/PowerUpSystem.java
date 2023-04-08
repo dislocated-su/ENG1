@@ -5,7 +5,9 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.utility.GdxTimer;
 import com.devcharles.piazzapanic.utility.Mappers;
 
 public class PowerUpSystem extends EntitySystem {
@@ -103,10 +105,40 @@ public class PowerUpSystem extends EntitySystem {
   }
 
   public void addPatience() {
+    if (numPatienceIncrease >= MAX_SINGLE_POWER_UP) {
+      return;
+    }
+    numPatienceIncrease++;
 
+    ImmutableArray<Entity> customers = getEngine().getEntitiesFor(
+        Family.all(CustomerComponent.class).get());
+    for (Entity customer : customers) {
+      GdxTimer timer = Mappers.customer.get(customer).timer;
+      timer.setDelay((int) (timer.getDelay() * patienceModifier));
+    }
+
+    CustomerAISystem aiSystem = getEngine().getSystem(CustomerAISystem.class);
+    if (aiSystem != null) {
+      aiSystem.setPatienceModifier(aiSystem.getPatienceModifier() * patienceModifier);
+    }
   }
 
   public void removePatience() {
+    if (numPatienceIncrease == 0) {
+      return;
+    }
 
+    ImmutableArray<Entity> customers = getEngine().getEntitiesFor(
+        Family.all(CustomerComponent.class).get());
+    for (Entity customer : customers) {
+      GdxTimer timer = Mappers.customer.get(customer).timer;
+      timer.setDelay((int) (timer.getDelay() / patienceModifier));
+    }
+
+    numPatienceIncrease--;
+    CustomerAISystem aiSystem = getEngine().getSystem(CustomerAISystem.class);
+    if (aiSystem != null) {
+      aiSystem.setPatienceModifier(aiSystem.getPatienceModifier() / patienceModifier);
+    }
   }
 }

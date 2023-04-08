@@ -63,7 +63,7 @@ public class WorldContactListener implements ContactListener {
 
       PlayerComponent player = Mappers.player.get(cook);
 
-      if (cook != null && player != null) {
+      if (player != null) {
         player.putDown = false;
         player.pickUp = false;
         return new Pair<>((StationComponent) station, cook);
@@ -96,9 +96,9 @@ public class WorldContactListener implements ContactListener {
 
       PlayerComponent player = Mappers.player.get(cook);
 
-      if (cook != null && player != null) {
+      if (player != null) {
         player.putDown = false;
-        return new Pair<Entity, Entity>(customer, cook);
+        return new Pair<>(customer, cook);
       }
     }
     return null;
