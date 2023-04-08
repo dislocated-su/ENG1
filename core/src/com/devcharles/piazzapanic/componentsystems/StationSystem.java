@@ -30,8 +30,6 @@ public class StationSystem extends IteratingSystem {
 
   KeyboardInput input;
 
-  boolean interactingStation = false;
-
   EntityFactory factory;
 
   private TintComponent readyTint;
@@ -151,6 +149,12 @@ public class StationSystem extends IteratingSystem {
     // success
 
     CookingComponent cooking = getEngine().createComponent(CookingComponent.class);
+    if (food.type == FoodType.unformedPatty) {
+      cooking.timer.setDelay((int) (cooking.timer.getDelay() / station.prepModifier));
+    } else if (food.type == FoodType.onion || food.type == FoodType.lettuce
+        || food.type == FoodType.tomato) {
+      cooking.timer.setDelay((int) (cooking.timer.getDelay() / station.chopModifier));
+    }
 
     cooking.timer.start();
 

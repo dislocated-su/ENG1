@@ -12,6 +12,8 @@ import com.devcharles.piazzapanic.utility.Station.StationType;
 public class StationComponent implements Component {
 
   public int id = 0;
+  public float prepModifier = 1f;
+  public float chopModifier = 1f;
   public Entity interactingCook = null;
   public StationType type;
   public ArrayList<Entity> food = new ArrayList<>(

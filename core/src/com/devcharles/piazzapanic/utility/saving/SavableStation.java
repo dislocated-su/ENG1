@@ -14,6 +14,8 @@ public class SavableStation {
   ArrayList<SavableFood> food = new ArrayList<>(
       Arrays.asList(new SavableFood[]{null, null, null, null}));
   FoodType ingredient;
+  public float prepModifier = 1f;
+  public float chopModifier = 1f;
 
   public static SavableStation from(StationComponent station) {
     SavableStation savableStation = new SavableStation();
@@ -23,6 +25,8 @@ public class SavableStation {
       savableStation.food.set(i, SavableFood.from(station.food.get(i)));
     }
     savableStation.ingredient = station.ingredient;
+    savableStation.prepModifier = station.prepModifier;
+    savableStation.chopModifier = station.chopModifier;
     return savableStation;
   }
 
@@ -39,6 +43,8 @@ public class SavableStation {
     }
 
     stationComponent.ingredient = ingredient;
+    stationComponent.prepModifier = prepModifier;
+    stationComponent.chopModifier = chopModifier;
 
     return stationComponent;
   }

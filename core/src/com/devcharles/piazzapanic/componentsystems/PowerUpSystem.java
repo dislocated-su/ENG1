@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.utility.Mappers;
 
 public class PowerUpSystem extends EntitySystem {
@@ -46,18 +47,51 @@ public class PowerUpSystem extends EntitySystem {
   }
 
   public void addPrepSpeed() {
+    if (numPrepSpeed >= MAX_SINGLE_POWER_UP) {
+      return;
+    }
+    numPrepSpeed++;
+    ImmutableArray<Entity> cooks = getEngine().getEntitiesFor(
+        Family.all(StationComponent.class).get());
+    for (Entity cook : cooks) {
+      Mappers.station.get(cook).prepModifier *= prepSpeedModifier;
+    }
   }
 
   public void removePrepSpeed() {
-
+    if (numPrepSpeed == 0) {
+      return;
+    }
+    numPrepSpeed--;
+    ImmutableArray<Entity> cooks = getEngine().getEntitiesFor(
+        Family.all(StationComponent.class).get());
+    for (Entity cook : cooks) {
+      Mappers.station.get(cook).prepModifier /= prepSpeedModifier;
+    }
   }
 
   public void addChopSpeed() {
-
+    if (numChopSpeed >= MAX_SINGLE_POWER_UP) {
+      return;
+    }
+    numChopSpeed++;
+    ImmutableArray<Entity> cooks = getEngine().getEntitiesFor(
+        Family.all(StationComponent.class).get());
+    for (Entity cook : cooks) {
+      Mappers.station.get(cook).chopModifier *= chopSpeedModifier;
+    }
   }
 
   public void removeChopSpeed() {
-
+    if (numChopSpeed == 0) {
+      return;
+    }
+    numChopSpeed--;
+    ImmutableArray<Entity> cooks = getEngine().getEntitiesFor(
+        Family.all(StationComponent.class).get());
+    for (Entity cook : cooks) {
+      Mappers.station.get(cook).chopModifier /= chopSpeedModifier;
+    }
   }
 
   public void addSalePrice() {

@@ -114,12 +114,12 @@ public class Hud extends ApplicationAdapter {
         } else if (keycode == Keys.F4) {
           PowerUpSystem powerUpSystem = gameScreen.getEngine().getSystem(PowerUpSystem.class);
           if (powerUpSystem != null) {
-            powerUpSystem.addSpeedUp();
+            powerUpSystem.addChopSpeed();
           }
         }else if (keycode == Keys.F5) {
           PowerUpSystem powerUpSystem = gameScreen.getEngine().getSystem(PowerUpSystem.class);
           if (powerUpSystem != null) {
-            powerUpSystem.removeSpeedUp();
+            powerUpSystem.removeChopSpeed();
           }
         }
         return true;
