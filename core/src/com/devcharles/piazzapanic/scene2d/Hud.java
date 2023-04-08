@@ -23,6 +23,7 @@ import com.devcharles.piazzapanic.BaseGameScreen;
 import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.componentsystems.PowerUpSystem;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.saving.GameState;
 import java.util.ArrayList;
@@ -109,6 +110,16 @@ public class Hud extends ApplicationAdapter {
             Gdx.graphics.setWindowedMode(1280, 720);
           } else {
             Gdx.graphics.setFullscreenMode(currentMode);
+          }
+        } else if (keycode == Keys.F4) {
+          PowerUpSystem powerUpSystem = gameScreen.getEngine().getSystem(PowerUpSystem.class);
+          if (powerUpSystem != null) {
+            powerUpSystem.addSpeedUp();
+          }
+        }else if (keycode == Keys.F5) {
+          PowerUpSystem powerUpSystem = gameScreen.getEngine().getSystem(PowerUpSystem.class);
+          if (powerUpSystem != null) {
+            powerUpSystem.removeSpeedUp();
           }
         }
         return true;

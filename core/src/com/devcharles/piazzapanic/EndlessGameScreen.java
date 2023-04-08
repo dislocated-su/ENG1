@@ -14,6 +14,7 @@ import com.devcharles.piazzapanic.componentsystems.InventoryUpdateSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
+import com.devcharles.piazzapanic.componentsystems.PowerUpSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.componentsystems.StationSystem;
 import com.devcharles.piazzapanic.utility.Mappers;
@@ -39,6 +40,7 @@ public class EndlessGameScreen extends BaseGameScreen {
     engine.addSystem(aiSystem);
     engine.addSystem(new CarryItemsSystem());
     engine.addSystem(new InventoryUpdateSystem(hud));
+    engine.addSystem(new PowerUpSystem());
 
     if (loadSave) {
       FileHandle saveFile = Gdx.files.local(GameState.SAVE_LOCATION);
@@ -63,6 +65,7 @@ public class EndlessGameScreen extends BaseGameScreen {
         for (SavableFood savableFood : gameSave.getCooks().get(i).foodStack) {
           controllableComponent.currentFood.push(savableFood.toEntity(factory));
         }
+        controllableComponent.speedModifier = savedCook.speedModifier;
         if (i == 0) {
           cook.add(engine.createComponent(PlayerComponent.class));
         }
