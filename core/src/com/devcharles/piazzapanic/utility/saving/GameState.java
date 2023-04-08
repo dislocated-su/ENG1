@@ -7,6 +7,7 @@ import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
+import com.devcharles.piazzapanic.componentsystems.PowerUpSystem;
 import com.devcharles.piazzapanic.utility.Mappers;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ public class GameState {
   private final HashMap<String, SavableStation> stations = new HashMap<>();
   private final ArrayList<SavableCook> cooks = new ArrayList<>();
   private SavableCustomerAISystem customerAISystem;
+
+  private SavablePowerUpSystem powerUpSystem;
 
   public Integer getCustomerTimer() {
     return customerTimer;
@@ -45,6 +48,9 @@ public class GameState {
 
     // Save customers
     customerAISystem = SavableCustomerAISystem.from(engine.getSystem(CustomerAISystem.class));
+
+    // Save power ups
+    powerUpSystem = SavablePowerUpSystem.from(engine.getSystem(PowerUpSystem.class));
   }
 
   public HashMap<String, SavableStation> getStations() {
@@ -65,5 +71,9 @@ public class GameState {
 
   public void setNumCustomersServed(int numCustomersServed) {
     this.numCustomersServed = numCustomersServed;
+  }
+
+  public SavablePowerUpSystem getPowerUpSystem() {
+    return powerUpSystem;
   }
 }

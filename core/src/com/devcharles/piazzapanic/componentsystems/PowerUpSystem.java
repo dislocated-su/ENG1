@@ -9,20 +9,22 @@ import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 import com.devcharles.piazzapanic.utility.Mappers;
+import com.devcharles.piazzapanic.utility.saving.SavablePowerUpSystem;
 
 public class PowerUpSystem extends EntitySystem {
 
-  private final int MAX_SINGLE_POWER_UP = 5;
+  private static final int MAX_SINGLE_POWER_UP = 5;
+
   private int numSpeedUp = 0;
-  private final float speedUpModifier = 1.5f;
+  private static final float speedUpModifier = 1.5f;
   private int numPrepSpeed = 0;
-  private final float prepSpeedModifier = 1.5f;
+  private static final float prepSpeedModifier = 1.5f;
   private int numChopSpeed = 0;
-  private final float chopSpeedModifier = 1.5f;
+  private static final float chopSpeedModifier = 1.5f;
   private int numSalePrice = 0;
-  private final float saleModifier = 1.5f;
+  private static final float saleModifier = 1.5f;
   private int numPatienceIncrease = 0;
-  private final float patienceModifier = 1.5f;
+  private static final float patienceModifier = 1.5f;
 
   public void addSpeedUp() {
     if (numSpeedUp >= MAX_SINGLE_POWER_UP) {
@@ -141,4 +143,33 @@ public class PowerUpSystem extends EntitySystem {
       aiSystem.setPatienceModifier(aiSystem.getPatienceModifier() / patienceModifier);
     }
   }
+
+  public void loadFromSave(SavablePowerUpSystem savedSystem) {
+    numSpeedUp = savedSystem.numSpeedUp;
+    numPrepSpeed = savedSystem.numPrepSpeed;
+    numChopSpeed = savedSystem.numChopSpeed;
+    numSalePrice = savedSystem.numSalePrice;
+    numPatienceIncrease = savedSystem.numPatienceIncrease;
+  }
+
+  public int getNumSpeedUp() {
+    return numSpeedUp;
+  }
+
+  public int getNumPrepSpeed() {
+    return numPrepSpeed;
+  }
+
+  public int getNumChopSpeed() {
+    return numChopSpeed;
+  }
+
+  public int getNumSalePrice() {
+    return numSalePrice;
+  }
+
+  public int getNumPatienceIncrease() {
+    return numPatienceIncrease;
+  }
+
 }

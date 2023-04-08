@@ -40,7 +40,8 @@ public class EndlessGameScreen extends BaseGameScreen {
     engine.addSystem(aiSystem);
     engine.addSystem(new CarryItemsSystem());
     engine.addSystem(new InventoryUpdateSystem(hud));
-    engine.addSystem(new PowerUpSystem());
+    PowerUpSystem powerUpSystem = new PowerUpSystem();
+    engine.addSystem(powerUpSystem);
 
     if (loadSave) {
       FileHandle saveFile = Gdx.files.local(GameState.SAVE_LOCATION);
@@ -73,6 +74,9 @@ public class EndlessGameScreen extends BaseGameScreen {
 
       // Load customerAISystem
       aiSystem.loadFromSave(gameSave.getCustomerAISystem());
+
+      // Load powerUpSystem
+      powerUpSystem.loadFromSave(gameSave.getPowerUpSystem());
 
       // Load hud save details
       hud.loadFromSave(gameSave);
