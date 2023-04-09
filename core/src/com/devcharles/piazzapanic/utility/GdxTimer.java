@@ -10,7 +10,7 @@ package com.devcharles.piazzapanic.utility;
  */
 public class GdxTimer {
 
-  private final int delay;
+  private int delay;
 
   private int elapsed;
   private boolean running;
@@ -61,6 +61,9 @@ public class GdxTimer {
     this.elapsed = 0;
   }
 
+  public void setElapsed(int elapsed) {
+    this.elapsed = elapsed;
+  }
   public int getElapsed() {
     return elapsed;
   }
@@ -69,4 +72,15 @@ public class GdxTimer {
     return running;
   }
 
+  public void setDelay(int delay) {
+    this.delay = delay;
+  }
+
+  public int getDelay() {
+    return delay;
+  }
+
+  public boolean isLooping() {
+    return looping;
+  }
 }
