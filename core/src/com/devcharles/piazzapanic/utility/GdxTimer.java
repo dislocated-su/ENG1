@@ -61,6 +61,9 @@ public class GdxTimer {
     this.elapsed = 0;
   }
 
+  public void setElapsed(int elapsed) {
+    this.elapsed = elapsed;
+  }
   public int getElapsed() {
     return elapsed;
   }
@@ -75,5 +78,9 @@ public class GdxTimer {
 
   public int getDelay() {
     return delay;
+  }
+
+  public boolean isLooping() {
+    return looping;
   }
 }

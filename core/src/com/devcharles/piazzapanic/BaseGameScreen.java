@@ -2,6 +2,7 @@ package com.devcharles.piazzapanic;
 
 
 import box2dLight.RayHandler;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -15,6 +16,7 @@ import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.MapLoader;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
+import java.util.Map;
 
 public abstract class BaseGameScreen implements Screen {
 
@@ -38,6 +40,7 @@ public abstract class BaseGameScreen implements Screen {
   protected final EntityFactory factory;
 
   protected final Integer[] reputationPoints = {3};
+  protected final Map<Integer, Entity> stationsMap;
 
   public BaseGameScreen(PiazzaPanic game, String mapPath) {
     this.game = game;
@@ -62,7 +65,7 @@ public abstract class BaseGameScreen implements Screen {
     mapLoader = new MapLoader(mapPath, null, factory);
     mapLoader.buildCollisions(world);
     mapLoader.buildFromObjects(engine, rayhandler);
-    mapLoader.buildStations(engine, world);
+    stationsMap = mapLoader.buildStations(engine, world);
 
     world.setContactListener(new WorldContactListener());
 
@@ -94,6 +97,10 @@ public abstract class BaseGameScreen implements Screen {
     if (!kbInput.disableHud) {
       hud.update(delta);
     }
+  }
+
+  public PooledEngine getEngine() {
+    return engine;
   }
 
   @Override

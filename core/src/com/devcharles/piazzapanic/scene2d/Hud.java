@@ -4,8 +4,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,12 +16,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.devcharles.piazzapanic.BaseGameScreen;
 import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.saving.GameState;
 import java.util.ArrayList;
 
 /**
@@ -58,7 +61,7 @@ public class Hud extends ApplicationAdapter {
   private boolean pauseToggled = false;
   public boolean paused = false;
 
-  private final Screen gameScreen;
+  private final BaseGameScreen gameScreen;
   private int numCustomersServed = 0;
 
   /**
@@ -71,7 +74,7 @@ public class Hud extends ApplicationAdapter {
    * @param reputationPoints Must be an object to pass by reference, see <a
    *                         href="https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference">...</a>
    */
-  public Hud(SpriteBatch spriteBatch, final Screen savedGame, final Game game,
+  public Hud(SpriteBatch spriteBatch, final BaseGameScreen savedGame, final Game game,
       Integer[] reputationPoints) {
     this.game = game;
     this.reputation = reputationPoints;
@@ -114,6 +117,26 @@ public class Hud extends ApplicationAdapter {
 
     // Create the UI layout.
     createTables();
+  }
+
+  private void saveGame() {
+    System.out.println("hello?");
+    GameState state = new GameState();
+    state.setFromEngine(gameScreen.getEngine());
+    state.setCustomerTimer(customerTimer);
+    state.setNumCustomersServed(numCustomersServed);
+
+    FileHandle saveFile = Gdx.files.local(GameState.SAVE_LOCATION);
+
+    Json json = new Json();
+    saveFile.writeString(json.toJson(state, GameState.class), false);
+    System.out.println(json.prettyPrint(state));
+  }
+
+  public void loadFromSave(GameState savedGame) {
+    customerTimer = savedGame.getCustomerTimer();
+    timerLabel.setText(String.format("%03d", customerTimer));
+    numCustomersServed = savedGame.getNumCustomersServed();
   }
 
   private void createTables() {
@@ -159,6 +182,7 @@ public class Hud extends ApplicationAdapter {
     TextButton resumeButton = new TextButton("Resume", skin);
     TextButton recipeBookButton = new TextButton("Recipe Book", skin);
     TextButton tutorialButton = new TextButton("Tutorial", skin);
+    TextButton saveButton = new TextButton("Save and Exit", skin);
 
     resumeButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
@@ -169,14 +193,21 @@ public class Hud extends ApplicationAdapter {
         createListener(new Slideshow(game, Slideshow.Type.recipe, gameScreen)));
     tutorialButton.addListener(
         createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
+    saveButton.addListener(new ClickListener() {
+      public void clicked(InputEvent event, float x, float y) {
+        saveGame();
+        Gdx.app.log("save", "Game is saved!");
+        game.setScreen(new MainMenuScreen((PiazzaPanic) game));
+      }
+    });
 
-    tablePause.add(resumeButton).width(240).height(70).padBottom(30);
-
+    tablePause.add(resumeButton).width(260).height(70).padBottom(30);
     tablePause.row();
-
-    tablePause.add(recipeBookButton).width(240).height(70).padBottom(30);
+    tablePause.add(recipeBookButton).width(260).height(70).padBottom(30);
     tablePause.row();
-    tablePause.add(tutorialButton).width(240).height(70);
+    tablePause.add(tutorialButton).width(260).height(70).padBottom(30);
+    tablePause.row();
+    tablePause.add(saveButton).width(260).height(70);
 
     this.tableRight = new Table();
     this.tableBottom = new Table();
@@ -264,15 +295,16 @@ public class Hud extends ApplicationAdapter {
       customerTimer++;
       timerLabel.setText(String.format("%03d", customerTimer));
       reputationLabel.setText(reputation[0]);
-      if (triggerWin) {
-        triggerWin = false;
-        win();
-      }
-      if (pauseToggled) {
-        pauseToggled = false;
-        this.pause();
-      }
       timeCounter -= 1;
+    }
+
+    if (triggerWin) {
+      triggerWin = false;
+      win();
+    }
+    if (pauseToggled) {
+      pauseToggled = false;
+      this.pause();
     }
 
     stage.act();
@@ -377,7 +409,7 @@ public class Hud extends ApplicationAdapter {
     stage.dispose();
   }
 
-  private ClickListener createListener(final Screen screen) {
+  private ClickListener createListener(final com.badlogic.gdx.Screen screen) {
     return new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         game.setScreen(screen);

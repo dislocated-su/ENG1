@@ -1,6 +1,8 @@
 package com.devcharles.piazzapanic.componentsystems;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.devcharles.piazzapanic.utility.saving.SavableCustomer;
+import com.devcharles.piazzapanic.utility.saving.SavableCustomerAISystem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +52,7 @@ public class CustomerAISystem extends IteratingSystem {
   private int numQueuedCustomers = 0;
   private final int maxGroupSize;
 
-  // List of customers, on removal we move the other customers up a place (queueing).
+  // List of customer groups, on removal we move the other customers up a place (queueing).
   protected final ArrayList<ArrayList<Entity>> customers = new ArrayList<ArrayList<Entity>>(
       MAX_CUSTOMERS) {
     @Override
@@ -103,6 +105,49 @@ public class CustomerAISystem extends IteratingSystem {
     spawnTimer.start();
   }
 
+  public void loadFromSave(SavableCustomerAISystem savedSystem) {
+    // Set objective taken.
+    objectiveTaken.clear();
+    // Event though objectiveTaken has a key of type Integer, the JSON loader loads it as a String,
+    // so type casting is necessary.
+    for (Object key : savedSystem.objectiveTaken.keySet()) {
+      objectiveTaken.put(Integer.valueOf((String) key), savedSystem.objectiveTaken.get(key));
+    }
+
+    // Set spawn timer
+    spawnTimer.setElapsed(savedSystem.spawnTimer.elapsed);
+    spawnTimer.setDelay(savedSystem.spawnTimer.delay);
+    if (savedSystem.spawnTimer.running) {
+      spawnTimer.start();
+    } else {
+      spawnTimer.stop();
+    }
+
+    // Set flags
+    totalCustomers = savedSystem.totalCustomers;
+    firstSpawn = savedSystem.firstSpawn;
+    numQueuedCustomers = savedSystem.numQueuedCustomers;
+
+    for (ArrayList<Entity> group : customers) {
+      for (Entity customer : group) {
+        destroyCustomer(customer);
+      }
+      group.clear();
+    }
+    customers.clear();
+
+    // Load customers
+    for (ArrayList<SavableCustomer> savedGroup : savedSystem.customers) {
+      ArrayList<Entity> group = new ArrayList<>(3);
+      for (SavableCustomer savedCustomer : savedGroup) {
+        Entity newCustomer = savedCustomer.toEntity(factory);
+        group.add(newCustomer);
+        makeItGoThere(Mappers.aiAgent.get(newCustomer), savedCustomer.currentObjective);
+      }
+      customers.add(group);
+    }
+  }
+
   @Override
   public void update(float deltaTime) {
     // Ensure timer actually ticks, and is not short-circuited by firstSpawn being true
@@ -123,7 +168,7 @@ public class CustomerAISystem extends IteratingSystem {
 
       ArrayList<Entity> group = new ArrayList<>();
       for (int i = 0; i < MathUtils.random(1, maxGroupSize); i++) {
-        Entity newCustomer = factory.createCustomer(objectives.get(-2).get(0).getPosition());
+        Entity newCustomer = factory.createCustomer(objectives.get(-2).get(0).getPosition(), null);
         Mappers.aiAgent.get(newCustomer).slot = i;
         group.add(newCustomer);
         Mappers.customer.get(newCustomer).timer.start();
@@ -224,6 +269,9 @@ public class CustomerAISystem extends IteratingSystem {
     objectiveTaken.put(aiAgent.currentObjective, false);
 
     Box2dLocation there = objectives.get(locationID).get(aiAgent.slot);
+    if (there == null) {
+      there = objectives.get(locationID).get(0);
+    }
 
     Arrive<Vector2> arrive = new Arrive<>(aiAgent.steeringBody)
         .setTimeToTarget(0.1f)
@@ -283,4 +331,29 @@ public class CustomerAISystem extends IteratingSystem {
     }
     hud.incrementCompletedOrders();
   }
+
+  public Map<Integer, Boolean> getObjectiveTaken() {
+    return objectiveTaken;
+  }
+
+  public GdxTimer getSpawnTimer() {
+    return spawnTimer;
+  }
+
+  public int getTotalCustomers() {
+    return totalCustomers;
+  }
+
+  public boolean isFirstSpawn() {
+    return firstSpawn;
+  }
+
+  public int getNumQueuedCustomers() {
+    return numQueuedCustomers;
+  }
+
+  public ArrayList<ArrayList<Entity>> getCustomers() {
+    return customers;
+  }
+
 }

@@ -76,7 +76,7 @@ public class EntityFactoryTest {
     World world = new World(Vector2.Zero, true);
     EntityFactory factory = new EntityFactory(engine, world);
 
-    Entity station = factory.createStation(StationType.ingredient, Vector2.Zero, FoodType.tomato);
+    Entity station = factory.createStation(0, StationType.ingredient, Vector2.Zero, FoodType.tomato);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
             TextureComponent.class, StationComponent.class).get());
@@ -106,7 +106,7 @@ public class EntityFactoryTest {
     World world = new World(Vector2.Zero, true);
     EntityFactory factory = new EntityFactory(engine, world);
 
-    Entity station = factory.createStation(StationType.grill, Vector2.Zero, null);
+    Entity station = factory.createStation(0, StationType.grill, Vector2.Zero, null);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
             TextureComponent.class, StationComponent.class).get());
@@ -162,7 +162,7 @@ public class EntityFactoryTest {
     World world = new World(Vector2.Zero, true);
     EntityFactory factory = new EntityFactory(engine, world);
 
-    Entity customer = factory.createCustomer(Vector2.Zero);
+    Entity customer = factory.createCustomer(Vector2.Zero, null);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
             CustomerComponent.class, TextureComponent.class, AnimationComponent.class,
