@@ -46,7 +46,7 @@ public class WorldContactListener implements ContactListener {
 
     }
 
-    private Pair<StationComponent, Entity> stationInteractResolver(Contact contact) {
+    protected Pair<StationComponent, Entity> stationInteractResolver(Contact contact) {
         Object objA = contact.getFixtureA().getUserData();
         Object objB = contact.getFixtureB().getUserData();
 
@@ -72,7 +72,7 @@ public class WorldContactListener implements ContactListener {
         return null;
     }
 
-    private Pair<Entity, Entity> customerInteractResolver(Contact contact) {
+    protected Pair<Entity, Entity> customerInteractResolver(Contact contact) {
         Object objA = contact.getFixtureA().getUserData();
         Object objB = contact.getFixtureB().getUserData();
 
