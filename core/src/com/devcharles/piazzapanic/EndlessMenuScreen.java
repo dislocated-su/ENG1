@@ -68,7 +68,6 @@ public class EndlessMenuScreen extends ApplicationAdapter implements Screen {
         toggleDifficulty = new TextButton("Easy", skin);
         TextButton backButton = new TextButton("Back", skin);
         TextButton startButton = new TextButton("Start", skin);
-        startButton.setDisabled(true);
         root.add(toggleDifficulty).padBottom(50);
         root.row();
         root.add(backButton);
@@ -79,6 +78,19 @@ public class EndlessMenuScreen extends ApplicationAdapter implements Screen {
         startButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 // TODO Start endless mode with specified difficulty.
+                GameScreen.Difficulty difficulty = GameScreen.Difficulty.ENDLESS_NORMAL;
+                switch(toggleDifficulty.getText().toString()){
+                    case "Easy":
+                        difficulty=GameScreen.Difficulty.ENDLESS_EASY;
+                        break;
+                    case "Normal":
+                        difficulty=GameScreen.Difficulty.ENDLESS_NORMAL;
+                        break;
+                    case "Hard":
+                        difficulty=GameScreen.Difficulty.ENDLESS_HARD;
+                        break;
+                }
+                game.setScreen(new GameScreen(game,999,difficulty));
             }
         });
 
