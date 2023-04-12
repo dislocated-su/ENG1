@@ -37,7 +37,6 @@ public class MapBodyBuilderTest {
     World world = new World(new Vector2(0, 0), true);
     RectangleMapObject testRectObj = new RectangleMapObject();
     Rectangle mapObjRect = testRectObj.getRectangle();
-    //Vector2 testVector = new Vector2(0,0);
     Vector2 actualVector = new Vector2(mapObjRect.getX() / 16, mapObjRect.getY() / 16);
     PolygonShape testPoly = getRectangle(testRectObj);
 
