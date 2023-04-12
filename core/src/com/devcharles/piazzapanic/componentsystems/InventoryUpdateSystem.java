@@ -14,6 +14,7 @@ import com.devcharles.piazzapanic.utility.Mappers;
 public class InventoryUpdateSystem extends IteratingSystem {
 
     private Hud hud;
+    FoodType[] foods;
     public InventoryUpdateSystem(Hud hud) {
         super(Family.all(PlayerComponent.class, ControllableComponent.class).get());
         this.hud = hud;
@@ -22,7 +23,7 @@ public class InventoryUpdateSystem extends IteratingSystem {
     protected void processEntity(Entity entity, float deltaTime) {
         ControllableComponent cook = Mappers.controllable.get(entity);
 
-        FoodType[] foods = new FoodType[cook.currentFood.size()];
+        foods = new FoodType[cook.currentFood.size()];
 
         int i = 0;
         for (Entity food : cook.currentFood){
