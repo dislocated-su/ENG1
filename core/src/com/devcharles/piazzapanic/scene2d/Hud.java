@@ -7,6 +7,7 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.devcharles.piazzapanic.GameScreen;
@@ -23,6 +26,7 @@ import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.components.PowerUpComponent.PowerUpType;
 
 /**
  * HUD user interface rendering for the game, also includes the win screen.
@@ -46,11 +50,18 @@ public class Hud extends ApplicationAdapter {
     Label reputationNameLabel;
     Label pausedNameLabel;
     BitmapFont uiFont, uiTitleFont;
+    
+    Label powerInv;
+    public float SpeedCounter = 0;
+    public float TimeFreezeCounter = 0;
+    public float BinACustomerCounter = 0;
+    public float DoublePointsCounter = 0;
+    public float InstaCookCounter = 0;
     // an image used as the background of recipe book and tutorial
     private Image photo;
 
     private Game game;
-    private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel;
+    private Table tableBottom, tableRight, tableTop, tableLeft, tablePause, tableBottomLabel;
 
     private boolean pauseToggled = false;
     public boolean paused = false;
@@ -130,11 +141,52 @@ public class Hud extends ApplicationAdapter {
         tableTop.row();
         tableTop.add(timerLabel).expandX();
         tableTop.add(reputationLabel).expandX();
+        
+        // the powerUps on the hud
+        tableLeft = new Table();
+        tableLeft.left();
+        tableLeft.setFillParent(true);
+
+        powerInv = new Label("PowerUps", hudLabelStyle);
+        powerInv.setFontScale(fontScale);
+        
+
+        Texture speedTexture =  new Texture(Gdx.files.internal("speed_boost32.png"));
+        Texture speedPressedTexture = new Texture(Gdx.files.internal("speed_boost32_pressed.png"));
+        ImageButton speedButton = new ImageButton(new TextureRegionDrawable(speedTexture), new TextureRegionDrawable(speedPressedTexture));
+
+        Texture instaTexture = new Texture(Gdx.files.internal("instantCook32.png"));
+        Texture instaPressedTexture = new Texture(Gdx.files.internal("instantCook32_pressed.png"));
+        ImageButton instaCook = new ImageButton(new TextureRegionDrawable(instaTexture), new TextureRegionDrawable(instaPressedTexture));
+
+        Texture binCustomerTexture = new Texture(Gdx.files.internal("binOrder32.png"));
+        Texture binCustomerPressed = new Texture(Gdx.files.internal("binOrder32_pressed.png"));
+        ImageButton binCustomer = new ImageButton(new TextureRegionDrawable(binCustomerTexture), new TextureRegionDrawable(binCustomerPressed));
+
+        Texture doubleRepTexture = new Texture(Gdx.files.internal("doubleRep32.png"));
+        Texture doubleRepPressed = new Texture(Gdx.files.internal("doubleRep32_pressed.png"));
+        ImageButton doubleRep = new ImageButton(new TextureRegionDrawable(doubleRepTexture), new TextureRegionDrawable(doubleRepPressed));
+
+        Texture timeFreezeTexture = new Texture(Gdx.files.internal("timeFreeze32.png"));
+        Texture timeFreezePressed = new Texture(Gdx.files.internal("timeFreeze32_pressed.png"));
+        ImageButton timeFreeze = new ImageButton(new TextureRegionDrawable(timeFreezeTexture), new TextureRegionDrawable(timeFreezePressed));
+
+        tableLeft.add(powerInv);
+        tableLeft.row();
+        tableLeft.add(speedButton);
+        tableLeft.row();
+        tableLeft.add(instaCook);
+        tableLeft.row();
+        tableLeft.add(binCustomer);
+        tableLeft.row();
+        tableLeft.add(doubleRep);
+        tableLeft.row();
+        tableLeft.add(timeFreeze);
 
         tableBottomLabel = new Table();
         tableBottomLabel.bottom();
         tableBottomLabel.setFillParent(true);
-
+    
         Label inv = new Label("Inventory", hudLabelStyle);
         inv.setFontScale(fontScale);
         tableBottomLabel.add(inv).padBottom(60);
@@ -175,6 +227,7 @@ public class Hud extends ApplicationAdapter {
         stage.addActor(tableTop);
         stage.addActor(tableRight);
         stage.addActor(tableBottom);
+        stage.addActor(tableLeft);
         stage.addActor(tableBottomLabel);
     }
 
@@ -227,6 +280,32 @@ public class Hud extends ApplicationAdapter {
     }
 
     /**
+     * Updates the current powerups dropped by the customer
+     * 
+     * @param powerUps array of {@link PowerUpType} to display
+     * 
+     */
+ 
+    // public void updatePowerUps(PowerUpType[] powerUps){
+    //     tableLeft.clear();
+    //     tableLeft.left();
+    //     tableLeft.setFillParent(true);
+
+    //     for (int i = 0; i < powerUps.length; i++){
+    //         TextureRegion region = EntityFactory.getPowerUpTexture(powerUps[i]);
+    //         if(region == null) {Gdx.app.log("No textures found","");}
+    //         else{
+    //             // adds all the powerups given by the customer on the left of the screen
+    //             Label powerUpNumber = new Label(String.format("%01d", i + 1), hudLabelStyle);
+    //             tableLeft.add(powerUpNumber);
+    //             photo = new Image(region);
+    //             tableLeft.add(photo).width(64).height(64);
+    //             tableLeft.row().height(0);
+    //         }
+    //     }
+    // }
+
+    /**
      * Render the hud. If {@code triggerWin} is true when this runs, the Win screen
      * will be shown.
      * 
@@ -274,6 +353,7 @@ public class Hud extends ApplicationAdapter {
         tableRight.setVisible(false);
         tableTop.setVisible(false);
         tableBottomLabel.setVisible(false);
+        tableLeft.setVisible(false);
 
         // Show the pause hud
         tablePause.setVisible(true);
@@ -291,6 +371,7 @@ public class Hud extends ApplicationAdapter {
         tableRight.setVisible(true);
         tableTop.setVisible(true);
         tableBottomLabel.setVisible(true);
+        tableLeft.setVisible(true);
 
         // Hide the pause hud
         tablePause.setVisible(false);
