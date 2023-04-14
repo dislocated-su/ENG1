@@ -191,8 +191,15 @@ public class MapLoader {
                             ingredientType = FoodType
                                     .from((Integer) currentCell.getTile().getProperties().get(ingredientTypeProperty));
                         }
+                        Object lockedProperty = currentCell.getTile().getProperties().get("locked");
+                        boolean locked =false;
+                        if(lockedProperty!=null){
+                            if(lockedProperty.equals(true)){
+                                locked=true;
+                            }
+                        }
 
-                        factory.createStation(stationType, new Vector2((i * 2) + 1, (j * 2) + 1), ingredientType);
+                        factory.createStation(stationType, new Vector2((i * 2) + 1, (j * 2) + 1), ingredientType, new Vector2(i,j),locked);
                     }
                 }
             }
