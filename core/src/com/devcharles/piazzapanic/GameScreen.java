@@ -44,8 +44,27 @@ public class GameScreen implements Screen {
     private MapLoader mapLoader;
 
     private Integer[] reputationPoints = { 3 };
+    private Float[] tillBalance = {0f};
 
-    public GameScreen(PiazzaPanic game) {
+    public enum Difficulty {
+        SCENARIO("Scenario",30000),
+        ENDLESS_EASY("Endless - Easy",120000),
+        ENDLESS_NORMAL("Endless - Normal",60000),
+        ENDLESS_HARD("Endless - Hard",30000);
+
+        private String displayName;
+        private int spawnFrequency;
+        Difficulty(String displayName, int spawnFrequency){
+            this.displayName=displayName;
+            this.spawnFrequency=spawnFrequency;
+        }
+        public String getDisplayName(){
+            return this.displayName;
+        }
+        public int getSpawnFrequency(){ return this.spawnFrequency;}
+    }
+
+    public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty) {
         this.game = game;
 
         kbInput = new KeyboardInput();
@@ -67,8 +86,9 @@ public class GameScreen implements Screen {
         EntityFactory.cutFood(null);
 
         if (!this.game.TESTMODE) {
-            hud = new Hud(game.batch, this, game, reputationPoints);
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance);
         }
+      
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
 
@@ -84,7 +104,7 @@ public class GameScreen implements Screen {
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
         engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
 

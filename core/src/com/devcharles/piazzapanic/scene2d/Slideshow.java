@@ -97,12 +97,15 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         });
 
         exit = new TextButton("Exit", skin);
+
+        // Is this method no longer required? Considering Slideshow is no longer used to start the game.
+        /*
         exit.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen((PiazzaPanic) game));
+                game.setScreen(new GameScreen((PiazzaPanic) game);
                 dispose();
             }
-        });
+        });*/
 
         updatePage();
         stage.addActor(buildTable());
