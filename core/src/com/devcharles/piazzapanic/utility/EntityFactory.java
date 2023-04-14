@@ -16,19 +16,8 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.devcharles.piazzapanic.components.AIAgentComponent;
-import com.devcharles.piazzapanic.components.AnimationComponent;
-import com.devcharles.piazzapanic.components.B2dBodyComponent;
-import com.devcharles.piazzapanic.components.ControllableComponent;
-import com.devcharles.piazzapanic.components.CustomerComponent;
-import com.devcharles.piazzapanic.components.FoodComponent;
-import com.devcharles.piazzapanic.components.PowerUpComponent;
-import com.devcharles.piazzapanic.components.TextureComponent;
-import com.devcharles.piazzapanic.components.TransformComponent;
-import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
+import com.devcharles.piazzapanic.components.*;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
-import com.devcharles.piazzapanic.components.PowerUpComponent.PowerUpType;
-import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.utility.box2d.Box2dSteeringBody;
 import com.devcharles.piazzapanic.utility.box2d.CollisionCategory;
 
@@ -52,7 +41,6 @@ public class EntityFactory {
     }
 
     private static final Map<FoodType, TextureRegion> foodTextures = new HashMap<FoodType, TextureRegion>();
-    private static final Map<PowerUpType, TextureRegion> powerupTextures =  new HashMap<PowerUpType, TextureRegion>();
 
     /**
      * Create reusable definitions for bodies and fixtures. These can be then be
@@ -201,7 +189,7 @@ public class EntityFactory {
      * @param ingredientType (optional) if this is an Ingredient station, which
      *                       ingredient should it spawn.
      */
-    public Entity createStation(Station.StationType type, Vector2 position, FoodType ingredientType) {
+    public Entity createStation(Station.StationType type, Vector2 position, FoodType ingredientType, Vector2 tileOnMap, boolean locked) {
         Entity entity = engine.createEntity();
 
         float[] size = { 1f, 1f };
@@ -213,7 +201,12 @@ public class EntityFactory {
         TransformComponent transform = engine.createComponent(TransformComponent.class);
 
         StationComponent station = engine.createComponent(StationComponent.class);
-        station.type = type;
+
+        if(type != Station.StationType.ingredient){
+            station.tileMapPosition =tileOnMap;
+        }
+        station.type=type;
+        station.locked=locked;
 
         if (type == Station.StationType.ingredient) {
             station.ingredient = ingredientType;
@@ -316,8 +309,6 @@ public class EntityFactory {
 
         AIAgentComponent aiAgent = engine.createComponent(AIAgentComponent.class);
 
-        PowerUpComponent powerUp = engine.createComponent(PowerUpComponent.class);
-
         walkingAnimation.animator = new CustomerAnimator();
 
 
@@ -335,9 +326,7 @@ public class EntityFactory {
         // Create a steering body with no behaviour (to be set later)
         aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, true, 0.5f);
 
-        FoodType[] s = new FoodType[Station.serveRecipes.values().size()];
-        s = Station.serveRecipes.values().toArray(s);
-
+        FoodType[] s = Station.serveRecipes;
         int orderIndex = ThreadLocalRandom.current().nextInt(0, s.length);
         customer.order = FoodType.from(s[orderIndex].getValue());
 

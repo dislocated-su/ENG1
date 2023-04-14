@@ -11,8 +11,7 @@ public class CustomerComponent implements Component, Poolable {
     public FoodType order = null;
     public Entity interactingCook = null;
     public Entity food = null;
-    public GdxTimer timer = new GdxTimer(90000, false, true);
-    // public PowerUpType powerUp = null;
+    public GdxTimer timer = new GdxTimer(120000, false, false);
 
     @Override
     public void reset() {

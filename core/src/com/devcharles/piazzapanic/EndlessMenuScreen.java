@@ -51,8 +51,8 @@ public class EndlessMenuScreen extends ApplicationAdapter implements Screen {
         Label.LabelStyle menuLabelStyle = new Label.LabelStyle();
         Label.LabelStyle subtitleLabelStyle = new Label.LabelStyle();
         gamesFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
-        subtitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
-        subtitleFont.getData().setScale((float) 0.7,(float) 0.7);
+        subtitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
+        subtitleFont.getData().setScale((float) 1.5,(float) 1.5);
         menuLabelStyle.font = gamesFont;
         subtitleLabelStyle.font=subtitleFont;
 
@@ -78,7 +78,19 @@ public class EndlessMenuScreen extends ApplicationAdapter implements Screen {
         startButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 // TODO Start endless mode with specified difficulty.
-                game.setScreen(new GameScreen(game,999));
+                GameScreen.Difficulty difficulty = GameScreen.Difficulty.ENDLESS_NORMAL;
+                switch(toggleDifficulty.getText().toString()){
+                    case "Easy":
+                        difficulty=GameScreen.Difficulty.ENDLESS_EASY;
+                        break;
+                    case "Normal":
+                        difficulty=GameScreen.Difficulty.ENDLESS_NORMAL;
+                        break;
+                    case "Hard":
+                        difficulty=GameScreen.Difficulty.ENDLESS_HARD;
+                        break;
+                }
+                game.setScreen(new GameScreen(game,999,difficulty));
             }
         });
 

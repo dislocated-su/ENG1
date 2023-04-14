@@ -34,11 +34,11 @@ public class RenderingSystem extends IteratingSystem {
 
     List<Entity> entities = new ArrayList<Entity>();
 
-    public RenderingSystem(TiledMap map, SpriteBatch batch, OrthographicCamera camera) {
+    public RenderingSystem(TiledMap map, SpriteBatch batch, OrthographicCamera camera, WorldTilemapRenderer mapRenderer) {
         super(Family.all(TransformComponent.class, TextureComponent.class).get());
         this.sb = batch;
         this.camera = camera;
-        this.mapRenderer = new WorldTilemapRenderer(map, camera, batch);
+        this.mapRenderer = mapRenderer;
         this.Zcomparator = new ZComparator();
         this.Ycomparator = new YComparator();
     }

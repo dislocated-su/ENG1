@@ -10,6 +10,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
@@ -18,10 +19,14 @@ import com.devcharles.piazzapanic.components.TintComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Station;
 import com.devcharles.piazzapanic.utility.Station.StationType;
+import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
+
+import static com.devcharles.piazzapanic.utility.Station.StationType.oven;
 
 /**
  * This system manages player-station interaction and station food processing.
@@ -33,14 +38,23 @@ public class StationSystem extends IteratingSystem {
     boolean interactingStation = false;
 
     EntityFactory factory;
+    WorldTilemapRenderer mapRenderer;
+    Hud hud;
 
     private TintComponent readyTint;
     private float tickAccumulator = 0;
+    private final Float[] tillBalance;
+    private GameScreen.Difficulty difficulty;
 
-    public StationSystem(KeyboardInput input, EntityFactory factory) {
+
+    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, GameScreen.Difficulty difficulty) {
         super(Family.all(StationComponent.class).get());
         this.input = input;
         this.factory = factory;
+        this.mapRenderer=mapRenderer;
+        this.tillBalance=tillBalance;
+        this.hud=hud;
+        this.difficulty=difficulty;
     }
 
     @Override
@@ -118,6 +132,11 @@ public class StationSystem extends IteratingSystem {
      */
     private void processStation(ControllableComponent controllable, StationComponent station) {
 
+        if(station.locked){
+            tryBuy(station);
+            return;
+        }
+
         if (controllable.currentFood.isEmpty()) {
             return;
         }
@@ -158,6 +177,12 @@ public class StationSystem extends IteratingSystem {
         station.food.get(foodIndex).add(cooking);
 
         Gdx.app.log("Food processed", String.format("%s turned into %s", food.type, result));
+
+        // If the station is an oven start the cooking animation.
+        if(station.type==oven){
+            mapRenderer.animateOven(station.tileMapPosition);
+        }
+
 
     }
 
@@ -200,10 +225,10 @@ public class StationSystem extends IteratingSystem {
         }
 
         int count = 2;
-        FoodType result = tryServe(controllable, count);
+        FoodType result = tryAssemble(controllable, count);
 
         if (result == null) {
-            result = tryServe(controllable, ++count);
+            result = tryAssemble(controllable, ++count);
             if (result == null) {
                 return;
             }
@@ -222,7 +247,7 @@ public class StationSystem extends IteratingSystem {
      * Attempt to create a food.
      * @param count number of ingredients to combine
      */
-    private FoodType tryServe(ControllableComponent controllable, int count) {
+    private FoodType tryAssemble(ControllableComponent controllable, int count) {
         Set<FoodType> ingredients = new HashSet<FoodType>();
         int i = 0;
         for (Entity foodEntity : controllable.currentFood) {
@@ -234,7 +259,7 @@ public class StationSystem extends IteratingSystem {
             i++;
         }
 
-        return Station.serveRecipes.get(ingredients);
+        return Station.assembleRecipes.get(ingredients);
     }
 
     /**
@@ -295,6 +320,11 @@ public class StationSystem extends IteratingSystem {
                 Mappers.texture.get(foodEntity).region = EntityFactory.getFoodTexture(food.type);
                 foodEntity.remove(CookingComponent.class);
                 Gdx.app.log("Food ready", food.type.name());
+
+                // If the station is an oven turn off the animation.
+                if(station.type==oven){
+                    mapRenderer.removeOvenAnimation(station.tileMapPosition);
+                }
             } else if (ready) {
 
                 if (tickAccumulator > 0.5f) {
@@ -308,6 +338,30 @@ public class StationSystem extends IteratingSystem {
 
             }
 
+        }
+    }
+
+
+    /**
+     * Unlocks the current station if the player is in endless mode and has enough money.
+     * @param station The current station component with details about the current station.
+     */
+    public void tryBuy(StationComponent station){
+        // TODO sound effect for success or failure.
+        // TODO set price for new stations.
+        if(difficulty== GameScreen.Difficulty.SCENARIO){
+            hud.displayInfoMessage("You can only unlock new stations in endless mode");
+            return;
+        }
+        float priceOfNewStation = 5;
+        if(tillBalance[0]-priceOfNewStation<0){
+            hud.displayInfoMessage("Insufficient funds - Each station costs $"+priceOfNewStation);
+        }
+        else{
+            mapRenderer.unlockStation(station.tileMapPosition,station.type.getValue());
+            tillBalance[0]-=priceOfNewStation;
+            station.locked=false;
+            hud.displayInfoMessage("New station unlocked!");
         }
     }
 
