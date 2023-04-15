@@ -293,7 +293,7 @@ public class Hud extends ApplicationAdapter {
         });
 
         timeFreeze.addListener(new ClickListener(){
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y){ 
                 timeCounter++;
             }
         });
