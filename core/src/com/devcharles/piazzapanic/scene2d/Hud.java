@@ -1,5 +1,7 @@
 package com.devcharles.piazzapanic.scene2d;
 
+import javax.swing.text.LabelView;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -22,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.devcharles.piazzapanic.GameScreen;
@@ -70,11 +73,11 @@ public class Hud extends ApplicationAdapter {
     BitmapFont uiFont, uiTitleFont;
     
     Label powerInv;
-    public float SpeedCounter = 0;
-    public float TimeFreezeCounter = 0;
-    public float BinACustomerCounter = 0;
-    public float DoublePointsCounter = 0;
-    public float InstaCookCounter = 0;
+    public Integer SpeedCounter = 0;
+    public Integer TimeFreezeCounter = 0;
+    public Integer BinACustomerCounter = 0;
+    public Integer DoublePointsCounter = 0;
+    public Integer InstaCookCounter = 0;
     // an image used as the background of recipe book and tutorial
     private Image photo;
 
@@ -198,35 +201,103 @@ public class Hud extends ApplicationAdapter {
 
         Texture speedTexture =  new Texture(Gdx.files.internal("speed_boost32.png"));
         Texture speedPressedTexture = new Texture(Gdx.files.internal("speed_boost32_pressed.png"));
+        // Texture speedRejectTexutre =  new Texture(Gdx.files.internal("speed_boost32_x.png"));
         ImageButton speedButton = new ImageButton(new TextureRegionDrawable(speedTexture), new TextureRegionDrawable(speedPressedTexture));
+        Label currentSpeedLabel = new Label("x0", hudLabelStyle);
+        Label speedCost = new Label("Cost:15", hudGreenLabelStyle); 
+        speedCost.setFontScale(0.5f);
+        speedButton.setSize(64, 64);
+        currentSpeedLabel.setFontScale(0.5f);
 
         Texture instaTexture = new Texture(Gdx.files.internal("instantCook32.png"));
         Texture instaPressedTexture = new Texture(Gdx.files.internal("instantCook32_pressed.png"));
         ImageButton instaCook = new ImageButton(new TextureRegionDrawable(instaTexture), new TextureRegionDrawable(instaPressedTexture));
-
+        Label currentInstaCook = new Label("x0", hudLabelStyle);
+        Label instaCost = new Label("Cost:20", hudGreenLabelStyle);
+        instaCost.setFontScale(0.5f);
+        currentInstaCook.setFontScale(0.5f);
+        
         Texture binCustomerTexture = new Texture(Gdx.files.internal("binOrder32.png"));
         Texture binCustomerPressed = new Texture(Gdx.files.internal("binOrder32_pressed.png"));
         ImageButton binCustomer = new ImageButton(new TextureRegionDrawable(binCustomerTexture), new TextureRegionDrawable(binCustomerPressed));
+        Label binCost = new Label("Cost:50", hudGreenLabelStyle);
+        binCost.setFontScale(0.5f);
+        binCustomer.setSize(64, 64);
 
         Texture doubleRepTexture = new Texture(Gdx.files.internal("doubleRep32.png"));
         Texture doubleRepPressed = new Texture(Gdx.files.internal("doubleRep32_pressed.png"));
         ImageButton doubleRep = new ImageButton(new TextureRegionDrawable(doubleRepTexture), new TextureRegionDrawable(doubleRepPressed));
+        ImageButton doubleRep2 = new ImageButton(null, null, null);
+        Label doubleRepCost = new Label("Cost:30", hudGreenLabelStyle);
+        doubleRepCost.setFontScale(0.5f);
+        doubleRep.setSize(64, 64);
 
         Texture timeFreezeTexture = new Texture(Gdx.files.internal("timeFreeze32.png"));
         Texture timeFreezePressed = new Texture(Gdx.files.internal("timeFreeze32_pressed.png"));
         ImageButton timeFreeze = new ImageButton(new TextureRegionDrawable(timeFreezeTexture), new TextureRegionDrawable(timeFreezePressed));
+        Label timeCost = new Label("Cost:100", hudGreenLabelStyle);
+        timeCost.setFontScale(0.5f);
+        timeFreeze.setSize(64, 64);
 
         tableLeft.add(powerInv);
         tableLeft.row();
         tableLeft.add(speedButton);
+        tableLeft.add(currentSpeedLabel);
+        tableLeft.row();
+        tableLeft.add(speedCost);
         tableLeft.row();
         tableLeft.add(instaCook);
+        tableLeft.add(currentInstaCook);
+        tableLeft.row();
+        tableLeft.add(instaCost);
         tableLeft.row();
         tableLeft.add(binCustomer);
         tableLeft.row();
+        tableLeft.add(binCost);
+        tableLeft.row();
         tableLeft.add(doubleRep);
         tableLeft.row();
+        tableLeft.add(doubleRepCost);
+        tableLeft.row();
         tableLeft.add(timeFreeze);
+        tableLeft.row();
+        tableLeft.add(timeCost);
+
+        speedButton.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                if(tillBalance[0] - 15 >0){
+                    SpeedCounter++;
+                    tillBalance[0] = tillBalance[0] - 15f;
+                }
+                
+            }
+        });
+
+        instaCook.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                InstaCookCounter++;
+            }
+
+        });
+
+        binCustomer.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                BinACustomerCounter++;
+            }
+        });
+
+        doubleRep.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y ){ 
+                DoublePointsCounter++;
+            }
+        });
+
+        timeFreeze.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                timeCounter++;
+            }
+        });
+
 
         tableBottomLabel = new Table();
         tableBottomLabel.bottom();
