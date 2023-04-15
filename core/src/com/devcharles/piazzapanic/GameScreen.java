@@ -18,7 +18,9 @@ import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.Difficulty;
 import com.devcharles.piazzapanic.utility.MapLoader;
+import com.devcharles.piazzapanic.utility.SaveLoad;
 import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 import com.devcharles.piazzapanic.scene2d.Hud;
@@ -47,24 +49,6 @@ public class GameScreen implements Screen {
 
     private Integer[] reputationPoints = { 3 };
     private Float[] tillBalance = {0f};
-
-    public enum Difficulty {
-        SCENARIO("Scenario",30000),
-        ENDLESS_EASY("Endless - Easy",120000),
-        ENDLESS_NORMAL("Endless - Normal",60000),
-        ENDLESS_HARD("Endless - Hard",30000);
-
-        private String displayName;
-        private int spawnFrequency;
-        Difficulty(String displayName, int spawnFrequency){
-            this.displayName=displayName;
-            this.spawnFrequency=spawnFrequency;
-        }
-        public String getDisplayName(){
-            return this.displayName;
-        }
-        public int getSpawnFrequency(){ return this.spawnFrequency;}
-    }
 
     public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty) {
         this.game = game;

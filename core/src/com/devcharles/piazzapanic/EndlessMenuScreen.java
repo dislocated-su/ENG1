@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.scene2d.Slideshow;
+import com.devcharles.piazzapanic.utility.Difficulty;
 
 /**
  * Endless menu screen for selecting easy, normal or hard difficulty, transitions the player to the Tutorial
@@ -78,16 +79,16 @@ public class EndlessMenuScreen extends ApplicationAdapter implements Screen {
         startButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 // TODO Start endless mode with specified difficulty.
-                GameScreen.Difficulty difficulty = GameScreen.Difficulty.ENDLESS_NORMAL;
+                Difficulty difficulty = Difficulty.ENDLESS_NORMAL;
                 switch(toggleDifficulty.getText().toString()){
                     case "Easy":
-                        difficulty=GameScreen.Difficulty.ENDLESS_EASY;
+                        difficulty= Difficulty.ENDLESS_EASY;
                         break;
                     case "Normal":
-                        difficulty=GameScreen.Difficulty.ENDLESS_NORMAL;
+                        difficulty= Difficulty.ENDLESS_NORMAL;
                         break;
                     case "Hard":
-                        difficulty=GameScreen.Difficulty.ENDLESS_HARD;
+                        difficulty= Difficulty.ENDLESS_HARD;
                         break;
                 }
                 game.setScreen(new GameScreen(game,999,difficulty));

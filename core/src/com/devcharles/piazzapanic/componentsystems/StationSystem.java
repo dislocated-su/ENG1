@@ -21,6 +21,7 @@ import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.Difficulty;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Station;
 import com.devcharles.piazzapanic.utility.Station.StationType;
@@ -44,10 +45,10 @@ public class StationSystem extends IteratingSystem {
     private TintComponent readyTint;
     private float tickAccumulator = 0;
     private final Float[] tillBalance;
-    private GameScreen.Difficulty difficulty;
+    private Difficulty difficulty;
 
 
-    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, GameScreen.Difficulty difficulty) {
+    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, Difficulty difficulty) {
         super(Family.all(StationComponent.class).get());
         this.input = input;
         this.factory = factory;
@@ -349,7 +350,7 @@ public class StationSystem extends IteratingSystem {
     public void tryBuy(StationComponent station){
         // TODO sound effect for success or failure.
         // TODO set price for new stations.
-        if(difficulty== GameScreen.Difficulty.SCENARIO){
+        if(difficulty == Difficulty.SCENARIO){
             hud.displayInfoMessage("You can only unlock new stations in endless mode");
             return;
         }

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.scene2d.Slideshow;
+import com.devcharles.piazzapanic.utility.Difficulty;
 
 /**
  * Menu for starting a new scenario game mode, transitions the player to the Tutorial
@@ -81,7 +82,7 @@ public class ScenarioMenuScreen extends ApplicationAdapter implements Screen {
 
                 try {
                     if(Integer.parseInt(numOfCustomers.getText())>0) {
-                        game.setScreen(new GameScreen(game, Integer.parseInt(numOfCustomers.getText()),GameScreen.Difficulty.SCENARIO));
+                        game.setScreen(new GameScreen(game, Integer.parseInt(numOfCustomers.getText()),Difficulty.SCENARIO));
                         dispose();
                     }
                     else{

@@ -27,6 +27,7 @@ import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.GdxTimer;
+import com.devcharles.piazzapanic.utility.Difficulty;
 
 import java.awt.*;
 
@@ -66,7 +67,7 @@ public class Hud extends ApplicationAdapter {
     private Image photo;
 
     private Game game;
-    private GameScreen.Difficulty difficulty;
+    private Difficulty difficulty;
     private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel, infoTable;
 
     private boolean pauseToggled = false;
@@ -82,7 +83,7 @@ public class Hud extends ApplicationAdapter {
      * @param game {@link PiazzaPanic} instance for switching screens.
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty, Float[] tillBalance) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, Difficulty difficulty, Float[] tillBalance) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;

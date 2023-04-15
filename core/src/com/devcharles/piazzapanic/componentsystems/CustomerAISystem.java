@@ -8,7 +8,6 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.steer.Proximity;
 import com.badlogic.gdx.ai.steer.behaviors.Arrive;
@@ -16,11 +15,11 @@ import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.components.*;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.Difficulty;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
@@ -39,7 +38,7 @@ public class CustomerAISystem extends IteratingSystem {
     private final EntityFactory factory;
     private int numOfCustomerTotal = 0;
     private final Hud hud;
-    private final GameScreen.Difficulty difficulty;
+    private final Difficulty difficulty;
     private final Integer[] reputationPoints;
     private final Float[] tillBalance;
     private int CUSTOMER;
@@ -74,7 +73,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
      */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty, Float[] tillBalance) {
+            Integer[] reputationPoints, int customer, Difficulty difficulty, Float[] tillBalance) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.CUSTOMER=customer;
@@ -124,7 +123,7 @@ public class CustomerAISystem extends IteratingSystem {
 
             // If endless mode then decrease customer spawn frequency by one second every time a customer is served.
             // Result is customers will arrive more often over time in endless mode.
-            if(firstSpawn==false && difficulty != GameScreen.Difficulty.SCENARIO){
+            if(firstSpawn==false && difficulty != Difficulty.SCENARIO){
                 spawnTimer = new GdxTimer((difficulty.getSpawnFrequency()-((999-CUSTOMER)*1000)),true,true);
                 Gdx.app.log("Info","Spawn frequency is now " + (difficulty.getSpawnFrequency()-((999-CUSTOMER)*1000)));
             }
@@ -285,7 +284,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @return groupSize
      */
     private int getRandomCustomerGroupSize(){
-        if (difficulty== GameScreen.Difficulty.SCENARIO){return 1;}
+        if (difficulty == Difficulty.SCENARIO){return 1;}
         double x = Math.random();
         if(x<0.7){return 1;}
         if(x>=0.7 && x < 0.9){return 2;}
@@ -302,7 +301,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @return The calculated tip.
      */
     private int getRandomCustomerTip(float dishPrice){
-        if (difficulty== GameScreen.Difficulty.SCENARIO){return 0;}
+        if (difficulty == Difficulty.SCENARIO){return 0;}
         double x = Math.random();
         if(x>0.8){
             x = (1 + Math.random());
