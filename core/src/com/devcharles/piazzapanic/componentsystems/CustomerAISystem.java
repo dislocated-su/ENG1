@@ -45,7 +45,7 @@ public class CustomerAISystem extends IteratingSystem {
   private final EntityFactory factory;
   private int totalCustomers = 0;
   private final Hud hud;
-  private final Integer[] reputationPoints;
+  private final Integer[] reputationPointsAndMoney;
   private final int MAX_CUSTOMERS = 5;
   private boolean firstSpawn = true;
   private final boolean isEndless;
@@ -77,23 +77,24 @@ public class CustomerAISystem extends IteratingSystem {
   /**
    * Instantiate the system.
    *
-   * @param objectives       Map of objectives available
-   * @param world            Box2D {@link World} for AI and disposing of customer entities.
-   * @param factory          {@link EntityFactory} for creating new customers
-   * @param hud              {@link Hud} for updating orders, reputation
-   * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
-   * @param isEndless        a boolean flag to decide whether there is a limit on customers
-   * @param maxGroupSize     the maximum size of a single group of customers
+   * @param objectives               Map of objectives available
+   * @param world                    Box2D {@link World} for AI and disposing of customer entities.
+   * @param factory                  {@link EntityFactory} for creating new customers
+   * @param hud                      {@link Hud} for updating orders, reputation
+   * @param reputationPointsAndMoney array-wrapped integer reputation and money passed by-reference
+   *                                 See {@link Hud}
+   * @param isEndless                a boolean flag to decide whether there is a limit on customers
+   * @param maxGroupSize             the maximum size of a single group of customers
    */
   public CustomerAISystem(Map<Integer, Map<Integer, Box2dLocation>> objectives, World world,
       EntityFactory factory, Hud hud,
-      Integer[] reputationPoints, boolean isEndless, int maxGroupSize) {
+      Integer[] reputationPointsAndMoney, boolean isEndless, int maxGroupSize) {
     super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
     this.hud = hud;
     this.objectives = objectives;
     this.objectiveTaken = new HashMap<>();
-    this.reputationPoints = reputationPoints;
+    this.reputationPointsAndMoney = reputationPointsAndMoney;
     this.isEndless = isEndless;
     this.maxGroupSize = maxGroupSize;
 
@@ -186,7 +187,7 @@ public class CustomerAISystem extends IteratingSystem {
 
     if (!isEndless && !hud.won && customers.size() == 0 && totalCustomers == MAX_CUSTOMERS) {
       hud.triggerWin = true;
-    } else if (isEndless && reputationPoints[0] == 0) {
+    } else if (isEndless && reputationPointsAndMoney[0] == 0) {
       hud.triggerWin = true;
     }
 
@@ -215,8 +216,8 @@ public class CustomerAISystem extends IteratingSystem {
 
     // lower reputation points if they have waited longer than time allotted (1 min)
     if (customer.timer.tick(deltaTime)) {
-      if (reputationPoints[0] > 0) {
-        reputationPoints[0]--;
+      if (reputationPointsAndMoney[0] > 0) {
+        reputationPointsAndMoney[0]--;
       }
       customer.timer.stop();
     }
@@ -316,6 +317,8 @@ public class CustomerAISystem extends IteratingSystem {
 
     AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
     makeItGoThere(aiAgent, -1);
+    // Give money for completion of order
+    reputationPointsAndMoney[1] += 8;
 
     customer.timer.stop();
     customer.timer.reset();

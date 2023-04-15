@@ -34,7 +34,8 @@ public class EndlessGameScreen extends BaseGameScreen {
     engine.addSystem(new PlayerControlSystem(kbInput));
     engine.addSystem(new StationSystem(kbInput, factory));
     CustomerAISystem aiSystem =
-        new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,
+        new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud,
+            reputationPointsAndMoney,
             true, 3);
     engine.addSystem(aiSystem);
     engine.addSystem(new CarryItemsSystem());
@@ -73,6 +74,9 @@ public class EndlessGameScreen extends BaseGameScreen {
 
       // Load hud save details
       hud.loadFromSave(gameSave);
+
+      reputationPointsAndMoney[0] = gameSave.getReputation();
+      reputationPointsAndMoney[1] = gameSave.getMoney();
     }
   }
 }

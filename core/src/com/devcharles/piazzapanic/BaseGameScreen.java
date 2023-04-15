@@ -39,7 +39,7 @@ public abstract class BaseGameScreen implements Screen {
   protected final MapLoader mapLoader;
   protected final EntityFactory factory;
 
-  protected final Integer[] reputationPoints = {3};
+  protected final Integer[] reputationPointsAndMoney = {3, 0};
   protected final Map<Integer, Entity> stationsMap;
 
   public BaseGameScreen(PiazzaPanic game, String mapPath) {
@@ -60,7 +60,7 @@ public abstract class BaseGameScreen implements Screen {
     factory = new EntityFactory(engine, world);
     EntityFactory.cutFood(null);
 
-    hud = new Hud(game.batch, this, game, reputationPoints);
+    hud = new Hud(game.batch, this, game, reputationPointsAndMoney);
 
     mapLoader = new MapLoader(mapPath, null, factory);
     mapLoader.buildCollisions(world);
