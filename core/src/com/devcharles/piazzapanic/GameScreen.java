@@ -19,6 +19,7 @@ import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.MapLoader;
+import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import box2dLight.RayHandler;
@@ -42,9 +43,12 @@ public class GameScreen implements Screen {
     private RayHandler rayhandler;
 
     private MapLoader mapLoader;
+    private WorldTilemapRenderer mapRenderer;
 
     private Integer[] reputationPoints = { 3 };
     private Float[] tillBalance = {0f};
+
+    private Integer[] customersServed = { 0 };
 
     public enum Difficulty {
         SCENARIO("Scenario",30000),
@@ -86,7 +90,7 @@ public class GameScreen implements Screen {
         EntityFactory.cutFood(null);
 
         if (!this.game.TESTMODE) {
-            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance);
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed);
         }
       
         mapLoader = new MapLoader(null, null, factory);
@@ -96,15 +100,15 @@ public class GameScreen implements Screen {
             mapLoader.buildFromObjects(engine, rayhandler);
         }
         mapLoader.buildStations(engine, world);
-
+        mapRenderer = new WorldTilemapRenderer(mapLoader.map,camera,game.batch);
         engine.addSystem(new PhysicsSystem(world));
-        engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera));
+        engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera,mapRenderer));
         engine.addSystem(new LightingSystem(rayhandler, camera));
         // This can be commented in during debugging.
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
-        engine.addSystem(new StationSystem(kbInput, factory));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance,customersServed));
+        engine.addSystem(new StationSystem(kbInput, factory,mapRenderer,tillBalance,hud,difficulty));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
 

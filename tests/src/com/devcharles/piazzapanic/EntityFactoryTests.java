@@ -58,10 +58,10 @@ public class EntityFactoryTests {
         public void createStationTest() throws Exception {
                 assertTrue("check createStation method returns an entity",
                                 entityFactory.createStation(StationType.grill, new Vector2(0, 0),
-                                                FoodType.grilledPatty) instanceof Entity);
+                                                FoodType.grilledPatty, new Vector2(0,0),false) instanceof Entity);
 
                 Entity station = (entityFactory.createStation(StationType.grill, new Vector2(0, 0),
-                                FoodType.grilledPatty));
+                                FoodType.grilledPatty, new Vector2(),false));
                 assertTrue("check createStation method adds the new station entity to the engine",
                                 engine.getEntities().contains(station, true));
         }

@@ -85,10 +85,10 @@ public class ScenarioMenuScreen extends ApplicationAdapter implements Screen {
                         dispose();
                     }
                     else{
-                        throw new Exception();
+                        throw new NumberFormatException();
                     }
                 }
-                catch(Exception e){
+                catch(NumberFormatException e){
                     Gdx.app.log("Error","Number of customers must be a positive integer.");
                 }
             }
