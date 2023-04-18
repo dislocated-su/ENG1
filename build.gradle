@@ -14,6 +14,7 @@ buildscript {
 
 allprojects {
     apply plugin: "eclipse"
+    apply plugin: 'checkstyle'
     version = '1.0'
     ext {
         appName = "piazzaPanic"
@@ -23,6 +24,11 @@ allprojects {
         ashleyVersion = '1.7.4'
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.2.1'
+        checkStyleVersion = '10.4'
+    }
+
+    configurations {
+        checkstyleRules
     }
 
     repositories {
@@ -33,6 +39,18 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        checkstyleRules("com.puppycrawl.tools:checkstyle:${checkStyleVersion}") {
+            transitive = false
+        }
+        checkstyle "com.puppycrawl.tools:checkstyle:${checkStyleVersion}"
+    }
+
+    checkstyle {
+        toolVersion "${checkStyleVersion}"
+        config = resources.text.fromArchiveEntry(configurations.checkstyleRules, 'google_checks.xml')
     }
 
 
