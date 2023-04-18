@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
@@ -33,7 +34,7 @@ public class EntityFactoryTest {
   public void testCreateCook() {
     PooledEngine engine = new PooledEngine();
     World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
+    EntityFactory factory = new EntityFactory(engine, world, new AssetManager());
 
     Entity cook = factory.createCook(0, 0);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
@@ -58,7 +59,7 @@ public class EntityFactoryTest {
   public void testCreateFood() {
     PooledEngine engine = new PooledEngine();
     World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
+    EntityFactory factory = new EntityFactory(engine, world, new AssetManager());
 
     Entity food = factory.createFood(FoodType.burger);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
@@ -74,9 +75,10 @@ public class EntityFactoryTest {
   public void testCreateIngredientStation() {
     PooledEngine engine = new PooledEngine();
     World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
+    EntityFactory factory = new EntityFactory(engine, world, new AssetManager());
 
-    Entity station = factory.createStation(0, StationType.ingredient, Vector2.Zero, FoodType.tomato);
+    Entity station = factory.createStation(0, StationType.ingredient, Vector2.Zero,
+        FoodType.tomato);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
             TextureComponent.class, StationComponent.class).get());
@@ -104,7 +106,7 @@ public class EntityFactoryTest {
   public void testCreateOtherStation() {
     PooledEngine engine = new PooledEngine();
     World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
+    EntityFactory factory = new EntityFactory(engine, world, new AssetManager());
 
     Entity station = factory.createStation(0, StationType.grill, Vector2.Zero, null);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
@@ -130,26 +132,32 @@ public class EntityFactoryTest {
 
   @Test
   public void testCutFoodNullPath() {
+    EntityFactory factory = new EntityFactory(new PooledEngine(), new World(Vector2.Zero, true),
+        new AssetManager());
     EntityFactory.foodTextures.clear();
     assertEquals("Ensure no textures are there initially.", 0, EntityFactory.foodTextures.size());
-    EntityFactory.cutFood(null);
+    factory.cutFood(null);
     assertEquals("Ensure 13 food textures are loaded.", 13, EntityFactory.foodTextures.size());
   }
 
   @Test
   public void testCutFoodWithPath() {
+    EntityFactory factory = new EntityFactory(new PooledEngine(), new World(Vector2.Zero, true),
+        new AssetManager());
     EntityFactory.foodTextures.clear();
     assertEquals("Ensure no textures are there initially.", 0, EntityFactory.foodTextures.size());
-    EntityFactory.cutFood("v2/food.png");
+    factory.cutFood("v2/food.png");
     assertEquals("Ensure 13 food textures are loaded.", 13, EntityFactory.foodTextures.size());
   }
 
   @Test
   public void testGetFoodTexture() {
+    EntityFactory factory = new EntityFactory(new PooledEngine(), new World(Vector2.Zero, true),
+        new AssetManager());
     EntityFactory.foodTextures.remove(FoodType.buns);
     assertNull("It should return null if food texture does not exist yet.",
         EntityFactory.getFoodTexture(FoodType.buns));
-    EntityFactory.cutFood(null);
+    factory.cutFood(null);
     for (int i = 1; i < 14; i++) {
       assertNotNull("There should be a texture for this food type: " + FoodType.from(i),
           EntityFactory.getFoodTexture(FoodType.from(i)));
@@ -160,7 +168,7 @@ public class EntityFactoryTest {
   public void testCreateCustomer() {
     PooledEngine engine = new PooledEngine();
     World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
+    EntityFactory factory = new EntityFactory(engine, world, new AssetManager());
 
     Entity customer = factory.createCustomer(Vector2.Zero, null);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(

@@ -1,10 +1,10 @@
 package com.devcharles.piazzapanic.componentsystems;
 
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
@@ -210,10 +210,5 @@ public class RenderingSystem extends IteratingSystem {
 
   protected void processEntity(Entity entity, float deltaTime) {
     entities.add(entity);
-  }
-
-  @Override
-  public void addedToEngine(Engine engine) {
-    super.addedToEngine(engine);
   }
 }

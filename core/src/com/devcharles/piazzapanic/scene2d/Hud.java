@@ -1,7 +1,6 @@
 package com.devcharles.piazzapanic.scene2d;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input.Keys;
@@ -53,11 +52,12 @@ public class Hud extends ApplicationAdapter {
   Label reputationLabel;
   Label reputationNameLabel;
   Label pausedNameLabel;
+  TextButton saveButton;
   BitmapFont uiFont, uiTitleFont;
   // an image used as the background of recipe book and tutorial
   private Image photo;
 
-  private final Game game;
+  private final PiazzaPanic game;
   private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel;
 
   private boolean pauseToggled = false;
@@ -76,7 +76,7 @@ public class Hud extends ApplicationAdapter {
    * @param reputationPoints Must be an object to pass by reference, see <a
    *                         href="https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference">...</a>
    */
-  public Hud(SpriteBatch spriteBatch, final BaseGameScreen savedGame, final Game game,
+  public Hud(SpriteBatch spriteBatch, final BaseGameScreen savedGame, final PiazzaPanic game,
       Integer[] reputationPoints) {
     this.game = game;
     this.reputationAndMoney = reputationPoints;
@@ -161,6 +161,9 @@ public class Hud extends ApplicationAdapter {
     moneyNameLabel.setFontScale(fontScale + 0.1f);
     reputationNameLabel.setFontScale(fontScale + 0.1f);
 
+    moneyLabel.setVisible(false);
+    moneyNameLabel.setVisible(false);
+
     // lays out timer and reputation
     tableTop = new Table();
     tableTop.top();
@@ -195,7 +198,7 @@ public class Hud extends ApplicationAdapter {
     TextButton resumeButton = new TextButton("Resume", skin);
     TextButton recipeBookButton = new TextButton("Recipe Book", skin);
     TextButton tutorialButton = new TextButton("Tutorial", skin);
-    TextButton saveButton = new TextButton("Save and Exit", skin);
+    saveButton = new TextButton("Exit", skin);
 
     resumeButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
@@ -208,9 +211,13 @@ public class Hud extends ApplicationAdapter {
         createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
     saveButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
-        saveGame();
+        if (isEndless) {
+          saveGame();
+        }
         Gdx.app.log("save", "Game is saved!");
         game.setScreen(new MainMenuScreen((PiazzaPanic) game));
+        dispose();
+        gameScreen.dispose();
       }
     });
 
@@ -294,12 +301,6 @@ public class Hud extends ApplicationAdapter {
    * @param deltaTime the time elapsed since last frame.
    */
   public void update(float deltaTime) {
-    if (won) {
-      stage.act();
-      stage.draw();
-      return;
-    }
-
     if (paused) {
       if (pauseToggled) {
         pauseToggled = false;
@@ -309,7 +310,7 @@ public class Hud extends ApplicationAdapter {
       stage.draw();
       return;
     }
-    timeCounter += deltaTime;
+    timeCounter += won ? 0 : deltaTime;
     // Staggered once per second using timeCounter makes it way faster
     if (timeCounter >= 1) {
       customerTimer++;
@@ -318,7 +319,7 @@ public class Hud extends ApplicationAdapter {
       timeCounter -= 1;
     }
 
-    if (triggerWin) {
+    if (triggerWin && !won) {
       triggerWin = false;
       win();
     }
@@ -427,6 +428,7 @@ public class Hud extends ApplicationAdapter {
   }
 
   public void dispose() {
+    skin.dispose();
     stage.dispose();
   }
 
@@ -434,6 +436,7 @@ public class Hud extends ApplicationAdapter {
     return new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         game.setScreen(screen);
+        gameScreen.dispose();
       }
     };
   }
@@ -442,5 +445,6 @@ public class Hud extends ApplicationAdapter {
     isEndless = endless;
     moneyNameLabel.setVisible(isEndless);
     moneyLabel.setVisible(isEndless);
+    saveButton.setText(isEndless ? "Save and Exit" : "Exit");
   }
 }

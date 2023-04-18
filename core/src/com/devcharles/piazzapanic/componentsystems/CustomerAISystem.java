@@ -1,6 +1,8 @@
 package com.devcharles.piazzapanic.componentsystems;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.devcharles.piazzapanic.components.AnimationComponent;
+import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
 import com.devcharles.piazzapanic.utility.saving.SavableCustomer;
 import com.devcharles.piazzapanic.utility.saving.SavableCustomerAISystem;
 import java.util.ArrayList;
@@ -58,16 +60,22 @@ public class CustomerAISystem extends IteratingSystem {
     @Override
     public boolean remove(Object o) {
       for (ArrayList<Entity> group : customers) {
-        if (group != o) {
+        if (group == o) {
+          objectiveTaken.put(customers.indexOf(o), false);
+        } else {
+          int objective = -3;
           for (Entity entity : group) {
             AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
 
             if (aiAgent.currentObjective - 1 >= 0) {
+              objective = aiAgent.currentObjective;
               if (!objectiveTaken.get(aiAgent.currentObjective - 1)) {
                 makeItGoThere(aiAgent, aiAgent.currentObjective - 1);
               }
             }
           }
+          objectiveTaken.put(objective, false);
+          objectiveTaken.put(objective - 1, true);
         }
       }
       return super.remove(o);
@@ -187,7 +195,7 @@ public class CustomerAISystem extends IteratingSystem {
 
     if (!isEndless && !hud.won && customers.size() == 0 && totalCustomers == MAX_CUSTOMERS) {
       hud.triggerWin = true;
-    } else if (isEndless && reputationPointsAndMoney[0] == 0) {
+    } else if (isEndless && !hud.won && reputationPointsAndMoney[0] == 0) {
       hud.triggerWin = true;
     }
 
@@ -267,8 +275,6 @@ public class CustomerAISystem extends IteratingSystem {
    * @param locationID and id from {@link CustomerAISystem.objectives}
    */
   protected void makeItGoThere(AIAgentComponent aiAgent, int locationID) {
-    objectiveTaken.put(aiAgent.currentObjective, false);
-
     Box2dLocation there = objectives.get(locationID).get(aiAgent.slot);
     if (there == null) {
       there = objectives.get(locationID).get(0);
@@ -290,7 +296,6 @@ public class CustomerAISystem extends IteratingSystem {
 
     aiAgent.steeringBody.setSteeringBehavior(prioritySteering);
     aiAgent.currentObjective = locationID;
-    objectiveTaken.put(aiAgent.currentObjective, true);
 
     if (locationID == -1) {
       aiAgent.steeringBody.setOrientation(0);

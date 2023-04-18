@@ -1,5 +1,6 @@
 package com.devcharles.piazzapanic.utility;
 
+import com.badlogic.gdx.assets.AssetManager;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.HashMap;
@@ -37,14 +38,15 @@ public class EntityFactory {
 
   private final PooledEngine engine;
   private final World world;
+  private final AssetManager assetManager;
 
   private FixtureDef movingFixtureDef;
   private BodyDef movingBodyDef;
-  private CircleShape circleShape;
 
-  public EntityFactory(PooledEngine engine, World world) {
+  public EntityFactory(PooledEngine engine, World world, AssetManager textureManager) {
     this.engine = engine;
     this.world = world;
+    this.assetManager = textureManager;
 
     createDefinitions();
   }
@@ -67,7 +69,7 @@ public class EntityFactory {
     movingBodyDef.fixedRotation = true;
 
     // Shape - needs to be disposed
-    circleShape = new CircleShape();
+    CircleShape circleShape = new CircleShape();
     circleShape.setRadius(0.5f);
 
     // FixtureDef
@@ -102,9 +104,10 @@ public class EntityFactory {
 
     controllable.currentFood.init(engine);
 
-    animation.animator = new CookAnimator();
+    animation.animator = new CookAnimator(assetManager);
     // Texture
-    TextureRegion[][] tempRegions = TextureRegion.split(new Texture("droplet.png"), 32, 32);
+    Texture tempTexture = assetManager.get("droplet.png", Texture.class);
+    TextureRegion[][] tempRegions = TextureRegion.split(tempTexture, 32, 32);
 
     texture.region = tempRegions[0][0];
     // TODO: Set size in viewport units instead of scale
@@ -251,12 +254,12 @@ public class EntityFactory {
    *
    * @param path (optional) custom path for food textures.
    */
-  public static void cutFood(String path) {
+  public void cutFood(String path) {
     if (path == null) {
       path = "v2/food.png";
     }
 
-    Texture foodSheet = new Texture(path);
+    Texture foodSheet = assetManager.get(path, Texture.class);
 
     TextureRegion[][] tmp = TextureRegion.split(foodSheet, 32, 32);
 
@@ -288,7 +291,7 @@ public class EntityFactory {
    * {@link com.badlogic.gdx.ai.steer.SteeringBehavior}.
    *
    * @param position of the customer at spawn point.
-   * @param foodType
+   * @param foodType the type of food that the customer wants
    * @return reference to the entity.
    */
   public Entity createCustomer(Vector2 position, FoodType foodType) {
@@ -309,14 +312,14 @@ public class EntityFactory {
 
     AIAgentComponent aiAgent = engine.createComponent(AIAgentComponent.class);
 
-    walkingAnimation.animator = new CustomerAnimator();
+    walkingAnimation.animator = new CustomerAnimator(assetManager);
 
     // Reuse existing body definition
     movingBodyDef.position.set(position.x, position.y);
     b2dBody.body = world.createBody(movingBodyDef);
     b2dBody.body.createFixture(movingFixtureDef).setUserData(entity);
 
-    texture.region = new TextureRegion(new Texture("droplet.png"));
+    texture.region = new TextureRegion(assetManager.get("droplet.png", Texture.class));
     texture.scale.set(0.1f, 0.1f);
 
     transform.isHidden = false;

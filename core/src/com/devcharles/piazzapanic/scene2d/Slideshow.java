@@ -52,7 +52,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
    *
    * @param type {@link Type} of slideshow to create.
    */
-  private Slideshow(Type type) {
+  private Slideshow(final PiazzaPanic game, Type type) {
 
     camera = new OrthographicCamera();
     camera.setToOrtho(false, 1280, 720);
@@ -70,7 +70,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
     textures = new Texture[fileCount];
 
     for (int i = 0; i < fileCount; i++) {
-      textures[i] = new Texture(Gdx.files.internal(type.name() + i + ".png"));
+      textures[i] = game.assetManager.get(type.name() + i + ".png", Texture.class);
     }
 
     skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
@@ -104,8 +104,8 @@ public class Slideshow extends ApplicationAdapter implements Screen {
    * @param type        {@link Type} of slideshow to create.
    * @param savedScreen the {@link ScenarioGameScreen} to return to after this screen is closed.
    */
-  public Slideshow(final Game game, Type type, final Screen savedScreen) {
-    this(type);
+  public Slideshow(final PiazzaPanic game, Type type, final Screen savedScreen) {
+    this(game, type);
 
     exit.clearListeners();
 

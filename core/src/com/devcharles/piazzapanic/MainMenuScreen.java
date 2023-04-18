@@ -103,6 +103,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
   public void render(float delta) {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     // draws everything (dont change this order unless you know what youre doing)
+    game.assetManager.update(16);
     batch.begin();
     sprite.draw(batch);
     batch.end();
