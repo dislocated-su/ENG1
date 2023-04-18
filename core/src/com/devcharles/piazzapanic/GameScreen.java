@@ -94,8 +94,9 @@ public class GameScreen implements Screen {
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.stage);
 
-        SaveLoad saveLoad = new SaveLoad(world, tillBalance, reputationPoints, difficulty);
-        saveLoad.load();
+        SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty);
+        saveLoad.save();
+        //saveLoad.load();
     }
 
     @Override
