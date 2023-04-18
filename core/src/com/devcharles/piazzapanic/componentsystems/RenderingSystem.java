@@ -207,6 +207,7 @@ public class RenderingSystem extends IteratingSystem {
     }
   }
 
+  @Override
   protected void processEntity(Entity entity, float deltaTime) {
     entities.add(entity);
   }

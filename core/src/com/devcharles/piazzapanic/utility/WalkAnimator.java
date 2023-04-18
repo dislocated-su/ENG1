@@ -93,10 +93,10 @@ public abstract class WalkAnimator {
    * spritesheet differently.
    *
    * @param currentSheet The {@link Texture} containing all the frames of the animation.
-   * @param value        Variant of the spritesheet (0 -> walk, 1 -> hold one item, 2 -> hold
+   * @param variant        Variant of the spritesheet (0 -> walk, 1 -> hold one item, 2 -> hold
    *                     crate)
    */
-  protected void addTextures(Texture currentSheet, int value) {
+  protected void addTextures(Texture currentSheet, int variant) {
     // Split the spritesheet into separate textureregions
     TextureRegion[][] tmp = TextureRegion.split(currentSheet, 32, 32);
 
@@ -114,7 +114,7 @@ public abstract class WalkAnimator {
     walkRight.add(new Animation<>(0.1f, Arrays.copyOfRange(frames, 6, 10)));
 
     // Create the left animation by copying and flipping textures.
-    TextureRegion[] toCopy = walkRight.get(value).getKeyFrames();
+    TextureRegion[] toCopy = walkRight.get(variant).getKeyFrames();
     TextureRegion[] flippedRegions = new TextureRegion[toCopy.length];
 
     for (int i = 0; i < flippedRegions.length; i++) {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.ItemComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
@@ -62,7 +63,11 @@ public class EndlessGameScreen extends BaseGameScreen {
 
         ControllableComponent controllableComponent = Mappers.controllable.get(cook);
         for (SavableFood savableFood : gameSave.getCooks().get(i).foodStack) {
-          controllableComponent.currentFood.push(savableFood.toEntity(factory));
+          Entity foodEntity = savableFood.toEntity(factory);
+          ItemComponent itemComponent = engine.createComponent(ItemComponent.class);
+          itemComponent.holderTransform = Mappers.transform.get(cook);
+          foodEntity.add(itemComponent);
+          controllableComponent.currentFood.push(foodEntity);
         }
         if (i == 0) {
           cook.add(engine.createComponent(PlayerComponent.class));
