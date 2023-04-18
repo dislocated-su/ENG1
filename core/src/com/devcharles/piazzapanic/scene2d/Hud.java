@@ -36,7 +36,6 @@ public class Hud extends ApplicationAdapter {
   private Integer customerTimer = 0;
   private float timeCounter = 0;
   private final Integer[] reputationAndMoney;
-  private final Skin skin;
 
   private final float fontScale = 0.6f;
 
@@ -88,9 +87,8 @@ public class Hud extends ApplicationAdapter {
     viewport.apply();
 
     // Import the custom skin with different fonts
-    skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
-    uiFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
-    uiTitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
+    uiFont = game.assetManager.get("craftacular/raw/font-export.fnt", BitmapFont.class);
+    uiTitleFont = game.assetManager.get("craftacular/raw/font-title-export.fnt");
 
     // Create generic style for labels with the different fonts
     hudLabelStyle = new Label.LabelStyle();
@@ -195,10 +193,10 @@ public class Hud extends ApplicationAdapter {
 
     tablePause.row();
     // checks if resume button is clicked
-    TextButton resumeButton = new TextButton("Resume", skin);
-    TextButton recipeBookButton = new TextButton("Recipe Book", skin);
-    TextButton tutorialButton = new TextButton("Tutorial", skin);
-    saveButton = new TextButton("Exit", skin);
+    TextButton resumeButton = new TextButton("Resume", game.skin);
+    TextButton recipeBookButton = new TextButton("Recipe Book", game.skin);
+    TextButton tutorialButton = new TextButton("Tutorial", game.skin);
+    saveButton = new TextButton("Exit", game.skin);
 
     resumeButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
@@ -412,7 +410,7 @@ public class Hud extends ApplicationAdapter {
 
     centerTable.row();
 
-    TextButton returnToMenuButton = new TextButton("Main menu", skin);
+    TextButton returnToMenuButton = new TextButton("Main menu", game.skin);
     centerTable.add(returnToMenuButton).width(240).height(70).padTop(50).colspan(2);
 
     returnToMenuButton.addListener(createListener(new MainMenuScreen(game)));
@@ -428,7 +426,6 @@ public class Hud extends ApplicationAdapter {
   }
 
   public void dispose() {
-    skin.dispose();
     stage.dispose();
   }
 

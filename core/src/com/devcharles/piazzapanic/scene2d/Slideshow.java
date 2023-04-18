@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -27,7 +26,6 @@ public class Slideshow extends ApplicationAdapter implements Screen {
 
   OrthographicCamera camera;
   private final Stage stage;
-  private final Skin skin;
   private final Batch batch;
   private Sprite sprite;
 
@@ -72,11 +70,10 @@ public class Slideshow extends ApplicationAdapter implements Screen {
       textures[i] = game.assetManager.get(type.name() + i + ".png", Texture.class);
     }
 
-    skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
     stage = new Stage(viewport);
 
     // Begin layout
-    leftButton = new TextButton("Page Left", skin);
+    leftButton = new TextButton("Page Left", game.skin);
 
     leftButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
@@ -85,7 +82,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
       }
     });
 
-    rightButton = new TextButton("Page Right", skin);
+    rightButton = new TextButton("Page Right", game.skin);
     rightButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         currentPage = currentPage + 1;
@@ -93,7 +90,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
       }
     });
 
-    exit = new TextButton("Exit", skin);
+    exit = new TextButton("Exit", game.skin);
   }
 
   /**
@@ -177,7 +174,6 @@ public class Slideshow extends ApplicationAdapter implements Screen {
   }
 
   public void dispose() {
-    skin.dispose();
     stage.dispose();
   }
 

@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -28,7 +27,6 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
   final PiazzaPanic game;
   OrthographicCamera camera;
   private final Stage stage;
-  private final Skin skin;
   private final Batch batch;
   private final Sprite sprite;
 
@@ -39,15 +37,13 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     camera.setToOrtho(false, 1280, 720);
     batch = new SpriteBatch();
 
-    sprite = new Sprite(new Texture(Gdx.files.internal("mainMenuImage.png")));
+    sprite = new Sprite(game.assetManager.get("mainMenuImage.png", Texture.class));
     sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-    skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
     stage = new Stage(new ScreenViewport());
 
     Label.LabelStyle menuLabelStyle = new Label.LabelStyle();
-    menuLabelStyle.font = new BitmapFont(
-        Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
+    menuLabelStyle.font = game.assetManager.get("craftacular/raw/font-title-export.fnt", BitmapFont.class);
 
     Label title = new Label("Piazza Panic", menuLabelStyle);
 
@@ -55,9 +51,9 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     root.setFillParent(true);
     stage.addActor(root);
 
-    TextButton startScenarioModeBtn = new TextButton("Start scenario mode", skin);
-    TextButton startEndlessModeBtn = new TextButton("Start endless mode", skin);
-    TextButton loadEndlessModeBtn = new TextButton("Load endless mode", skin);
+    TextButton startScenarioModeBtn = new TextButton("Start scenario mode", game.skin);
+    TextButton startEndlessModeBtn = new TextButton("Start endless mode", game.skin);
+    TextButton loadEndlessModeBtn = new TextButton("Load endless mode", game.skin);
 
     // Checks if button is clicked and if clicked goes onto the tutorial
     startScenarioModeBtn.addListener(new ClickListener() {
@@ -122,7 +118,6 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
   }
 
   public void dispose() {
-    skin.dispose();
     stage.dispose();
   }
 }
