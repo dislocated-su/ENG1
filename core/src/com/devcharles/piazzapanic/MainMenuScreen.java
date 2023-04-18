@@ -54,9 +54,11 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     TextButton startScenarioModeBtn = new TextButton("Start scenario mode", game.skin);
     TextButton startEndlessModeBtn = new TextButton("Start endless mode", game.skin);
     TextButton loadEndlessModeBtn = new TextButton("Load endless mode", game.skin);
+    TextButton exitBtn = new TextButton("Exit game", game.skin);
 
     // Checks if button is clicked and if clicked goes onto the tutorial
     startScenarioModeBtn.addListener(new ClickListener() {
+      @Override
       public void clicked(InputEvent event, float x, float y) {
         game.setScreen(
             new Slideshow(game, Slideshow.Type.tutorial, new ScenarioGameScreen(game, null)));
@@ -65,6 +67,7 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     });
     // Checks if button is clicked and if clicked goes onto the tutorial
     startEndlessModeBtn.addListener(new ClickListener() {
+      @Override
       public void clicked(InputEvent event, float x, float y) {
         game.setScreen(
             new Slideshow(game, Slideshow.Type.tutorial, new EndlessGameScreen(game, null, false)));
@@ -73,20 +76,30 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
     });
     // Checks if button is clicked and if clicked goes onto the tutorial
     loadEndlessModeBtn.addListener(new ClickListener() {
+      @Override
       public void clicked(InputEvent event, float x, float y) {
         game.setScreen(
             new Slideshow(game, Slideshow.Type.tutorial, new EndlessGameScreen(game, null, true)));
         dispose();
       }
     });
+    exitBtn.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        dispose();
+        Gdx.app.exit();
+      }
+    });
 
     root.add(title).expandX().padBottom(120);
     root.row();
-    root.add(startScenarioModeBtn);
+    root.add(startScenarioModeBtn).padBottom(30);
     root.row();
-    root.add(startEndlessModeBtn);
+    root.add(startEndlessModeBtn).padBottom(30);
     root.row();
-    root.add(loadEndlessModeBtn);
+    root.add(loadEndlessModeBtn).padBottom(30);
+    root.row();
+    root.add(exitBtn);
 
   }
 

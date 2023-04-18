@@ -65,6 +65,7 @@ public class PiazzaPanic extends Game {
   }
 
   public void dispose() {
+    System.out.println("dispose game");
     batch.dispose();
     assetManager.dispose();
     skin.dispose();
