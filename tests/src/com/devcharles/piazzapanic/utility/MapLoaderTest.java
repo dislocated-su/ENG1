@@ -4,6 +4,11 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.AnimationComponent;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
@@ -31,9 +36,14 @@ public class MapLoaderTest {
   public void buildFromObjectsTest(){
     World world = new World(new Vector2(0, 0), true);
     PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
+    AssetManager manager = new AssetManager();
+    manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+    PiazzaPanic.loadAssets(manager);
+    manager.finishLoading();
+
+    EntityFactory factory = new EntityFactory(engine, world, manager);
     RayHandler rayhandler = new RayHandler(world);
-    MapLoader mapLoader = new MapLoader("v2/mapTest.tmx", null, factory);
+    MapLoader mapLoader = new MapLoader("v2/mapTest.tmx", null, factory, manager);
     mapLoader.buildFromObjects(engine, rayhandler);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
@@ -50,8 +60,9 @@ public class MapLoaderTest {
   public void buildStationsTest(){
     World world = new World(new Vector2(0, 0), true);
     PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
-    MapLoader mapLoader = new MapLoader("v2/mapTest.tmx", null, factory);
+    AssetManager manager = new AssetManager();
+    EntityFactory factory = new EntityFactory(engine, world, manager);
+    MapLoader mapLoader = new MapLoader("v2/mapTest.tmx", null, factory, manager);
     mapLoader.buildStations(engine, world);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,

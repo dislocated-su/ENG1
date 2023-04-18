@@ -1,5 +1,6 @@
 package com.devcharles.piazzapanic.utility;
 
+import com.badlogic.gdx.assets.AssetManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,15 +66,14 @@ public class MapLoader {
    * @param ppt     Pixels per tile (default 16).
    * @param factory {@link EntityFactory} instance to create entities based on the map metadata.
    */
-  public MapLoader(String path, Integer ppt, EntityFactory factory) {
+  public MapLoader(String path, Integer ppt, EntityFactory factory, AssetManager assetManager) {
     if (ppt != null) {
       this.ppt = ppt;
     }
-    if (path != null) {
-      map = new TmxMapLoader().load(path);
-    } else {
-      map = new TmxMapLoader().load("v2/map.tmx");
+    if (path == null) {
+      path = "v2/map.tmx";
     }
+    map = new TmxMapLoader().load(path);
 
     this.factory = factory;
   }

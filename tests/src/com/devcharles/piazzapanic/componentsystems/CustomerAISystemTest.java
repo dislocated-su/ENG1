@@ -6,9 +6,14 @@ import static org.mockito.Mockito.mock;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.ai.steer.SteeringBehavior;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.GdxTestRunner;
+import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.CustomerComponent;
@@ -30,9 +35,14 @@ import org.junit.runner.RunWith;
 public class CustomerAISystemTest {
 
   Map<Integer, Map<Integer, Box2dLocation>> objectives;
+  World world;
+  PooledEngine engine;
+  AssetManager manager;
+  EntityFactory factory;
+  Integer[] reputationPoints;
 
   @Before
-  public void setupObjectives() {
+  public void setup() {
     objectives = new HashMap<>();
     HashMap<Integer, Box2dLocation> destination = new HashMap<>();
     destination.put(0, new Box2dLocation());
@@ -48,14 +58,21 @@ public class CustomerAISystemTest {
     objectives.put(-1, destination);
     objectives.put(0, queueStart);
     objectives.put(1, queueEnd);
+
+    reputationPoints = new Integer[] {3, 0};
+
+    world = new World(Vector2.Zero, true);
+    engine = new PooledEngine();
+    manager = new AssetManager();
+    manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+    PiazzaPanic.loadAssets(manager);
+    manager.finishLoading();
+    factory = new EntityFactory(engine, world, manager);
   }
 
 
   @Test
   public void testUpdate() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
         new Integer[]{3}, false, 1);
     engine.addSystem(system);
@@ -73,9 +90,6 @@ public class CustomerAISystemTest {
 
   @Test
   public void testEndlessQuickerSpawns() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
         new Integer[]{3}, true, 1);
     engine.addSystem(system);
@@ -91,11 +105,6 @@ public class CustomerAISystemTest {
 
   @Test
   public void testProcessEntityLoseReputation() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
-
-    Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
         reputationPoints, false, 1);
     engine.addSystem(system);
@@ -108,11 +117,6 @@ public class CustomerAISystemTest {
 
   @Test
   public void testProcessEntityExitsWithFood() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
-
-    Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
         reputationPoints, false, 1);
     engine.addSystem(system);
@@ -131,11 +135,6 @@ public class CustomerAISystemTest {
 
   @Test
   public void testProcessEntityChefInteractValidFood() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
-
-    Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
         reputationPoints, false, 1);
     engine.addSystem(system);
@@ -163,11 +162,6 @@ public class CustomerAISystemTest {
 
   @Test
   public void testProcessEntityChefInteractNoPlayerComponent() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
-
-    Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
         reputationPoints, false, 1);
     engine.addSystem(system);
@@ -189,11 +183,6 @@ public class CustomerAISystemTest {
 
   @Test
   public void testProcessEntityChefInteractInvalidFood() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
-
-    Integer[] reputationPoints = new Integer[]{3};
     CustomerAISystem system = new CustomerAISystem(objectives, world, factory, mock(Hud.class),
         reputationPoints, false, 1);
     engine.addSystem(system);
@@ -220,9 +209,6 @@ public class CustomerAISystemTest {
 
   @Test
   public void testDestroyCustomerValid() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(objectives, world,
         factory, mock(Hud.class), new Integer[]{}, false, 1);
     engine.addSystem(system);
@@ -246,9 +232,6 @@ public class CustomerAISystemTest {
 
   @Test(expected = NullPointerException.class)
   public void testDestroyCustomerInvalidEntity() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(objectives, world,
         factory, mock(Hud.class), new Integer[]{}, false, 1);
     engine.addSystem(system);
@@ -259,9 +242,6 @@ public class CustomerAISystemTest {
 
   @Test(expected = NullPointerException.class)
   public void testDestroyCustomerNull() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(objectives, world,
         factory, mock(Hud.class), new Integer[]{}, false, 1);
     engine.addSystem(system);
@@ -271,10 +251,6 @@ public class CustomerAISystemTest {
 
   @Test
   public void testMakeItGoThere() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
-
     CustomerAISystem system = new CustomerAISystem(objectives, world,
         factory, mock(Hud.class), new Integer[]{}, false, 1);
     engine.addSystem(system);
@@ -295,11 +271,8 @@ public class CustomerAISystemTest {
 
   @Test
   public void testFulfillOrder() {
-    World world = new World(Vector2.Zero, true);
-    PooledEngine engine = new PooledEngine();
-    EntityFactory factory = new EntityFactory(engine, world);
     CustomerAISystem system = new CustomerAISystem(objectives, world,
-        factory, mock(Hud.class), new Integer[]{}, false, 1);
+        factory, mock(Hud.class), reputationPoints, false, 1);
     engine.addSystem(system);
     Entity customer = factory.createCustomer(Vector2.Zero, null);
     Entity food = factory.createFood(FoodType.from(1));

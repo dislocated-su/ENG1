@@ -63,6 +63,7 @@ public class KeyboardInput implements InputProcessor {
         break;
       case Keys.H:
         disableHud = true;
+        break;
       default:
         processed = false;
     }
@@ -91,6 +92,7 @@ public class KeyboardInput implements InputProcessor {
         break;
       case Keys.E:
         changeCooks = false;
+        break;
       case Keys.F:
         putDown = false;
         break;
@@ -102,6 +104,7 @@ public class KeyboardInput implements InputProcessor {
         break;
       case Keys.H:
         disableHud = false;
+        break;
       default:
         processed = false;
     }

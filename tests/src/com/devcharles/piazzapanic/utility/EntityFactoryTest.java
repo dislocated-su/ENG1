@@ -6,11 +6,16 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.devcharles.piazzapanic.GdxTestRunner;
+import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.AnimationComponent;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
@@ -23,18 +28,31 @@ import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
 import com.devcharles.piazzapanic.utility.Station.StationType;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(GdxTestRunner.class)
 public class EntityFactoryTest {
 
+  PooledEngine engine;
+  World world;
+  AssetManager manager;
+  EntityFactory factory;
+
+  @Before
+  public void setup() {
+    engine = new PooledEngine();
+    world = new World(Vector2.Zero, true);
+    manager = new AssetManager();
+    manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+    PiazzaPanic.loadAssets(manager);
+    manager.finishLoading();
+    factory = new EntityFactory(engine, world, manager);
+  }
+
   @Test
   public void testCreateCook() {
-    PooledEngine engine = new PooledEngine();
-    World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
-
     Entity cook = factory.createCook(0, 0);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
@@ -56,10 +74,6 @@ public class EntityFactoryTest {
 
   @Test
   public void testCreateFood() {
-    PooledEngine engine = new PooledEngine();
-    World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
-
     Entity food = factory.createFood(FoodType.burger);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(TextureComponent.class, TransformComponent.class, FoodComponent.class).get());
@@ -72,11 +86,8 @@ public class EntityFactoryTest {
 
   @Test
   public void testCreateIngredientStation() {
-    PooledEngine engine = new PooledEngine();
-    World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
-
-    Entity station = factory.createStation(0, StationType.ingredient, Vector2.Zero, FoodType.tomato);
+    Entity station = factory.createStation(0, StationType.ingredient, Vector2.Zero,
+        FoodType.tomato);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
             TextureComponent.class, StationComponent.class).get());
@@ -102,10 +113,6 @@ public class EntityFactoryTest {
 
   @Test
   public void testCreateOtherStation() {
-    PooledEngine engine = new PooledEngine();
-    World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
-
     Entity station = factory.createStation(0, StationType.grill, Vector2.Zero, null);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
@@ -132,7 +139,7 @@ public class EntityFactoryTest {
   public void testCutFoodNullPath() {
     EntityFactory.foodTextures.clear();
     assertEquals("Ensure no textures are there initially.", 0, EntityFactory.foodTextures.size());
-    EntityFactory.cutFood(null);
+    factory.cutFood(null);
     assertEquals("Ensure 13 food textures are loaded.", 13, EntityFactory.foodTextures.size());
   }
 
@@ -140,7 +147,7 @@ public class EntityFactoryTest {
   public void testCutFoodWithPath() {
     EntityFactory.foodTextures.clear();
     assertEquals("Ensure no textures are there initially.", 0, EntityFactory.foodTextures.size());
-    EntityFactory.cutFood("v2/food.png");
+    factory.cutFood("v2/food.png");
     assertEquals("Ensure 13 food textures are loaded.", 13, EntityFactory.foodTextures.size());
   }
 
@@ -149,7 +156,7 @@ public class EntityFactoryTest {
     EntityFactory.foodTextures.remove(FoodType.buns);
     assertNull("It should return null if food texture does not exist yet.",
         EntityFactory.getFoodTexture(FoodType.buns));
-    EntityFactory.cutFood(null);
+    factory.cutFood(null);
     for (int i = 1; i < 14; i++) {
       assertNotNull("There should be a texture for this food type: " + FoodType.from(i),
           EntityFactory.getFoodTexture(FoodType.from(i)));
@@ -158,10 +165,6 @@ public class EntityFactoryTest {
 
   @Test
   public void testCreateCustomer() {
-    PooledEngine engine = new PooledEngine();
-    World world = new World(Vector2.Zero, true);
-    EntityFactory factory = new EntityFactory(engine, world);
-
     Entity customer = factory.createCustomer(Vector2.Zero, null);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,

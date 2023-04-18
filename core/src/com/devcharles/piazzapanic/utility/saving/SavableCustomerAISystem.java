@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class SavableCustomerAISystem {
 
-  public Map<Integer, Boolean> objectiveTaken;
+  public Map<Integer,Boolean> objectiveTaken;
   public SavableTimer spawnTimer;
   public int totalCustomers;
   public boolean firstSpawn = false;
