@@ -11,7 +11,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 
 @RunWith(GdxTestRunner.class)
-public class KeyboardInputTest {
+public class KeyboardInputTests {
 
     private KeyboardInput keyboardInput;
 

@@ -80,18 +80,25 @@ public class GameScreen implements Screen {
 
         engine = new PooledEngine();
 
-        // The rayhandler is responsible for rendering the lights.
-        rayhandler = new RayHandler(world);
-        rayhandler.setAmbientLight(0.4f);
+        if (!this.game.TESTMODE) {
+            // The rayhandler is responsible for rendering the lights.
+            rayhandler = new RayHandler(world);
+            rayhandler.setAmbientLight(0.4f);
+        }
 
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
-        hud = new Hud(game.batch, this, game, reputationPoints,difficulty,tillBalance,customersServed);
-
+        if (!this.game.TESTMODE) {
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed);
+        }
+      
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
-        mapLoader.buildFromObjects(engine, rayhandler);
+
+        if (!this.game.TESTMODE) {
+            mapLoader.buildFromObjects(engine, rayhandler);
+        }
         mapLoader.buildStations(engine, world);
         mapRenderer = new WorldTilemapRenderer(mapLoader.map,camera,game.batch);
         engine.addSystem(new PhysicsSystem(world));
@@ -110,7 +117,10 @@ public class GameScreen implements Screen {
         // set the input processor
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
-        multiplexer.addProcessor(hud.stage);
+
+        if (!this.game.TESTMODE) {
+            multiplexer.addProcessor(hud.stage);
+        }
     }
 
     @Override
