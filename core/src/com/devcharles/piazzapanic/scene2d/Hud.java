@@ -294,6 +294,12 @@ public class Hud extends ApplicationAdapter {
    * @param deltaTime the time elapsed since last frame.
    */
   public void update(float deltaTime) {
+    if (won) {
+      stage.act();
+      stage.draw();
+      return;
+    }
+
     if (paused) {
       if (pauseToggled) {
         pauseToggled = false;
@@ -303,7 +309,7 @@ public class Hud extends ApplicationAdapter {
       stage.draw();
       return;
     }
-    timeCounter += won ? 0 : deltaTime;
+    timeCounter += deltaTime;
     // Staggered once per second using timeCounter makes it way faster
     if (timeCounter >= 1) {
       customerTimer++;
