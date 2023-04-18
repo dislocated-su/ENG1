@@ -1,6 +1,4 @@
 buildscript {
-    
-
     repositories {
         mavenLocal()
         mavenCentral()
@@ -11,13 +9,11 @@ buildscript {
     dependencies {
         classpath 'org.wisepersist:gwt-gradle-plugin:1.1.16'
         classpath 'org.gretty:gretty:3.0.7'
-
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
-
     version = '1.0'
     ext {
         appName = "piazzaPanic"
@@ -38,11 +34,13 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://jitpack.io" }
     }
+
+
+
 }
 
 project(":desktop") {
     apply plugin: "java-library"
-
 
     dependencies {
         implementation project(":core")
@@ -57,7 +55,6 @@ project(":desktop") {
 project(":core") {
     apply plugin: "java-library"
 
-
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
@@ -70,13 +67,22 @@ project(":core") {
 
 project(":tests") {
     apply plugin: "java"
-
+    apply plugin: 'jacoco'
+    // Add all the code packages to the jacoco report.
+    gradle.projectsEvaluated {
+        jacocoTestReport {
+            def projects = configurations.implementation.getAllDependencies().withType(ProjectDependency).collect{it.getDependencyProject()}
+            projects.each {
+                additionalSourceDirs files(it.sourceSets.main.java.srcDirs)
+                additionalClassDirs files(it.sourceSets.main.output)
+            }
+        }
+    }
     sourceSets.test.java.srcDirs = ["src/"]
 
     dependencies {
 
         implementation project(":core")
-
         implementation "junit:junit:4.+"
         implementation "org.mockito:mockito-core:3.+"
 
@@ -89,6 +95,5 @@ project(":tests") {
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "com.badlogicgames.ashley:ashley:$ashleyVersion"
         implementation "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-
     }
 }
