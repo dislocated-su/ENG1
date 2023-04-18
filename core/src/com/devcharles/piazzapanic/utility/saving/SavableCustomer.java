@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.devcharles.piazzapanic.components.AIAgentComponent;
 import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.components.ItemComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.Mappers;
@@ -50,7 +51,11 @@ public class SavableCustomer {
     CustomerComponent customerComponent = Mappers.customer.get(customer);
     if (food != null) {
       customerComponent.food = food.toEntity(factory);
+      ItemComponent itemComponent = factory.getEngine().createComponent(ItemComponent.class);
+      itemComponent.holderTransform = Mappers.transform.get(customer);
+      customerComponent.food.add(itemComponent);
     }
+
     customerComponent.timer = timer.toGdxTimer();
     return customer;
   }

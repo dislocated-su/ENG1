@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.ItemComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
@@ -34,7 +35,8 @@ public class EndlessGameScreen extends BaseGameScreen {
     engine.addSystem(new PlayerControlSystem(kbInput));
     engine.addSystem(new StationSystem(kbInput, factory));
     CustomerAISystem aiSystem =
-        new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,
+        new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud,
+            reputationPointsAndMoney,
             true, 3);
     engine.addSystem(aiSystem);
     engine.addSystem(new CarryItemsSystem());
@@ -61,7 +63,11 @@ public class EndlessGameScreen extends BaseGameScreen {
 
         ControllableComponent controllableComponent = Mappers.controllable.get(cook);
         for (SavableFood savableFood : gameSave.getCooks().get(i).foodStack) {
-          controllableComponent.currentFood.push(savableFood.toEntity(factory));
+          Entity foodEntity = savableFood.toEntity(factory);
+          ItemComponent itemComponent = engine.createComponent(ItemComponent.class);
+          itemComponent.holderTransform = Mappers.transform.get(cook);
+          foodEntity.add(itemComponent);
+          controllableComponent.currentFood.push(foodEntity);
         }
         if (i == 0) {
           cook.add(engine.createComponent(PlayerComponent.class));
@@ -73,6 +79,9 @@ public class EndlessGameScreen extends BaseGameScreen {
 
       // Load hud save details
       hud.loadFromSave(gameSave);
+
+      reputationPointsAndMoney[0] = gameSave.getReputation();
+      reputationPointsAndMoney[1] = gameSave.getMoney();
     }
   }
 }

@@ -1,7 +1,6 @@
 package com.devcharles.piazzapanic.scene2d;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input.Keys;
@@ -36,8 +35,7 @@ public class Hud extends ApplicationAdapter {
   private final Viewport viewport;
   private Integer customerTimer = 0;
   private float timeCounter = 0;
-  private final Integer[] reputation;
-  private final Skin skin;
+  private final Integer[] reputationAndMoney;
 
   private final float fontScale = 0.6f;
 
@@ -48,14 +46,17 @@ public class Hud extends ApplicationAdapter {
   LabelStyle titleLabelStyle;
   Label timerLabel;
   Label timeNameLabel;
+  Label moneyLabel;
+  Label moneyNameLabel;
   Label reputationLabel;
   Label reputationNameLabel;
   Label pausedNameLabel;
+  TextButton saveButton;
   BitmapFont uiFont, uiTitleFont;
   // an image used as the background of recipe book and tutorial
   private Image photo;
 
-  private final Game game;
+  private final PiazzaPanic game;
   private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel;
 
   private boolean pauseToggled = false;
@@ -74,10 +75,10 @@ public class Hud extends ApplicationAdapter {
    * @param reputationPoints Must be an object to pass by reference, see <a
    *                         href="https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference">...</a>
    */
-  public Hud(SpriteBatch spriteBatch, final BaseGameScreen savedGame, final Game game,
+  public Hud(SpriteBatch spriteBatch, final BaseGameScreen savedGame, final PiazzaPanic game,
       Integer[] reputationPoints) {
     this.game = game;
-    this.reputation = reputationPoints;
+    this.reputationAndMoney = reputationPoints;
     this.gameScreen = savedGame;
 
     // Setup the viewport
@@ -86,9 +87,8 @@ public class Hud extends ApplicationAdapter {
     viewport.apply();
 
     // Import the custom skin with different fonts
-    skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
-    uiFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-export.fnt"));
-    uiTitleFont = new BitmapFont(Gdx.files.internal("craftacular/raw/font-title-export.fnt"));
+    uiFont = game.assetManager.get("craftacular/raw/font-export.fnt", BitmapFont.class);
+    uiTitleFont = game.assetManager.get("craftacular/raw/font-title-export.fnt");
 
     // Create generic style for labels with the different fonts
     hudLabelStyle = new Label.LabelStyle();
@@ -120,11 +120,13 @@ public class Hud extends ApplicationAdapter {
   }
 
   private void saveGame() {
-    System.out.println("hello?");
     GameState state = new GameState();
     state.setFromEngine(gameScreen.getEngine());
     state.setCustomerTimer(customerTimer);
     state.setNumCustomersServed(numCustomersServed);
+
+    state.setReputation(reputationAndMoney[0]);
+    state.setMoney(reputationAndMoney[1]);
 
     FileHandle saveFile = Gdx.files.local(GameState.SAVE_LOCATION);
 
@@ -137,29 +139,41 @@ public class Hud extends ApplicationAdapter {
     customerTimer = savedGame.getCustomerTimer();
     timerLabel.setText(String.format("%03d", customerTimer));
     numCustomersServed = savedGame.getNumCustomersServed();
+    moneyLabel.setText(String.format("$%d", reputationAndMoney[1]));
+    reputationLabel.setText(reputationAndMoney[0]);
   }
 
   private void createTables() {
 
     timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);
-    reputationLabel = new Label(String.format("%01d", reputation[0]), hudLabelStyle);
+    moneyNameLabel = new Label("Money", hudLabelStyle);
+    reputationLabel = new Label(String.format("%01d", reputationAndMoney[0]), hudLabelStyle);
     timeNameLabel = new Label("Time", hudLabelStyle);
+    moneyLabel = new Label(String.format("$%d", reputationAndMoney[1]), hudLabelStyle);
     reputationNameLabel = new Label("Reputation", hudLabelStyle);
     // Creates a bunch of labels and sets the fontsize
     reputationLabel.setFontScale(fontScale + 0.1f);
+    moneyLabel.setFontScale(fontScale + 0.1f);
     timerLabel.setFontScale(fontScale + 0.1f);
     timeNameLabel.setFontScale(fontScale + 0.1f);
+    moneyNameLabel.setFontScale(fontScale + 0.1f);
     reputationNameLabel.setFontScale(fontScale + 0.1f);
+
+    moneyLabel.setVisible(false);
+    moneyNameLabel.setVisible(false);
+
     // lays out timer and reputation
     tableTop = new Table();
     tableTop.top();
     tableTop.setFillParent(true);
 
     tableTop.add(timeNameLabel).expandX().padTop(10);
+    tableTop.add(moneyNameLabel).expandX().padTop(10);
     tableTop.add(reputationNameLabel).expandX().padTop(10);
 
     tableTop.row();
     tableTop.add(timerLabel).expandX();
+    tableTop.add(moneyLabel).expandX();
     tableTop.add(reputationLabel).expandX();
 
     tableBottomLabel = new Table();
@@ -179,10 +193,10 @@ public class Hud extends ApplicationAdapter {
 
     tablePause.row();
     // checks if resume button is clicked
-    TextButton resumeButton = new TextButton("Resume", skin);
-    TextButton recipeBookButton = new TextButton("Recipe Book", skin);
-    TextButton tutorialButton = new TextButton("Tutorial", skin);
-    TextButton saveButton = new TextButton("Save and Exit", skin);
+    TextButton resumeButton = new TextButton("Resume", game.skin);
+    TextButton recipeBookButton = new TextButton("Recipe Book", game.skin);
+    TextButton tutorialButton = new TextButton("Tutorial", game.skin);
+    saveButton = new TextButton("Exit", game.skin);
 
     resumeButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
@@ -195,9 +209,13 @@ public class Hud extends ApplicationAdapter {
         createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
     saveButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
-        saveGame();
+        if (isEndless) {
+          saveGame();
+        }
         Gdx.app.log("save", "Game is saved!");
-        game.setScreen(new MainMenuScreen((PiazzaPanic) game));
+        game.setScreen(new MainMenuScreen(game));
+        dispose();
+        gameScreen.dispose();
       }
     });
 
@@ -272,6 +290,7 @@ public class Hud extends ApplicationAdapter {
    */
   public void incrementCompletedOrders() {
     numCustomersServed++;
+    moneyLabel.setText(String.format("$%d", reputationAndMoney[1]));
   }
 
   /**
@@ -294,11 +313,11 @@ public class Hud extends ApplicationAdapter {
     if (timeCounter >= 1) {
       customerTimer++;
       timerLabel.setText(String.format("%03d", customerTimer));
-      reputationLabel.setText(reputation[0]);
+      reputationLabel.setText(reputationAndMoney[0]);
       timeCounter -= 1;
     }
 
-    if (triggerWin) {
+    if (triggerWin && !won) {
       triggerWin = false;
       win();
     }
@@ -353,6 +372,7 @@ public class Hud extends ApplicationAdapter {
    * Win screen
    */
   private void win() {
+    gameScreen.pause();
     won = true;
     // winscreen table made
     stage.clear();
@@ -390,10 +410,10 @@ public class Hud extends ApplicationAdapter {
 
     centerTable.row();
 
-    TextButton returnToMenuButton = new TextButton("Main menu", skin);
+    TextButton returnToMenuButton = new TextButton("Main menu", game.skin);
     centerTable.add(returnToMenuButton).width(240).height(70).padTop(50).colspan(2);
 
-    returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
+    returnToMenuButton.addListener(createListener(new MainMenuScreen(game)));
 
     stage.addActor(centerTable);
   }
@@ -413,11 +433,15 @@ public class Hud extends ApplicationAdapter {
     return new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         game.setScreen(screen);
+        gameScreen.dispose();
       }
     };
   }
 
   public void setEndless(boolean endless) {
     isEndless = endless;
+    moneyNameLabel.setVisible(isEndless);
+    moneyLabel.setVisible(isEndless);
+    saveButton.setText(isEndless ? "Save and Exit" : "Exit");
   }
 }

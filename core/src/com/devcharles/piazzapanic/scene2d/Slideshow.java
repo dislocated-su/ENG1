@@ -1,7 +1,6 @@
 package com.devcharles.piazzapanic.scene2d;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -28,7 +26,6 @@ public class Slideshow extends ApplicationAdapter implements Screen {
 
   OrthographicCamera camera;
   private final Stage stage;
-  private final Skin skin;
   private final Batch batch;
   private Sprite sprite;
 
@@ -52,7 +49,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
    *
    * @param type {@link Type} of slideshow to create.
    */
-  private Slideshow(Type type) {
+  private Slideshow(final PiazzaPanic game, Type type) {
 
     camera = new OrthographicCamera();
     camera.setToOrtho(false, 1280, 720);
@@ -70,14 +67,13 @@ public class Slideshow extends ApplicationAdapter implements Screen {
     textures = new Texture[fileCount];
 
     for (int i = 0; i < fileCount; i++) {
-      textures[i] = new Texture(Gdx.files.internal(type.name() + i + ".png"));
+      textures[i] = game.assetManager.get(type.name() + i + ".png", Texture.class);
     }
 
-    skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
     stage = new Stage(viewport);
 
     // Begin layout
-    leftButton = new TextButton("Page Left", skin);
+    leftButton = new TextButton("Page Left", game.skin);
 
     leftButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
@@ -86,7 +82,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
       }
     });
 
-    rightButton = new TextButton("Page Right", skin);
+    rightButton = new TextButton("Page Right", game.skin);
     rightButton.addListener(new ClickListener() {
       public void clicked(InputEvent event, float x, float y) {
         currentPage = currentPage + 1;
@@ -94,7 +90,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
       }
     });
 
-    exit = new TextButton("Exit", skin);
+    exit = new TextButton("Exit", game.skin);
   }
 
   /**
@@ -104,8 +100,8 @@ public class Slideshow extends ApplicationAdapter implements Screen {
    * @param type        {@link Type} of slideshow to create.
    * @param savedScreen the {@link ScenarioGameScreen} to return to after this screen is closed.
    */
-  public Slideshow(final Game game, Type type, final Screen savedScreen) {
-    this(type);
+  public Slideshow(final PiazzaPanic game, Type type, final Screen savedScreen) {
+    this(game, type);
 
     exit.clearListeners();
 
@@ -178,7 +174,6 @@ public class Slideshow extends ApplicationAdapter implements Screen {
   }
 
   public void dispose() {
-    skin.dispose();
     stage.dispose();
   }
 

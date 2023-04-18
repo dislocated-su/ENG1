@@ -3,9 +3,6 @@ package com.devcharles.piazzapanic.utility;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.GdxTestRunner;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.Station.StationType;
@@ -17,11 +14,9 @@ import org.junit.runner.RunWith;
 
 @RunWith(GdxTestRunner.class)
 public class StationTest {
-  World world = new World(new Vector2(0, 0), true);
-  PooledEngine engine = new PooledEngine();
-  EntityFactory factory = new EntityFactory(engine, world);
+
   @Test
-  public void testRecipeHashMaps(){
+  public void testRecipeHashMaps() {
     //Grill station recipes tests
     FoodType testActual = Station.grillRecipes.get(FoodType.buns);
     assertEquals("Buns should be mapped to toasted buns",
@@ -30,7 +25,8 @@ public class StationTest {
     assertEquals("Formed patties should be mapped to grilled patties",
         FoodType.grilledPatty, testActual);
     testActual = Station.grillRecipes.get(FoodType.unformedPatty);
-    assertNull("Any ingredient that isn't used in the grill station shouldn't be mapped to anything",
+    assertNull(
+        "Any ingredient that isn't used in the grill station shouldn't be mapped to anything",
         testActual);
 
     //Cutting board recipes tests
@@ -47,7 +43,8 @@ public class StationTest {
     assertEquals("Onions should be mapped to sliced onions",
         FoodType.slicedOnion, testActual);
     testActual = Station.cuttingBoardRecipes.get(FoodType.burger);
-    assertNull("Any ingredient that isn't used in the cutting board shouldn't be mapped to anything",
+    assertNull(
+        "Any ingredient that isn't used in the cutting board shouldn't be mapped to anything",
         testActual);
 
     //Serve recipes tests
@@ -86,7 +83,7 @@ public class StationTest {
   }
 
   @Test
-  public void testStationType(){
+  public void testStationType() {
     int testStationTypeValue = StationType.oven.getValue();
     assertEquals("The oven station should have a value of one",
         1, testStationTypeValue);

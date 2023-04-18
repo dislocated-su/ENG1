@@ -15,6 +15,7 @@ public class GameState {
 
   public static String SAVE_LOCATION = "save.json";
 
+  private final Integer[] reputationAndMoney = {0, 0};
   private Integer customerTimer = 0;
   private int numCustomersServed = 0;
   private final HashMap<String, SavableStation> stations = new HashMap<>();
@@ -65,5 +66,21 @@ public class GameState {
 
   public void setNumCustomersServed(int numCustomersServed) {
     this.numCustomersServed = numCustomersServed;
+  }
+
+  public Integer getReputation() {
+    return reputationAndMoney[0];
+  }
+
+  public Integer getMoney() {
+    return reputationAndMoney[1];
+  }
+
+  public void setReputation(int reputation) {
+    reputationAndMoney[0] = reputation;
+  }
+
+  public void setMoney(int money) {
+    reputationAndMoney[1] = money;
   }
 }

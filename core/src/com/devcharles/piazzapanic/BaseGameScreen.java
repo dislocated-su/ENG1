@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -39,11 +40,15 @@ public abstract class BaseGameScreen implements Screen {
   protected final MapLoader mapLoader;
   protected final EntityFactory factory;
 
-  protected final Integer[] reputationPoints = {3};
+  protected final AssetManager assetManager;
+
+  protected final Integer[] reputationPointsAndMoney = {3, 0};
   protected final Map<Integer, Entity> stationsMap;
 
   public BaseGameScreen(PiazzaPanic game, String mapPath) {
     this.game = game;
+    assetManager = game.assetManager;
+    assetManager.finishLoading();
 
     kbInput = new KeyboardInput();
 
@@ -57,12 +62,12 @@ public abstract class BaseGameScreen implements Screen {
     // The rayhandler is responsible for rendering the lights.
     rayhandler = new RayHandler(world);
 
-    factory = new EntityFactory(engine, world);
-    EntityFactory.cutFood(null);
+    factory = new EntityFactory(engine, world, assetManager);
+    factory.cutFood(null);
 
-    hud = new Hud(game.batch, this, game, reputationPoints);
+    hud = new Hud(game.batch, this, game, reputationPointsAndMoney);
 
-    mapLoader = new MapLoader(mapPath, null, factory);
+    mapLoader = new MapLoader(mapPath, null, factory, assetManager);
     mapLoader.buildCollisions(world);
     mapLoader.buildFromObjects(engine, rayhandler);
     stationsMap = mapLoader.buildStations(engine, world);

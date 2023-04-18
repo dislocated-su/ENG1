@@ -7,9 +7,14 @@ import static org.junit.Assert.assertTrue;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.GdxTestRunner;
+import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
@@ -23,6 +28,7 @@ import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Station.StationType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,9 +36,21 @@ import org.junit.runner.RunWith;
 public class StationSystemTest {
 
   KeyboardInput kbInput = new KeyboardInput();
-  World world = new World(new Vector2(0, 0), true);
+
+  World world;
   PooledEngine engine = new PooledEngine();
-  EntityFactory factory = new EntityFactory(engine, world);
+  EntityFactory factory;
+
+  @Before
+  public void setup() {
+    world  = new World(new Vector2(0, 0), true);
+    engine = new PooledEngine();
+    AssetManager manager = new AssetManager();
+    manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+    PiazzaPanic.loadAssets(manager);
+    manager.finishLoading();
+    factory = new EntityFactory(engine, world, manager);
+  }
 
   @Test
   public void testProcessStation() {
