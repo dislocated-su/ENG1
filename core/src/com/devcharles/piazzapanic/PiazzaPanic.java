@@ -26,11 +26,11 @@ public class PiazzaPanic extends Game {
     batch = new SpriteBatch();
     assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
     skin = new Skin(Gdx.files.internal("craftacular/skin/craftacular-ui.json"));
-    loadAssets();
+    loadAssets(assetManager);
     this.setScreen(new MainMenuScreen(this));
   }
 
-  public void loadAssets() {
+  public static void loadAssets(AssetManager assetManager) {
     assetManager.load("mainMenuImage.png", Texture.class);
     assetManager.load("craftacular/raw/font-export.fnt", BitmapFont.class);
     assetManager.load("craftacular/raw/font-title-export.fnt", BitmapFont.class);
@@ -65,7 +65,6 @@ public class PiazzaPanic extends Game {
   }
 
   public void dispose() {
-    System.out.println("dispose game");
     batch.dispose();
     assetManager.dispose();
     skin.dispose();
