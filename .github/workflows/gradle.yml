@@ -12,23 +12,32 @@ permissions:
 
 jobs:
   build:
+    # Run the build job in multiple os environments to check
+    # that the game works cross-platform.
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
+    # Checkout repository for use by workflow.
     - uses: actions/checkout@v3
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
-    - name: Run chmod to make gradlew executable
-      run: chmod +x ./gradlew
+    # Build with Gradle Action from marketplace
+    # makes it easy to build the game and generate the
+    # Jacoco testing report and executable jar.
+    # Checkstyle report gets generated automatically when built.
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      uses: gradle/gradle-build-action@v2.4.2
       with:
-        arguments: build jacocoTestReport
+        arguments: build jacocoTestReport desktop:dist
+    # Upload the executable desktop JAR, Jacoco and checkstyle report.
+    # The Jacoco and checkstyle report is only uploaded in the ubuntu
+    # os environment otherwise to prevent it being unnecessarily uploaded
+    # more than once.
     - name: Upload desktop JAR
       uses: actions/upload-artifact@v3.1.1
       with:
@@ -45,4 +54,41 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       with:
           name: jacoco-report
-          path: tests/build/reports/tests
+          path: tests/build/reports/jacoco
+  release:
+    # Make a new release if a git tag in the format defined above is present.
+    runs-on: ubuntu-latest
+    needs: [ "build" ]
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    steps:
+      # Checkout repository so workflow can access the artefacts generated
+      # in previous workflow.
+      # Rename each executable Jar artefact to reflect the environment
+      # it was created in.
+      # Includes the three executable JAR files for Ubuntu, MacOS and Windows
+      # in the release as artefacts.
+      - uses: actions/checkout@v3
+      - name: Download Ubuntu Build Artifact
+        uses: actions/download-artifact@v3.0.1
+        with:
+          name: lib-ubuntu-latest.jar
+      - name: Rename Ubuntu Build Artifact
+        run: mv desktop-1.0.jar lib-ubuntu.jar
+      - name: Download MacOS Build Artifact
+        uses: actions/download-artifact@v3.0.1
+        with:
+          name: lib-macos-latest.jar
+      - name: Rename MacOS Build Artifact
+        run: mv desktop-1.0.jar lib-macos.jar
+      - name: Download Windows Build Artifact
+        uses: actions/download-artifact@v3.0.1
+        with:
+          name: lib-windows-latest.jar
+      - name: Rename Windows Build Artifact
+        run: mv desktop-1.0.jar lib-windows.jar
+      - name: Release
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
+        with:
+          files: lib*.jar
