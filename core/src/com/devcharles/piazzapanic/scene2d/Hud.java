@@ -215,7 +215,7 @@ public class Hud extends ApplicationAdapter {
           saveGame();
         }
         Gdx.app.log("save", "Game is saved!");
-        game.setScreen(new MainMenuScreen((PiazzaPanic) game));
+        game.setScreen(new MainMenuScreen(game));
         dispose();
         gameScreen.dispose();
       }
@@ -415,7 +415,7 @@ public class Hud extends ApplicationAdapter {
     TextButton returnToMenuButton = new TextButton("Main menu", skin);
     centerTable.add(returnToMenuButton).width(240).height(70).padTop(50).colspan(2);
 
-    returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
+    returnToMenuButton.addListener(createListener(new MainMenuScreen(game)));
 
     stage.addActor(centerTable);
   }

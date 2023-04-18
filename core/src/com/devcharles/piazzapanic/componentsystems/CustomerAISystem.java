@@ -1,8 +1,6 @@
 package com.devcharles.piazzapanic.componentsystems;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.devcharles.piazzapanic.components.AnimationComponent;
-import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
 import com.devcharles.piazzapanic.utility.saving.SavableCustomer;
 import com.devcharles.piazzapanic.utility.saving.SavableCustomerAISystem;
 import java.util.ArrayList;

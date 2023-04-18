@@ -1,6 +1,5 @@
 package com.devcharles.piazzapanic.componentsystems;
 
-import com.badlogic.ashley.utils.ImmutableArray;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import java.util.ArrayList;
 import java.util.Collections;

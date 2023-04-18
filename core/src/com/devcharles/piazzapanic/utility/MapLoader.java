@@ -1,7 +1,6 @@
 package com.devcharles.piazzapanic.utility;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import java.util.HashMap;
 import java.util.Map;
 
