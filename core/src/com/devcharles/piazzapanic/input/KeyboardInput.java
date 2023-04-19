@@ -2,7 +2,6 @@ package com.devcharles.piazzapanic.input;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
-import com.devcharles.piazzapanic.scene2d.Hud;
 
 public class KeyboardInput implements InputProcessor {
 

@@ -44,6 +44,9 @@ public class CustomerAISystem extends IteratingSystem {
   protected final GdxTimer spawnTimer = new GdxTimer(30000, false, true);
   private final EntityFactory factory;
   private int totalCustomers = 0;
+  private float patienceModifier = 1f;
+
+  private int incomeModifier = 1;
   private final Hud hud;
   private final Integer[] reputationPointsAndMoney;
   private final int MAX_CUSTOMERS = 5;
@@ -134,6 +137,8 @@ public class CustomerAISystem extends IteratingSystem {
     totalCustomers = savedSystem.totalCustomers;
     firstSpawn = savedSystem.firstSpawn;
     numQueuedCustomers = savedSystem.numQueuedCustomers;
+    patienceModifier = savedSystem.patienceModifier;
+    incomeModifier = savedSystem.incomeModifier;
 
     for (ArrayList<Entity> group : customers) {
       for (Entity customer : group) {
@@ -178,7 +183,9 @@ public class CustomerAISystem extends IteratingSystem {
         Entity newCustomer = factory.createCustomer(objectives.get(-2).get(0).getPosition(), null);
         Mappers.aiAgent.get(newCustomer).slot = i;
         group.add(newCustomer);
-        Mappers.customer.get(newCustomer).timer.start();
+        GdxTimer timer =Mappers.customer.get(newCustomer).timer;
+        timer.setDelay((int) (timer.getDelay() * patienceModifier));
+        timer.start();
       }
       customers.add(group);
       totalCustomers++;
@@ -321,7 +328,7 @@ public class CustomerAISystem extends IteratingSystem {
     AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
     makeItGoThere(aiAgent, -1);
     // Give money for completion of order
-    reputationPointsAndMoney[1] += 8;
+    reputationPointsAndMoney[1] += 8 + incomeModifier;
 
     customer.timer.stop();
     customer.timer.reset();
@@ -362,4 +369,19 @@ public class CustomerAISystem extends IteratingSystem {
     return customers;
   }
 
+  public float getPatienceModifier() {
+    return patienceModifier;
+  }
+
+  public void setPatienceModifier(float patienceModifier) {
+    this.patienceModifier = patienceModifier;
+  }
+
+  public int getIncomeModifier() {
+    return incomeModifier;
+  }
+
+  public void setIncomeModifier(int incomeModifier) {
+    this.incomeModifier = incomeModifier;
+  }
 }

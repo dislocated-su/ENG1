@@ -15,101 +15,101 @@ import com.devcharles.piazzapanic.utility.Pair;
  */
 public class WorldContactListener implements ContactListener {
 
-    @Override
-    public void beginContact(Contact contact) {
-        Pair<StationComponent, Entity> stationCook = stationInteractResolver(contact);
-        if (stationCook != null) {
-            stationCook.first.interactingCook = stationCook.second;
-            return;
-        }
-
-        Pair<Entity, Entity> customerCook = customerInteractResolver(contact);
-        if (customerCook != null) {
-            // Gdx.app.log("Begin contact", "Cook+Customer");
-            Mappers.customer.get(customerCook.first).interactingCook = customerCook.second;
-        }
+  @Override
+  public void beginContact(Contact contact) {
+    Pair<StationComponent, Entity> stationCook = stationInteractResolver(contact);
+    if (stationCook != null) {
+      stationCook.first.interactingCook = stationCook.second;
+      return;
     }
 
-    @Override
-    public void endContact(Contact contact) {
-        Pair<StationComponent, Entity> stationCook = stationInteractResolver(contact);
-        if (stationCook != null) {
-            stationCook.first.interactingCook = null;
-            return;
-        }
+    Pair<Entity, Entity> customerCook = customerInteractResolver(contact);
+    if (customerCook != null) {
+      // Gdx.app.log("Begin contact", "Cook+Customer");
+      Mappers.customer.get(customerCook.first).interactingCook = customerCook.second;
+    }
+  }
 
-        Pair<Entity, Entity> customerCook = customerInteractResolver(contact);
-        if (customerCook != null) {
-            // Gdx.app.log("End contact", "Cook+Customer");
-            Mappers.customer.get(customerCook.first).interactingCook = null;
-        }
-
+  @Override
+  public void endContact(Contact contact) {
+    Pair<StationComponent, Entity> stationCook = stationInteractResolver(contact);
+    if (stationCook != null) {
+      stationCook.first.interactingCook = null;
+      return;
     }
 
-    protected Pair<StationComponent, Entity> stationInteractResolver(Contact contact) {
-        Object objA = contact.getFixtureA().getUserData();
-        Object objB = contact.getFixtureB().getUserData();
-
-        if (objA == null || objB == null) {
-            return null;
-        }
-
-        boolean objAStation = (StationComponent.class.isAssignableFrom(objA.getClass()));
-        boolean objBStation = (StationComponent.class.isAssignableFrom(objB.getClass()));
-
-        if (objAStation || objBStation) {
-            Object station = objAStation ? objA : objB;
-            Entity cook = station == objA ? ((Entity) objB) : ((Entity) objA);
-
-            PlayerComponent player = Mappers.player.get(cook);
-
-            if (cook != null && player != null) {
-                player.putDown = false;
-                player.pickUp = false;
-                return new Pair<StationComponent, Entity>((StationComponent) station, cook);
-            }
-        }
-        return null;
+    Pair<Entity, Entity> customerCook = customerInteractResolver(contact);
+    if (customerCook != null) {
+      // Gdx.app.log("End contact", "Cook+Customer");
+      Mappers.customer.get(customerCook.first).interactingCook = null;
     }
 
-    protected Pair<Entity, Entity> customerInteractResolver(Contact contact) {
-        Object objA = contact.getFixtureA().getUserData();
-        Object objB = contact.getFixtureB().getUserData();
+  }
 
-        if (objA == null || objB == null) {
-            return null;
-        }
+  protected Pair<StationComponent, Entity> stationInteractResolver(Contact contact) {
+    Object objA = contact.getFixtureA().getUserData();
+    Object objB = contact.getFixtureB().getUserData();
 
-        boolean objAEntity = (Entity.class.isAssignableFrom(objA.getClass()));
-        boolean objBEntity = (Entity.class.isAssignableFrom(objB.getClass()));
-
-        if (!objAEntity || !objBEntity) {
-            return null;
-        }
-
-        Entity a = (Entity) objA;
-        Entity b = (Entity) objB;
-
-        if (Mappers.customer.has(a) || Mappers.customer.has(b)) {
-            Entity customer = Mappers.customer.has(a) ? a : b;
-            Entity cook = (customer == a) ? b : a;
-
-            PlayerComponent player = Mappers.player.get(cook);
-
-            if (cook != null && player != null) {
-                player.putDown = false;
-                return new Pair<Entity, Entity>(customer, cook);
-            }
-        }
-        return null;
+    if (objA == null || objB == null) {
+      return null;
     }
 
-    @Override
-    public void preSolve(Contact contact, Manifold oldManifold) {
+    boolean objAStation = (StationComponent.class.isAssignableFrom(objA.getClass()));
+    boolean objBStation = (StationComponent.class.isAssignableFrom(objB.getClass()));
+
+    if (objAStation || objBStation) {
+      Object station = objAStation ? objA : objB;
+      Entity cook = station == objA ? ((Entity) objB) : ((Entity) objA);
+
+      PlayerComponent player = Mappers.player.get(cook);
+
+      if (player != null) {
+        player.putDown = false;
+        player.pickUp = false;
+        return new Pair<>((StationComponent) station, cook);
+      }
+    }
+    return null;
+  }
+
+  protected Pair<Entity, Entity> customerInteractResolver(Contact contact) {
+    Object objA = contact.getFixtureA().getUserData();
+    Object objB = contact.getFixtureB().getUserData();
+
+    if (objA == null || objB == null) {
+      return null;
     }
 
-    @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {
+    boolean objAEntity = (Entity.class.isAssignableFrom(objA.getClass()));
+    boolean objBEntity = (Entity.class.isAssignableFrom(objB.getClass()));
+
+    if (!objAEntity || !objBEntity) {
+      return null;
     }
+
+    Entity a = (Entity) objA;
+    Entity b = (Entity) objB;
+
+    if (Mappers.customer.has(a) || Mappers.customer.has(b)) {
+      Entity customer = Mappers.customer.has(a) ? a : b;
+      Entity cook = (customer == a) ? b : a;
+
+      PlayerComponent player = Mappers.player.get(cook);
+
+      if (player != null) {
+        player.putDown = false;
+        return new Pair<>(customer, cook);
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public void preSolve(Contact contact, Manifold oldManifold) {
+  }
+
+  @Override
+  public void postSolve(Contact contact, ContactImpulse impulse) {
+  }
 
 }
