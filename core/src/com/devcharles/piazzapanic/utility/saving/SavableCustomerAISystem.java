@@ -13,6 +13,7 @@ public class SavableCustomerAISystem {
   public boolean firstSpawn = false;
   public int numQueuedCustomers = 0;
   public float patienceModifier = 1f;
+  public int incomeModifier = 1;
   public ArrayList<ArrayList<SavableCustomer>> customers;
 
   public static SavableCustomerAISystem from(CustomerAISystem system) {
@@ -23,6 +24,7 @@ public class SavableCustomerAISystem {
     savableSystem.firstSpawn = system.isFirstSpawn();
     savableSystem.numQueuedCustomers = system.getNumQueuedCustomers();
     savableSystem.patienceModifier = system.getPatienceModifier();
+    savableSystem.incomeModifier = system.getIncomeModifier();
 
     ArrayList<ArrayList<Entity>> customers = system.getCustomers();
     savableSystem.customers = new ArrayList<>(customers.size());

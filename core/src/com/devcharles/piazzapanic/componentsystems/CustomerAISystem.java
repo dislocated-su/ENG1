@@ -45,6 +45,8 @@ public class CustomerAISystem extends IteratingSystem {
   private final EntityFactory factory;
   private int totalCustomers = 0;
   private float patienceModifier = 1f;
+
+  private int incomeModifier = 1;
   private final Hud hud;
   private final Integer[] reputationPointsAndMoney;
   private final int MAX_CUSTOMERS = 5;
@@ -136,6 +138,7 @@ public class CustomerAISystem extends IteratingSystem {
     firstSpawn = savedSystem.firstSpawn;
     numQueuedCustomers = savedSystem.numQueuedCustomers;
     patienceModifier = savedSystem.patienceModifier;
+    incomeModifier = savedSystem.incomeModifier;
 
     for (ArrayList<Entity> group : customers) {
       for (Entity customer : group) {
@@ -325,7 +328,7 @@ public class CustomerAISystem extends IteratingSystem {
     AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
     makeItGoThere(aiAgent, -1);
     // Give money for completion of order
-    reputationPointsAndMoney[1] += 8;
+    reputationPointsAndMoney[1] += 8 + incomeModifier;
 
     customer.timer.stop();
     customer.timer.reset();
@@ -372,5 +375,13 @@ public class CustomerAISystem extends IteratingSystem {
 
   public void setPatienceModifier(float patienceModifier) {
     this.patienceModifier = patienceModifier;
+  }
+
+  public int getIncomeModifier() {
+    return incomeModifier;
+  }
+
+  public void setIncomeModifier(int incomeModifier) {
+    this.incomeModifier = incomeModifier;
   }
 }

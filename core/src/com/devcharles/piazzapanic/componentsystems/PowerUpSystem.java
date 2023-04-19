@@ -16,16 +16,18 @@ public class PowerUpSystem extends EntitySystem {
   private static final int MAX_SINGLE_POWER_UP = 5;
 
   private int numSpeedUp = 0;
-  private static final float speedUpModifier = 1.5f;
+  private static final float speedUpModifier = 1.2f;
   private int numPrepSpeed = 0;
-  private static final float prepSpeedModifier = 1.5f;
+  private static final float prepSpeedModifier = 1.2f;
   private int numChopSpeed = 0;
-  private static final float chopSpeedModifier = 1.5f;
+  private static final float chopSpeedModifier = 1.2f;
   private int numSalePrice = 0;
-  private static final float saleModifier = 1.5f;
   private int numPatienceIncrease = 0;
-  private static final float patienceModifier = 1.5f;
+  private static final float patienceModifier = 1.2f;
 
+  public boolean isMaxSpeedUp() {
+    return numSpeedUp == MAX_SINGLE_POWER_UP;
+  }
   public void addSpeedUp() {
     if (numSpeedUp >= MAX_SINGLE_POWER_UP) {
       return;
@@ -50,6 +52,9 @@ public class PowerUpSystem extends EntitySystem {
     }
   }
 
+  public boolean isMaxPrepSpeed() {
+    return numPrepSpeed == MAX_SINGLE_POWER_UP;
+  }
   public void addPrepSpeed() {
     if (numPrepSpeed >= MAX_SINGLE_POWER_UP) {
       return;
@@ -74,6 +79,9 @@ public class PowerUpSystem extends EntitySystem {
     }
   }
 
+  public boolean isMaxChopSpeed() {
+    return numChopSpeed == MAX_SINGLE_POWER_UP;
+  }
   public void addChopSpeed() {
     if (numChopSpeed >= MAX_SINGLE_POWER_UP) {
       return;
@@ -98,14 +106,30 @@ public class PowerUpSystem extends EntitySystem {
     }
   }
 
+  public boolean isMaxSalePrice() {
+    return numSalePrice == MAX_SINGLE_POWER_UP;
+  }
   public void addSalePrice() {
-
+    if (numSalePrice >= MAX_SINGLE_POWER_UP) {
+      return;
+    }
+    CustomerAISystem aiSystem = getEngine().getSystem(CustomerAISystem.class);
+    aiSystem.setIncomeModifier(aiSystem.getIncomeModifier() + 1);
+    numSalePrice++;
   }
 
   public void removeSalePrice() {
-
+    if (numSalePrice == 0) {
+      return;
+    }
+    CustomerAISystem aiSystem = getEngine().getSystem(CustomerAISystem.class);
+    aiSystem.setIncomeModifier(aiSystem.getIncomeModifier() - 1);
+    numSalePrice--;
   }
 
+  public boolean isMaxPatience() {
+    return numPatienceIncrease == MAX_SINGLE_POWER_UP;
+  }
   public void addPatience() {
     if (numPatienceIncrease >= MAX_SINGLE_POWER_UP) {
       return;

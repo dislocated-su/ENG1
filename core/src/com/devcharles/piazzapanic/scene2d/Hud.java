@@ -38,8 +38,6 @@ public class Hud extends ApplicationAdapter {
   private float timeCounter = 0;
   private final Integer[] reputationAndMoney;
 
-  private final float fontScale = 0.6f;
-
   private boolean isEndless = false;
 
   // A label is basically a widget
@@ -52,19 +50,22 @@ public class Hud extends ApplicationAdapter {
   Label reputationLabel;
   Label reputationNameLabel;
   Label pausedNameLabel;
-  TextButton saveButton;
+  TextButton saveButton, shopButton, pauseButton;
+  final TextButton movementSpeed, prepSpeed, chopSpeed, customerPatience, salePrice;
   BitmapFont uiFont, uiTitleFont;
   // an image used as the background of recipe book and tutorial
   private Image photo;
 
   private final PiazzaPanic game;
-  private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel;
+  private Table tableBottom, tableRight, shopTable, tableTop, tablePause, tableBottomLabel;
 
   private boolean pauseToggled = false;
   public boolean paused = false;
+  public boolean isShopOpen = false;
 
   private final BaseGameScreen gameScreen;
   private int numCustomersServed = 0;
+  private PowerUpSystem powerUpSystem;
 
   /**
    * Create the hud.
@@ -97,11 +98,27 @@ public class Hud extends ApplicationAdapter {
     titleLabelStyle = new Label.LabelStyle();
     titleLabelStyle.font = uiTitleFont;
 
+    movementSpeed = new TextButton("$20 - Movement Speed", game.skin);
+    prepSpeed = new TextButton("$20 - Preparation Speed", game.skin);
+    chopSpeed = new TextButton("$20 - Chopping Speed", game.skin);
+    salePrice = new TextButton("$20 - Order Income", game.skin);
+    customerPatience = new TextButton("$20 - Customer Patience", game.skin);
+
     stage.addListener(new InputListener() {
       @Override
       public boolean keyDown(InputEvent event, int keycode) {
         if (keycode == Keys.ESCAPE) {
-          pauseToggled = true;
+          if (isShopOpen) {
+            hideShop();
+          } else {
+            pauseToggled = true;
+          }
+        } else if (keycode == Keys.TAB) {
+          if (isShopOpen) {
+            hideShop();
+          } else {
+            showShop();
+          }
           // sets game to go bigscreen if F11 is pressed or sets it to go small screen
         } else if (keycode == Keys.F11) {
           boolean fullScreen = Gdx.graphics.isFullscreen();
@@ -110,16 +127,6 @@ public class Hud extends ApplicationAdapter {
             Gdx.graphics.setWindowedMode(1280, 720);
           } else {
             Gdx.graphics.setFullscreenMode(currentMode);
-          }
-        } else if (keycode == Keys.F4) {
-          PowerUpSystem powerUpSystem = gameScreen.getEngine().getSystem(PowerUpSystem.class);
-          if (powerUpSystem != null) {
-            powerUpSystem.addChopSpeed();
-          }
-        }else if (keycode == Keys.F5) {
-          PowerUpSystem powerUpSystem = gameScreen.getEngine().getSystem(PowerUpSystem.class);
-          if (powerUpSystem != null) {
-            powerUpSystem.removeChopSpeed();
           }
         }
         return true;
@@ -143,7 +150,6 @@ public class Hud extends ApplicationAdapter {
 
     Json json = new Json();
     saveFile.writeString(json.toJson(state, GameState.class), false);
-    System.out.println(json.prettyPrint(state));
   }
 
   public void loadFromSave(GameState savedGame) {
@@ -155,6 +161,23 @@ public class Hud extends ApplicationAdapter {
   }
 
   private void createTables() {
+    pauseButton = new TextButton("Pause", game.skin);
+    shopButton = new TextButton("Shop", game.skin);
+    shopButton.setVisible(false);
+
+    pauseButton.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        pauseToggled = true;
+      }
+    });
+
+    shopButton.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        showShop();
+      }
+    });
 
     timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);
     moneyNameLabel = new Label("Money", hudLabelStyle);
@@ -163,6 +186,7 @@ public class Hud extends ApplicationAdapter {
     moneyLabel = new Label(String.format("$%d", reputationAndMoney[1]), hudLabelStyle);
     reputationNameLabel = new Label("Reputation", hudLabelStyle);
     // Creates a bunch of labels and sets the fontsize
+    float fontScale = 0.6f;
     reputationLabel.setFontScale(fontScale + 0.1f);
     moneyLabel.setFontScale(fontScale + 0.1f);
     timerLabel.setFontScale(fontScale + 0.1f);
@@ -178,14 +202,18 @@ public class Hud extends ApplicationAdapter {
     tableTop.top();
     tableTop.setFillParent(true);
 
+    tableTop.add(shopButton).width(120).padTop(10).padLeft(10);
     tableTop.add(timeNameLabel).expandX().padTop(10);
     tableTop.add(moneyNameLabel).expandX().padTop(10);
     tableTop.add(reputationNameLabel).expandX().padTop(10);
+    tableTop.add(pauseButton).width(120).padTop(10).padRight(10);
 
     tableTop.row();
+    tableTop.add().width(120).padLeft(10);
     tableTop.add(timerLabel).expandX();
     tableTop.add(moneyLabel).expandX();
     tableTop.add(reputationLabel).expandX();
+    tableTop.add().width(120).padRight(10);
 
     tableBottomLabel = new Table();
     tableBottomLabel.bottom();
@@ -239,13 +267,139 @@ public class Hud extends ApplicationAdapter {
     tablePause.add(saveButton).width(260).height(70);
 
     this.tableRight = new Table();
+    this.shopTable = new Table();
     this.tableBottom = new Table();
 
     stage.addActor(tablePause);
+    stage.addActor(shopTable);
     stage.addActor(tableTop);
     stage.addActor(tableRight);
     stage.addActor(tableBottom);
     stage.addActor(tableBottomLabel);
+  }
+
+  /**
+   * Create table with items to buy
+   *
+   * @param powerUpSystem The system that deals with the purchase of powerups
+   */
+  public void initShop(final PowerUpSystem powerUpSystem) {
+    this.powerUpSystem = powerUpSystem;
+    shopTable.setVisible(false);
+    shopTable.clear();
+    shopTable.center();
+    shopTable.setFillParent(true);
+
+    TextButton resumeButton = new TextButton("Resume", game.skin);
+
+    movementSpeed.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        if (reputationAndMoney[1] < 20) {
+          updateShopButtons();
+          return;
+        }
+        reputationAndMoney[1] -= 20;
+        moneyLabel.setText(String.format("$%d", reputationAndMoney[1]));
+        powerUpSystem.addSpeedUp();
+        updateShopButtons();
+      }
+    });
+
+    prepSpeed.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        if (reputationAndMoney[1] < 20) {
+          updateShopButtons();
+          return;
+        }
+        reputationAndMoney[1] -= 20;
+        moneyLabel.setText(String.format("$%d", reputationAndMoney[1]));
+        powerUpSystem.addPrepSpeed();
+        updateShopButtons();
+      }
+    });
+
+    chopSpeed.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        if (reputationAndMoney[1] < 20) {
+          updateShopButtons();
+          return;
+        }
+        reputationAndMoney[1] -= 20;
+        moneyLabel.setText(String.format("$%d", reputationAndMoney[1]));
+        powerUpSystem.addChopSpeed();
+        updateShopButtons();
+      }
+    });
+
+    salePrice.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        if (reputationAndMoney[1] < 20) {
+          updateShopButtons();
+          return;
+        }
+        reputationAndMoney[1] -= 20;
+        moneyLabel.setText(String.format("$%d", reputationAndMoney[1]));
+        powerUpSystem.addSalePrice();
+        updateShopButtons();
+      }
+    });
+
+    customerPatience.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        if (reputationAndMoney[1] < 20) {
+          updateShopButtons();
+          return;
+        }
+        reputationAndMoney[1] -= 20;
+        moneyLabel.setText(String.format("$%d", reputationAndMoney[1]));
+        powerUpSystem.addPatience();
+        updateShopButtons();
+      }
+    });
+
+    resumeButton.addListener(new ClickListener() {
+      @Override
+      public void clicked(InputEvent event, float x, float y) {
+        hideShop();
+      }
+    });
+
+    shopTable.add(movementSpeed).width(500).padBottom(30);
+    shopTable.row();
+    shopTable.add(prepSpeed).width(500).padBottom(30);
+    shopTable.row();
+    shopTable.add(chopSpeed).width(500).padBottom(30);
+    shopTable.row();
+    shopTable.add(salePrice).width(500).padBottom(30);
+    shopTable.row();
+    shopTable.add(customerPatience).width(500).padBottom(30);
+    shopTable.row();
+    shopTable.add(resumeButton).width(500);
+  }
+
+  private void updateShopButtons() {
+    boolean hasInsufficientFunds = reputationAndMoney[1] < 20;
+    movementSpeed.setDisabled(hasInsufficientFunds);
+    prepSpeed.setDisabled(hasInsufficientFunds);
+    chopSpeed.setDisabled(hasInsufficientFunds);
+    salePrice.setDisabled(hasInsufficientFunds);
+    customerPatience.setDisabled(hasInsufficientFunds);
+    if (hasInsufficientFunds) {
+      return;
+    }
+    if (powerUpSystem == null) {
+      return;
+    }
+    movementSpeed.setDisabled(powerUpSystem.isMaxSpeedUp());
+    prepSpeed.setDisabled(powerUpSystem.isMaxPrepSpeed());
+    chopSpeed.setDisabled(powerUpSystem.isMaxChopSpeed());
+    salePrice.setDisabled(powerUpSystem.isMaxSalePrice());
+    customerPatience.setDisabled(powerUpSystem.isMaxPatience());
   }
 
   /**
@@ -350,13 +504,34 @@ public class Hud extends ApplicationAdapter {
     // Hide the normal hud
     tableBottom.setVisible(false);
     tableRight.setVisible(false);
-    tableTop.setVisible(false);
+    pauseButton.setVisible(false);
+    shopButton.setVisible(false);
     tableBottomLabel.setVisible(false);
 
     // Show the pause hud
     tablePause.setVisible(true);
 
     // super.pause();
+  }
+
+  public void showShop() {
+    if (isShopOpen) {
+      return;
+    }
+    isShopOpen = true;
+    pause();
+    updateShopButtons();
+    tablePause.setVisible(false);
+    shopTable.setVisible(true);
+  }
+
+  public void hideShop() {
+    if (!isShopOpen) {
+      return;
+    }
+    isShopOpen = false;
+    shopTable.setVisible(false);
+    resume();
   }
 
   @Override
@@ -367,7 +542,8 @@ public class Hud extends ApplicationAdapter {
     // Show the normal hud
     tableBottom.setVisible(true);
     tableRight.setVisible(true);
-    tableTop.setVisible(true);
+    pauseButton.setVisible(true);
+    shopButton.setVisible(true);
     tableBottomLabel.setVisible(true);
 
     // Hide the pause hud
@@ -454,5 +630,6 @@ public class Hud extends ApplicationAdapter {
     moneyNameLabel.setVisible(isEndless);
     moneyLabel.setVisible(isEndless);
     saveButton.setText(isEndless ? "Save and Exit" : "Exit");
+    shopButton.setVisible(isEndless);
   }
 }

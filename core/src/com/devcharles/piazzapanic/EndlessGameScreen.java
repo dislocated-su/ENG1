@@ -44,6 +44,7 @@ public class EndlessGameScreen extends BaseGameScreen {
     engine.addSystem(new InventoryUpdateSystem(hud));
     PowerUpSystem powerUpSystem = new PowerUpSystem();
     engine.addSystem(powerUpSystem);
+    hud.initShop(powerUpSystem);
 
     if (loadSave) {
       FileHandle saveFile = Gdx.files.local(GameState.SAVE_LOCATION);
@@ -78,6 +79,9 @@ public class EndlessGameScreen extends BaseGameScreen {
         }
       }
 
+      reputationPointsAndMoney[0] = gameSave.getReputation();
+      reputationPointsAndMoney[1] = gameSave.getMoney();
+
       // Load customerAISystem
       aiSystem.loadFromSave(gameSave.getCustomerAISystem());
 
@@ -86,9 +90,6 @@ public class EndlessGameScreen extends BaseGameScreen {
 
       // Load hud save details
       hud.loadFromSave(gameSave);
-
-      reputationPointsAndMoney[0] = gameSave.getReputation();
-      reputationPointsAndMoney[1] = gameSave.getMoney();
     }
   }
 }
