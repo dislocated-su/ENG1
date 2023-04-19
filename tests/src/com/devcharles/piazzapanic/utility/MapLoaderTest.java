@@ -44,7 +44,7 @@ public class MapLoaderTest {
     EntityFactory factory = new EntityFactory(engine, world, manager);
     RayHandler rayhandler = new RayHandler(world);
     MapLoader mapLoader = new MapLoader("v2/mapTest.tmx", null, factory, manager);
-    mapLoader.buildFromObjects(engine, rayhandler);
+    mapLoader.buildFromObjects(rayhandler);
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
             ControllableComponent.class, TextureComponent.class, AnimationComponent.class,
@@ -63,7 +63,7 @@ public class MapLoaderTest {
     AssetManager manager = new AssetManager();
     EntityFactory factory = new EntityFactory(engine, world, manager);
     MapLoader mapLoader = new MapLoader("v2/mapTest.tmx", null, factory, manager);
-    mapLoader.buildStations(engine, world);
+    mapLoader.buildStations();
     ImmutableArray<Entity> entities = engine.getEntitiesFor(
         Family.all(B2dBodyComponent.class, TransformComponent.class,
             TextureComponent.class, StationComponent.class).get());

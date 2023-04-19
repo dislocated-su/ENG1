@@ -69,8 +69,8 @@ public abstract class BaseGameScreen implements Screen {
 
     mapLoader = new MapLoader(mapPath, null, factory, assetManager);
     mapLoader.buildCollisions(world);
-    mapLoader.buildFromObjects(engine, rayhandler);
-    stationsMap = mapLoader.buildStations(engine, world);
+    mapLoader.buildFromObjects(rayhandler);
+    stationsMap = mapLoader.buildStations();
 
     world.setContactListener(new WorldContactListener());
 

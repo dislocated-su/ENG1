@@ -4,7 +4,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -73,7 +71,7 @@ public class MapLoader {
     if (path == null) {
       path = "v2/map.tmx";
     }
-    map = new TmxMapLoader().load(path);
+    map = assetManager.get(path, TiledMap.class);
 
     this.factory = factory;
   }
@@ -89,10 +87,9 @@ public class MapLoader {
   /**
    * Create lights, spawnpoints, AI paths from map metadata.
    *
-   * @param engine     Ashley {@link Engine} instance.
    * @param rayHandler {@link RayHandler} to add lights to.
    */
-  public void buildFromObjects(Engine engine, RayHandler rayHandler) {
+  public void buildFromObjects(RayHandler rayHandler) {
     MapObjects objects = map.getLayers().get(objectLayer).getObjects();
 
     aiObjectives = new HashMap<>();
@@ -172,11 +169,8 @@ public class MapLoader {
   /**
    * Create station entities from map metadata. Metadata is given to the tile in Edit Tileset ->
    * Tile Properties.
-   *
-   * @param engine Ashley {@link Engine} instance.
-   * @param world  The Box2D world instance to add sensor bodies to.
    */
-  public Map<Integer, Entity> buildStations(Engine engine, World world) {
+  public Map<Integer, Entity> buildStations() {
     TiledMapTileLayer stations = (TiledMapTileLayer) (map.getLayers().get(stationLayer));
     TiledMapTileLayer stations_f = (TiledMapTileLayer) (map.getLayers().get(stationLayer + "_f"));
 
@@ -195,11 +189,12 @@ public class MapLoader {
         if (currentCell == null) {
           continue;
         }
-        Integer object = currentCell.getTile().getProperties().get(stationIdProperty, Integer.class);
+        Integer object = currentCell.getTile().getProperties()
+            .get(stationIdProperty, Integer.class);
         if (object == null) {
           continue;
         }
-        StationType stationType = StationType.from((int) object);
+        StationType stationType = StationType.from(object);
 
         FoodType ingredientType = null;
 
@@ -208,8 +203,9 @@ public class MapLoader {
               (Integer) currentCell.getTile().getProperties().get(ingredientTypeProperty));
         }
 
-        stationsMap.put(id, factory.createStation(id, stationType, new Vector2((i * 2) + 1, (j * 2) + 1),
-            ingredientType));
+        stationsMap.put(id,
+            factory.createStation(id, stationType, new Vector2((i * 2) + 1, (j * 2) + 1),
+                ingredientType));
         id++;
       } // Rows Loop
     } // Columns Loop
