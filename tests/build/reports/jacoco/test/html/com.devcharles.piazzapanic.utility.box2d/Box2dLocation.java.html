@@ -71,7 +71,7 @@ public class Box2dLocation implements Location&lt;Vector2&gt; {
 	 */
 	@Override
 	public Location&lt;Vector2&gt; newLocation () {
-<span class="nc" id="L74">		return new Box2dLocation();</span>
+<span class="fc" id="L74">		return new Box2dLocation();</span>
 	}
 
 	/* (non-Javadoc)
@@ -79,7 +79,7 @@ public class Box2dLocation implements Location&lt;Vector2&gt; {
 	 */
 	@Override
 	public float vectorToAngle (Vector2 vector) {
-<span class="nc" id="L82">        return (float)Math.atan2(-vector.x, vector.y);</span>
+<span class="fc" id="L82">        return (float)Math.atan2(-vector.x, vector.y);</span>
 	}
 
 	/* (non-Javadoc)
@@ -87,9 +87,9 @@ public class Box2dLocation implements Location&lt;Vector2&gt; {
 	 */
 	@Override
 	public Vector2 angleToVector (Vector2 outVector, float angle) {
-<span class="nc" id="L90">        outVector.x = -(float)Math.sin(angle);</span>
-<span class="nc" id="L91">		outVector.y = (float)Math.cos(angle);</span>
-<span class="nc" id="L92">		return outVector;</span>
+<span class="fc" id="L90">        outVector.x = -(float)Math.sin(angle);</span>
+<span class="fc" id="L91">		outVector.y = (float)Math.cos(angle);</span>
+<span class="fc" id="L92">		return outVector;</span>
 	}
 
 }
