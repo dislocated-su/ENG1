@@ -1,12 +1,27 @@
 package com.devcharles.piazzapanic;
 
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+
 import com.badlogic.gdx.Gdx;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(GdxTestRunner.class)
-public class AssetTests {
+public class AssetTests implements BasicTest {
+
+    @Override
+    @Before
+    public void initialize() throws Exception {
+        // no initialization needed
+    }
+
+    @Override
+    @Test
+    public void constructorTest() throws Exception {
+        // no constructor test needed
+    }
 
     @Test
     public void testFoodAssetsExists() throws Exception {

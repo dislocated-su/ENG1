@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerAnimator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility</a> &gt; <span class="el_source">CustomerAnimator.java</span></div><h1>CustomerAnimator.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility;
+
+import java.util.concurrent.ThreadLocalRandom;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+/**
+ * Animations specific to the customers.
+ */
+public class CustomerAnimator extends WalkAnimator {
+
+<span class="fc" id="L14">    public CustomerAnimator() {</span>
+<span class="fc" id="L15">        int randomNum = ThreadLocalRandom.current().nextInt(1, 16);</span>
+
+        // Load the sprite sheet as a Texture
+<span class="fc" id="L18">        Texture walkSheet = new Texture(&quot;v2/customer/&quot; + randomNum + &quot;.png&quot;);</span>
+<span class="fc" id="L19">        Texture holdOneSheet = new Texture(&quot;v2/customer/&quot; + randomNum + &quot;_holding.png&quot;);</span>
+
+<span class="fc" id="L21">        addTextures(walkSheet, 0);</span>
+<span class="fc" id="L22">        addTextures(holdOneSheet, 1);</span>
+<span class="fc" id="L23">    }</span>
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.devcharles.piazzapanic.utility.WalkAnimator#getFrame(float, boolean,
+     * float)
+     */
+    @Override
+    public TextureRegion getFrame(float rotation, boolean isMoving, float frameTime, int holding) {
+
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        int animationIndex = holding &gt; 0 ? 1 : 0;</span>
+
+<span class="fc" id="L36">        Animation&lt;TextureRegion&gt; currentAnimation = walkDown.get(animationIndex);</span>
+
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (!isMoving) {</span>
+<span class="fc" id="L39">            frameTime = 0;</span>
+        }
+
+<span class="fc" id="L42">        Direction dir = rotationToDirection(rotation);</span>
+
+<span class="pc bpc" id="L44" title="4 of 5 branches missed.">        switch (dir) {</span>
+            case up:
+<span class="nc" id="L46">                currentAnimation = walkUp.get(animationIndex);</span>
+<span class="nc" id="L47">                break;</span>
+            case down:
+<span class="nc" id="L49">                currentAnimation = walkDown.get(animationIndex);</span>
+<span class="nc" id="L50">                break;</span>
+            case left:
+<span class="nc" id="L52">                currentAnimation = walkLeft.get(animationIndex);</span>
+<span class="nc" id="L53">                break;</span>
+            case right:
+<span class="fc" id="L55">                currentAnimation = walkRight.get(animationIndex);</span>
+                break;
+        }
+
+<span class="fc" id="L59">        return currentAnimation.getKeyFrame(frameTime, true);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

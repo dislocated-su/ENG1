@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CarryItemsSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.componentsystems</a> &gt; <span class="el_source">CarryItemsSystem.java</span></div><h1>CarryItemsSystem.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.componentsystems;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.math.Vector3;
+import com.devcharles.piazzapanic.components.ItemComponent;
+import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.utility.Mappers;
+import com.devcharles.piazzapanic.utility.WalkAnimator;
+import com.devcharles.piazzapanic.utility.WalkAnimator.Direction;
+
+public class CarryItemsSystem extends IteratingSystem {
+
+    public CarryItemsSystem() {
+<span class="fc" id="L19">        super(Family.all(ItemComponent.class, TransformComponent.class).get());</span>
+<span class="fc" id="L20">    }</span>
+
+<span class="fc" id="L22">    Map&lt;Direction, Vector3&gt; dirToVector = new HashMap&lt;Direction, Vector3&gt;() {</span>
+        {
+<span class="fc" id="L24">            put(Direction.down, new Vector3(0, -0.5f, 0));</span>
+<span class="fc" id="L25">            put(Direction.up, new Vector3(0, 0.5f, 1));</span>
+<span class="fc" id="L26">            put(Direction.left, new Vector3(-1, 0, 1));</span>
+<span class="fc" id="L27">            put(Direction.right, new Vector3(1, 0, 1));</span>
+<span class="fc" id="L28">        }</span>
+    };
+
+    @Override
+    protected void processEntity(Entity entity, float deltaTime) {
+<span class="nc" id="L33">        ItemComponent item = Mappers.item.get(entity);</span>
+<span class="nc" id="L34">        TransformComponent transform = Mappers.transform.get(entity);</span>
+
+<span class="nc" id="L36">        Direction cookDirection = WalkAnimator.rotationToDirection(item.holderTransform.rotation);</span>
+
+<span class="nc" id="L38">        Vector3 directionVector = dirToVector.get(cookDirection).cpy();</span>
+
+<span class="nc" id="L40">        transform.position.set(item.holderTransform.position.cpy().add(directionVector.scl(1)));</span>
+<span class="nc" id="L41">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

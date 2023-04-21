@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PhysicsSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.componentsystems</a> &gt; <span class="el_source">PhysicsSystem.java</span></div><h1>PhysicsSystem.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.componentsystems;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+import com.devcharles.piazzapanic.components.B2dBodyComponent;
+import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.utility.Mappers;
+
+/**
+ * Steps the Box2D world and maps the body positions to their
+ * TransformComponents to link physics and rendering.
+ */
+public class PhysicsSystem extends IteratingSystem {
+
+    private World world;
+    private Array&lt;Entity&gt; bodies;
+
+    private static final float MAX_FRAMETIME = 1 / 60f;
+<span class="fc" id="L24">    private static float accumulator = 0f;</span>
+
+    public PhysicsSystem(World world) {
+        // Iterate over all entities with a body and a transform
+<span class="fc" id="L28">        super(Family.all(B2dBodyComponent.class, TransformComponent.class).get());</span>
+<span class="fc" id="L29">        this.world = world;</span>
+<span class="fc" id="L30">        this.bodies = new Array&lt;Entity&gt;();</span>
+<span class="fc" id="L31">    }</span>
+
+    @Override
+    protected void processEntity(Entity entity, float deltaTime) {
+<span class="nc" id="L35">        bodies.add(entity);</span>
+<span class="nc" id="L36">    }</span>
+
+    @Override
+    public void update(float deltaTime) {
+<span class="nc" id="L40">        super.update(deltaTime);</span>
+
+<span class="nc" id="L42">        float frameTime = Math.min(deltaTime, 0.25f);</span>
+<span class="nc" id="L43">        accumulator += frameTime;</span>
+
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (accumulator &gt;= MAX_FRAMETIME) {</span>
+<span class="nc" id="L46">            world.step(MAX_FRAMETIME, 6, 2);</span>
+<span class="nc" id="L47">            accumulator -= MAX_FRAMETIME;</span>
+
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            for (Entity entity : bodies) {</span>
+<span class="nc" id="L50">                TransformComponent bodyTransform = Mappers.transform.get(entity);</span>
+<span class="nc" id="L51">                B2dBodyComponent bodyC = Mappers.b2body.get(entity);</span>
+
+<span class="nc" id="L53">                Vector2 position = bodyC.body.getPosition();</span>
+
+                // update our transform to match body position
+<span class="nc" id="L56">                bodyTransform.position.x = position.x;</span>
+<span class="nc" id="L57">                bodyTransform.position.y = position.y;</span>
+<span class="nc" id="L58">                bodyTransform.rotation = bodyC.body.getAngle() * MathUtils.radiansToDegrees;</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                bodyTransform.isMoving = !bodyC.body.getLinearVelocity().isZero(0.1f);</span>
+<span class="nc" id="L60">            }</span>
+
+<span class="nc" id="L62">            bodies.clear();</span>
+        }
+<span class="nc" id="L64">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Slideshow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.scene2d</a> &gt; <span class="el_source">Slideshow.java</span></div><h1>Slideshow.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.scene2d;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.devcharles.piazzapanic.GameScreen;
+import com.devcharles.piazzapanic.PiazzaPanic;
+
+/**
+ * A screen that displays a slideshow of images.
+ */
+public class Slideshow extends ApplicationAdapter implements Screen {
+
+    OrthographicCamera camera;
+    private Stage stage;
+    private Skin skin;
+    private Batch batch;
+    private Sprite sprite;
+
+    /**
+     * Slideshow type enumeration.
+     * To screate new slideshows, add their pages to the assets folder in the format
+     * {@code [type][PageNumber].png} and add a type to this enum.
+     */
+<span class="nc" id="L40">    public enum Type {</span>
+<span class="nc" id="L41">        recipe,</span>
+<span class="nc" id="L42">        tutorial;</span>
+    }
+
+    private Texture[] textures;
+
+<span class="nc" id="L47">    private int currentPage = 0;</span>
+
+    private TextButton leftButton, rightButton, exit;
+
+    /**
+     * Create a new slideshow screen.
+     * 
+     * @param game {@link PiazzaPanic} game instance for changing screens.
+     * @param type {@link Type} of slideshow to create.
+     */
+<span class="nc" id="L57">    public Slideshow(final Game game, Type type) {</span>
+
+<span class="nc" id="L59">        camera = new OrthographicCamera();</span>
+<span class="nc" id="L60">        camera.setToOrtho(false, 1280, 720);</span>
+<span class="nc" id="L61">        ScalingViewport viewport = new ScalingViewport(Scaling.fit, 1280, 720, camera);</span>
+<span class="nc" id="L62">        viewport.apply();</span>
+<span class="nc" id="L63">        batch = new SpriteBatch();</span>
+
+<span class="nc" id="L65">        int fileCount = 0;</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (type == Type.recipe) {</span>
+<span class="nc" id="L67">            fileCount = 2;</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        } else if (type == Type.tutorial) {</span>
+<span class="nc" id="L69">            fileCount = 11;</span>
+        }
+
+<span class="nc" id="L72">        textures = new Texture[fileCount];</span>
+
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        for (int i = 0; i &lt; fileCount; i++) {</span>
+<span class="nc" id="L75">            textures[i] = new Texture(Gdx.files.internal(type.name() + i + &quot;.png&quot;));</span>
+        }
+
+<span class="nc" id="L78">        skin = new Skin(Gdx.files.internal(&quot;craftacular/skin/craftacular-ui.json&quot;));</span>
+<span class="nc" id="L79">        stage = new Stage(viewport);</span>
+
+        // Begin layout
+<span class="nc" id="L82">        leftButton = new TextButton(&quot;Page Left&quot;, skin);</span>
+
+<span class="nc" id="L84">        leftButton.addListener(new ClickListener() {</span>
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L86">                currentPage = currentPage - 1;</span>
+<span class="nc" id="L87">                updatePage();</span>
+<span class="nc" id="L88">            }</span>
+        });
+
+<span class="nc" id="L91">        rightButton = new TextButton(&quot;Page Right&quot;, skin);</span>
+<span class="nc" id="L92">        rightButton.addListener(new ClickListener() {</span>
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L94">                currentPage = currentPage + 1;</span>
+<span class="nc" id="L95">                updatePage();</span>
+<span class="nc" id="L96">            }</span>
+        });
+
+<span class="nc" id="L99">        exit = new TextButton(&quot;Exit&quot;, skin);</span>
+
+        // Is this method no longer required? Considering Slideshow is no longer used to start the game.
+        /*
+        exit.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameScreen((PiazzaPanic) game);
+                dispose();
+            }
+        });*/
+
+<span class="nc" id="L110">        updatePage();</span>
+<span class="nc" id="L111">        stage.addActor(buildTable());</span>
+<span class="nc" id="L112">    }</span>
+    /**
+     * Create a new slideshow screen in a running game.
+     * 
+     * @param game {@link PiazzaPanic} game instance for changing screens.
+     * @param type {@link Type} of slideshow to create.
+     * @param savedScreen the {@link GameScreen} to return to after this screen is closed.
+     */
+    public Slideshow(final Game game, Type type, final Screen savedScreen) {
+<span class="nc" id="L121">        this(game, type);</span>
+
+<span class="nc" id="L123">        exit.clearListeners();</span>
+
+<span class="nc" id="L125">        exit.addListener(new ClickListener() {</span>
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L127">                game.setScreen(savedScreen);</span>
+<span class="nc" id="L128">            }</span>
+        });
+
+<span class="nc" id="L131">        updatePage();</span>
+<span class="nc" id="L132">        stage.clear();</span>
+<span class="nc" id="L133">        stage.addActor(buildTable());</span>
+<span class="nc" id="L134">    }</span>
+
+    private Table buildTable() {
+<span class="nc" id="L137">        Table table = new Table();</span>
+
+<span class="nc" id="L139">        table.top();</span>
+<span class="nc" id="L140">        table.setFillParent(true);</span>
+
+<span class="nc" id="L142">        table.add(exit).width(180).height(80).expandX().right().colspan(2);</span>
+
+<span class="nc" id="L144">        table.row().expandY();</span>
+
+<span class="nc" id="L146">        table.add(leftButton).width(200).height(50).expandX().left().bottom();</span>
+
+<span class="nc" id="L148">        table.add(rightButton).width(200).height(50).expandX().right().bottom();</span>
+
+<span class="nc" id="L150">        return table;</span>
+    }
+
+    private void updatePage() {
+<span class="nc" id="L154">        sprite = new Sprite(textures[currentPage]);</span>
+<span class="nc" id="L155">        sprite.setSize(1280, 720);</span>
+
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (currentPage == 0) {</span>
+<span class="nc" id="L158">            leftButton.setVisible(false);</span>
+<span class="nc" id="L159">            rightButton.setVisible(true);</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        } else if (textures.length - 1 == currentPage) {</span>
+<span class="nc" id="L161">            leftButton.setVisible(true);</span>
+<span class="nc" id="L162">            rightButton.setVisible(false);</span>
+        } else {
+<span class="nc" id="L164">            leftButton.setVisible(true);</span>
+<span class="nc" id="L165">            rightButton.setVisible(true);</span>
+        }
+<span class="nc" id="L167">    }</span>
+
+    @Override
+    public void show() {
+<span class="nc" id="L171">        Gdx.input.setInputProcessor(stage);</span>
+<span class="nc" id="L172">        stage.getViewport().apply();</span>
+<span class="nc" id="L173">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L177">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="nc" id="L179">        batch.setProjectionMatrix(stage.getViewport().getCamera().combined);</span>
+<span class="nc" id="L180">        batch.begin();</span>
+<span class="nc" id="L181">        sprite.draw(batch);</span>
+<span class="nc" id="L182">        batch.end();</span>
+<span class="nc" id="L183">        stage.act();</span>
+<span class="nc" id="L184">        stage.draw();</span>
+<span class="nc" id="L185">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L189">        stage.getViewport().update(width, height, true);</span>
+<span class="nc" id="L190">        stage.getViewport().apply();</span>
+<span class="nc" id="L191">    }</span>
+
+    public void dispose() {
+<span class="nc" id="L194">        skin.dispose();</span>
+<span class="nc" id="L195">        stage.dispose();</span>
+<span class="nc" id="L196">    }</span>
+
+    @Override
+    public void hide() {
+<span class="nc" id="L200">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

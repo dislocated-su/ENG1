@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Mappers.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility</a> &gt; <span class="el_source">Mappers.java</span></div><h1>Mappers.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility;
+
+import com.badlogic.ashley.core.ComponentMapper;
+import com.devcharles.piazzapanic.components.AIAgentComponent;
+import com.devcharles.piazzapanic.components.AnimationComponent;
+import com.devcharles.piazzapanic.components.B2dBodyComponent;
+import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.CookingComponent;
+import com.devcharles.piazzapanic.components.CustomerComponent;
+import com.devcharles.piazzapanic.components.FoodComponent;
+import com.devcharles.piazzapanic.components.ItemComponent;
+import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.components.TextureComponent;
+import com.devcharles.piazzapanic.components.TintComponent;
+import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
+
+/**
+ * Static class, holds all the {@link ComponentMapper} instances we need, as
+ * there is no reason to have multiple instaces of a {@link ComponentMapper}.
+ */
+<span class="fc" id="L23">public class Mappers {</span>
+<span class="fc" id="L24">        public static final ComponentMapper&lt;B2dBodyComponent&gt; b2body = ComponentMapper.getFor(B2dBodyComponent.class);</span>
+<span class="fc" id="L25">        public static final ComponentMapper&lt;TransformComponent&gt; transform = ComponentMapper</span>
+<span class="fc" id="L26">                        .getFor(TransformComponent.class);</span>
+<span class="fc" id="L27">        public static final ComponentMapper&lt;ControllableComponent&gt; controllable = ComponentMapper</span>
+<span class="fc" id="L28">                        .getFor(ControllableComponent.class);</span>
+<span class="fc" id="L29">        public static final ComponentMapper&lt;PlayerComponent&gt; player = ComponentMapper.getFor(PlayerComponent.class);</span>
+<span class="fc" id="L30">        public static final ComponentMapper&lt;AnimationComponent&gt; animation = ComponentMapper</span>
+<span class="fc" id="L31">                        .getFor(AnimationComponent.class);</span>
+<span class="fc" id="L32">        public static final ComponentMapper&lt;WalkingAnimationComponent&gt; walkingAnimation = ComponentMapper</span>
+<span class="fc" id="L33">                        .getFor(WalkingAnimationComponent.class);</span>
+<span class="fc" id="L34">        public static final ComponentMapper&lt;TextureComponent&gt; texture = ComponentMapper.getFor(TextureComponent.class);</span>
+<span class="fc" id="L35">        public static final ComponentMapper&lt;StationComponent&gt; station = ComponentMapper.getFor(StationComponent.class);</span>
+<span class="fc" id="L36">        public static final ComponentMapper&lt;FoodComponent&gt; food = ComponentMapper.getFor(FoodComponent.class);</span>
+<span class="fc" id="L37">        public static final ComponentMapper&lt;CookingComponent&gt; cooking = ComponentMapper.getFor(CookingComponent.class);</span>
+<span class="fc" id="L38">        public static final ComponentMapper&lt;ItemComponent&gt; item = ComponentMapper.getFor(ItemComponent.class);</span>
+<span class="fc" id="L39">        public static final ComponentMapper&lt;TintComponent&gt; tint = ComponentMapper.getFor(TintComponent.class);</span>
+<span class="fc" id="L40">        public static final ComponentMapper&lt;AIAgentComponent&gt; aiAgent = ComponentMapper.getFor(AIAgentComponent.class);</span>
+<span class="fc" id="L41">        public static final ComponentMapper&lt;CustomerComponent&gt; customer = ComponentMapper</span>
+<span class="fc" id="L42">                        .getFor(CustomerComponent.class);</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

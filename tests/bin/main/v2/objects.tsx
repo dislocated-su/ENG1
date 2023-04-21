@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.0" name="objects" tilewidth="32" tileheight="32" spacing="4" margin="2" tilecount="42" columns="6">
+<tileset version="1.9" tiledversion="1.9.2" name="objects" tilewidth="32" tileheight="32" spacing="4" margin="2" tilecount="42" columns="6">
  <image source="stations_chef_padded.png" width="216" height="252"/>
  <tile id="0">
   <properties>
-   <property name="stationID" type="int" value="1"/>
-  </properties>
- </tile>
- <tile id="1">
-  <properties>
+   <property name="fire" value="0"/>
    <property name="stationID" type="int" value="1"/>
   </properties>
  </tile>
  <tile id="2">
   <properties>
-   <property name="stationID" type="int" value="1"/>
+   <property name="fire" value="1"/>
   </properties>
  </tile>
  <tile id="3">
   <properties>
-   <property name="stationID" type="int" value="1"/>
+   <property name="fire" value="2"/>
   </properties>
  </tile>
  <tile id="4">
