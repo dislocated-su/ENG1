@@ -91,9 +91,9 @@ public class EntityFactory {
 
         WalkingAnimationComponent animation = engine.createComponent(WalkingAnimationComponent.class);
 
-        PowerUpComponent powerUp = engine.createComponent(PowerUpComponent.class);
+        // PowerUpComponent powerUp = engine.createComponent(PowerUpComponent.class);
 
-        controllable.currentPowerup.init(engine);
+        
         controllable.currentFood.init(engine);
 
         animation.animator = new CookAnimator();
@@ -378,4 +378,15 @@ public class EntityFactory {
     //     }
     // }
 
+
+    // public Entity createPowerup(PowerUpType powerUpType){
+    //     Entity entity = engine.createEntity();
+
+    //     PowerUpComponent powerUp = engine.createComponent(PowerUpComponent.class);
+
+    //     entity.add(powerUp);
+    //     engine.addEntity(entity);
+
+    //     return entity;
+    // }
 }

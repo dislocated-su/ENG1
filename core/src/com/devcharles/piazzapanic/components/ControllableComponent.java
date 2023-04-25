@@ -1,11 +1,13 @@
 package com.devcharles.piazzapanic.components;
 
+import java.util.ArrayList;
+
 import com.badlogic.ashley.core.Component;
+import com.devcharles.piazzapanic.components.PowerUpComponent.PowerUpType;
 import com.devcharles.piazzapanic.utility.FoodStack;
-import com.devcharles.piazzapanic.utility.PowerupStack;
 
 public class ControllableComponent implements Component {
     public FoodStack currentFood = new FoodStack();
-    public PowerupStack currentPowerup = new PowerupStack();
+    public ArrayList<PowerUpType> currentPowerup = new ArrayList<PowerUpType>();
     
 }

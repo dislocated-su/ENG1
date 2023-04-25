@@ -44,6 +44,8 @@ public class CustomerAISystem extends IteratingSystem {
     private final Integer[] customersServed;
     private int CUSTOMER;
     private boolean firstSpawn = true;
+    private GameScreen gameScreen;
+    private Integer timeFrozen = 30;
 
     // List of customers, on removal we move the other customers up a place (queueing).
     private final ArrayList<Entity> customers = new ArrayList<Entity>() {
@@ -74,7 +76,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
      */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty, Float[] tillBalance, Integer[] customersServed) {
+            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty, Float[] tillBalance, Integer[] customersServed, GameScreen gameScreen) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.CUSTOMER=customer;
@@ -85,6 +87,7 @@ public class CustomerAISystem extends IteratingSystem {
         this.difficulty=difficulty;
         this.tillBalance=tillBalance;
         this.customersServed=customersServed;
+        this.gameScreen = gameScreen;
 
         // Use a reference to the world to destroy box2d bodies when despawning
         // customers
@@ -176,6 +179,15 @@ public class CustomerAISystem extends IteratingSystem {
             customer.timer.stop();
         }
 
+        if(gameScreen.BinACustomer){
+            fulfillOrder(entity, customer, entity, gameScreen.BinACustomer);
+            gameScreen.BinOff();
+        }
+
+        if(gameScreen.TimeFreeze){
+            timeFreeze(customer);
+        }
+
         if (customer.interactingCook != null) {
             PlayerComponent player = Mappers.player.get(customer.interactingCook);
 
@@ -197,12 +209,22 @@ public class CustomerAISystem extends IteratingSystem {
             if (Mappers.food.get(food).type == customer.order) {
                 // Fulfill order
                 Gdx.app.log("Order success", customer.order.name());
-                fulfillOrder(entity, customer, food);
+                fulfillOrder(entity, customer, food, gameScreen.BinACustomer);
 
             } else {
                 getEngine().removeEntity(food);
             }
 
+        }
+    }
+
+    private void timeFreeze(CustomerComponent customer){
+        customer.timer.stop();
+        timeFrozen --;
+        if(timeFrozen == 0){
+            customer.timer.start();
+            timeFrozen = 30;
+            gameScreen.TimeOff();
         }
     }
 
@@ -252,35 +274,48 @@ public class CustomerAISystem extends IteratingSystem {
     /**
      * Give customer food, send them away and remove the order from the list
      */
-    private void fulfillOrder(Entity entity, CustomerComponent customer, Entity foodEntity) {
+    private void fulfillOrder(Entity entity, CustomerComponent customer, Entity foodEntity, Boolean BinACustomer) {
 
+            if(BinACustomer){
+            getEngine().removeEntity(entity);
+            customer.timer.stop();
+            customer.timer.reset();
+            customer.order = null;
+            customers.remove(entity);
+            numOfCustomerTotal--;
+            CUSTOMER--;
+        
+        }
+        
         Engine engine = getEngine();
-
-        float customerTip = getRandomCustomerTip(customer.order.getPrice());
-        if(customerTip>0){
-            hud.displayInfoMessage("Customer has tipped $ " + Float.toString(customerTip));
+        if(customer.order != null){
+            float customerTip = getRandomCustomerTip(customer.order.getPrice());
+            if(customerTip>0){
+                hud.displayInfoMessage("Customer has tipped $ " + Float.toString(customerTip));
+            }
+    
+            tillBalance[0]+=customer.order.getPrice() + customerTip;
+            customer.order = null;
+    
+            ItemComponent heldItem = engine.createComponent(ItemComponent.class);
+            heldItem.holderTransform = Mappers.transform.get(entity);
+    
+            foodEntity.add(heldItem);
+    
+            customer.food = foodEntity;
+    
+            AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
+            makeItGoThere(aiAgent, -1);
+    
+            customer.timer.stop();
+            customer.timer.reset();
+    
+            customers.remove(entity);
+            numOfCustomerTotal--;
+            CUSTOMER--;
+            customersServed[0]++;
         }
 
-        tillBalance[0]+=customer.order.getPrice() + customerTip;
-        customer.order = null;
-
-        ItemComponent heldItem = engine.createComponent(ItemComponent.class);
-        heldItem.holderTransform = Mappers.transform.get(entity);
-
-        foodEntity.add(heldItem);
-
-        customer.food = foodEntity;
-
-        AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
-        makeItGoThere(aiAgent, -1);
-
-        customer.timer.stop();
-        customer.timer.reset();
-
-        customers.remove(entity);
-        numOfCustomerTotal--;
-        CUSTOMER--;
-        customersServed[0]++;
     }
 
     /**

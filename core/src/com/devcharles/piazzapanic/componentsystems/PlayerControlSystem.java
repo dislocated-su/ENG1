@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.components.PowerUpComponent;
 import com.devcharles.piazzapanic.components.PowerUpComponent.PowerUpType;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.Mappers;
@@ -18,7 +17,7 @@ import com.devcharles.piazzapanic.utility.Mappers;
 public class PlayerControlSystem extends IteratingSystem {
 
     KeyboardInput input;
-
+    Integer timer = 30000;
 
     boolean changingCooks = false;
     PlayerComponent playerComponent;
@@ -86,14 +85,16 @@ public class PlayerControlSystem extends IteratingSystem {
             direction.add(0, -1);
         }
 
-        // Check the active powerup is a speed boost
-        // and increase the player's movement speed
+        ControllableComponent cook = Mappers.controllable.get(entity);
 
-        if(Mappers.powerup.has(entity)){
-            PowerUpComponent powerup = Mappers.powerup.get(entity);
-            if(powerup.type == PowerUpType.SpeedBoost){
-                speedMultiplier ++;
+        if(cook.currentPowerup.contains(PowerUpType.SpeedBoost)){
+            speedMultiplier = 2;
+            if(timer <= 0 ){
+                cook.currentPowerup.remove(PowerUpType.SpeedBoost);
+                speedMultiplier = 1;
+                timer = 30000;
             }
+           timer = timer - 17;
         }
 
         // Normalise vector (make length 1). This ensures player moves at the same speed
@@ -114,10 +115,6 @@ public class PlayerControlSystem extends IteratingSystem {
         }
 
     }
-
-    // public Boolean speedBoost(Boolean active){
-    //     return active;
-    // }
 
 
 }

@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.devcharles.piazzapanic.components.ItemComponent;
 
+
 public class PowerupStack extends ArrayDeque<Entity> {
 
     private Engine engine;
@@ -14,7 +15,7 @@ public class PowerupStack extends ArrayDeque<Entity> {
         engine = e;
     }
 
-    public final int capacity = 12;
+    public final int capacity = 64;
 
     /**
      * Put a new Powerup into inventory, use this instead of

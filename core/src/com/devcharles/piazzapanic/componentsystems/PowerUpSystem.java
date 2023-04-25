@@ -1,41 +1,100 @@
 package com.devcharles.piazzapanic.componentsystems;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.ashley.utils.ImmutableArray;
+import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.components.PowerUpComponent.PowerUpType;
-import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.Mappers;
+
 
 
 public class PowerUpSystem extends IteratingSystem{
 
-    private Hud hud;
-    public PowerUpSystem(Hud hud) {
+    public Integer timer = 15;
+    public GameScreen gameScreen;
+    Integer InstaCookTimer = 20;
+
+    public Engine engine;
+    public PowerUpSystem(Engine engine, GameScreen gameScreen) {
         
         super(Family.all(PlayerComponent.class, ControllableComponent.class).get());
-        this.hud = hud;
+        this.engine = engine;
+        this.gameScreen = gameScreen;
         
+
     }
     
     
     
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+        
         ControllableComponent cook = Mappers.controllable.get(entity);
 
-        PowerUpType[] powerups = new PowerUpType[cook.currentPowerup.size()];
-
-        int i = 0;
-        for (Entity powerup : cook.currentPowerup){
-            if(Mappers.food.get(powerup).type != null){
-                powerups[i] = Mappers.powerup.get(powerup).type;
-                i++; 
+        if(cook.currentPowerup.contains(PowerUpType.DoublePoints)){
+            cook.currentPowerup.remove(PowerUpType.DoublePoints);
+            FoodType.burger.setPrice();
+            FoodType.salad.setPrice();
+            FoodType.jacketPotato.setPrice();
+            FoodType.pizza.setPrice();
+            while(timer != 0){
+                timer--;
             }
+            FoodType.burger.originalPrice();
+            FoodType.salad.originalPrice();
+            FoodType.jacketPotato.setPrice();
+            FoodType.pizza.setPrice();
+        }        
+
+    }
+
+    @Override
+    public void update(float deltaTime){
+       ImmutableArray<Entity> cook = engine.getEntitiesFor(Family.all(ControllableComponent.class).get());
+       Entity chef = cook.first();
+       ControllableComponent chef_current = chef.getComponent(ControllableComponent.class);
+      
+       if(gameScreen.SpeedBoost){
+        gameScreen.SpeedBoost = false;
+        chef_current.currentPowerup.add(PowerUpType.SpeedBoost);
+        System.out.println("SpeedBoost added to the cook");
+        //Done
+       }
+       if(gameScreen.InstaCook){
+        if(InstaCookTimer !=0){
+            InstaCookTimer--;
         }
-        hud.updateInventory(null);
+        if(InstaCookTimer ==0){
+            gameScreen.InstaOff();
+            InstaCookTimer = 20;
+        }
+        //Partially Done
+       }
+       if(gameScreen.BinACustomer){
+        gameScreen.BinOff();
+        chef_current.currentPowerup.add(PowerUpType.BinACustomer);
+        System.out.println("BinACustomer added to the cook");
+        //Done
+       }
+       if(gameScreen.TimeFreeze){
+        gameScreen.TimeOff();
+        chef_current.currentPowerup.add(PowerUpType.TimeFreeze);
+        System.out.println("TimeFreeze added to the cook");
+        //Done
+
+       }
+       if(gameScreen.DoubleRep){
+        gameScreen.DoubleOff();
+        chef_current.currentPowerup.add(PowerUpType.DoublePoints);
+        System.out.println("DoublePoints added to the cook");
+        //Done
+       }
     }
 
 

@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Engine;
 
-public class FoodComponent implements Component {
+public class FoodComponent implements Component{
+
     public FoodType type;
+
+    public Engine engine;
 
     public enum FoodType {
         // These ids correspond to the order of the food in the sprite!
@@ -47,6 +51,14 @@ public class FoodComponent implements Component {
 
         public int getValue() {
             return value;
+        }
+
+        public void setPrice(){
+            price = price * 2;
+        }
+
+        public void originalPrice(){
+            price = price - 2;
         }
         public float getPrice(){return price;}
         private static final Map<Integer, FoodType> _map = new HashMap<Integer, FoodType>();
