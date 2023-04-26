@@ -74,7 +74,7 @@ public class Hud extends ApplicationAdapter {
     Label TimeFreezeTimer;
 
     Integer SpeedCounter = 30;
-    Integer InstaCounter = 20;
+    Integer InstaCounter = 30;
     Integer DoubleCounter = 30;
     Integer FreezeCounter = 30;
 
@@ -84,7 +84,6 @@ public class Hud extends ApplicationAdapter {
     Boolean FreezeActive = false;
 
 
-    private Boolean TimeFreeze = false;
     private GameScreen powerUps;
     // an image used as the background of recipe book and tutorial
     private Image photo;
@@ -272,6 +271,7 @@ public class Hud extends ApplicationAdapter {
                 powerUps.InstaActive();
                 System.out.print("InstaCook is Active");
                 InstaActive = true;
+                InstaCounter = 30;
                 
             }
 
@@ -281,6 +281,7 @@ public class Hud extends ApplicationAdapter {
             public void clicked(InputEvent event, float x, float y){
                 powerUps.BinActive();
                 System.out.print("BinACustomer is active");
+                InstaCounter = 30;
                 
             }
         });
@@ -289,7 +290,8 @@ public class Hud extends ApplicationAdapter {
             public void clicked(InputEvent event, float x, float y ){ 
                 powerUps.DoubleActive();
                 System.out.println("DoubleRep active");
-                DoubleActive = true;              
+                DoubleActive = true;
+                DoubleCounter = 30;
             }
         });
 
@@ -297,7 +299,8 @@ public class Hud extends ApplicationAdapter {
             public void clicked(InputEvent event, float x, float y){ 
                 powerUps.TimeActive();
                 System.out.print("TimeFreeze active");
-                TimeFreeze = true;
+                FreezeActive = true;
+                FreezeCounter = 30;
             }
         });
 
@@ -454,7 +457,7 @@ public class Hud extends ApplicationAdapter {
         timeCounter += gameOver ? 0 : deltaTime;
         // Staggered once per second using timeCounter makes it way faster
         if (timeCounter >= 1) {
-            if(!TimeFreeze){
+            if(!FreezeActive){
                 customerTimer++;
                 timerLabel.setText(String.format("%03d", customerTimer));
                 reputationLabel.setText(reputation[0]);

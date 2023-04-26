@@ -45,7 +45,7 @@ public class CustomerAISystem extends IteratingSystem {
     private int CUSTOMER;
     private boolean firstSpawn = true;
     private GameScreen gameScreen;
-    private Integer timeFrozen = 30;
+    private Integer timeFrozen = 30000;
 
     // List of customers, on removal we move the other customers up a place (queueing).
     private final ArrayList<Entity> customers = new ArrayList<Entity>() {
@@ -220,10 +220,10 @@ public class CustomerAISystem extends IteratingSystem {
 
     private void timeFreeze(CustomerComponent customer){
         customer.timer.stop();
-        timeFrozen --;
+        timeFrozen = timeFrozen - 17;
         if(timeFrozen == 0){
             customer.timer.start();
-            timeFrozen = 30;
+            timeFrozen = 30000;
             gameScreen.TimeOff();
         }
     }

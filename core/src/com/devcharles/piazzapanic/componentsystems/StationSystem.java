@@ -18,7 +18,6 @@ import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TintComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
-import com.devcharles.piazzapanic.components.PowerUpComponent.PowerUpType;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;

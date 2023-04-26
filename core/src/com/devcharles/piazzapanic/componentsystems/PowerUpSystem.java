@@ -18,7 +18,7 @@ public class PowerUpSystem extends IteratingSystem{
 
     public Integer timer = 15;
     public GameScreen gameScreen;
-    Integer InstaCookTimer = 20;
+    Integer InstaCookTimer = 30000;
 
     public Engine engine;
     public PowerUpSystem(Engine engine, GameScreen gameScreen) {
@@ -68,11 +68,11 @@ public class PowerUpSystem extends IteratingSystem{
        }
        if(gameScreen.InstaCook){
         if(InstaCookTimer !=0){
-            InstaCookTimer--;
+            InstaCookTimer = InstaCookTimer -17;
         }
-        if(InstaCookTimer ==0){
+        if(InstaCookTimer == 0){
             gameScreen.InstaOff();
-            InstaCookTimer = 20;
+            InstaCookTimer = 30000;
         }
         //Partially Done
        }
