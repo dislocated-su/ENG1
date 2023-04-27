@@ -208,6 +208,10 @@ public class StationSystem extends IteratingSystem {
             // Check if it's ready without ticking the timer
             boolean ready = cooking.timer.tick(0);
 
+            if(InstaCook.InstaCook){
+                ready = true;
+            }
+
             if(cooking.processed){
                 food.remove(TintComponent.class);
                 return;

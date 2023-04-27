@@ -26,6 +26,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
+import com.devcharles.piazzapanic.GameScreen.Difficulty;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.GdxTimer;
@@ -200,134 +201,143 @@ public class Hud extends ApplicationAdapter {
         tableTop.add(tillBalanceLabel).expandX();
         tableTop.add(difficultyLabel).expandX();
         
-        // the powerUps on the hud
-        tableLeft = new Table();
-        tableLeft.left();
-        tableLeft.setFillParent(true);
+        if(difficulty != Difficulty.SCENARIO){
+            // the powerUps on the hud
+            tableLeft = new Table();
+            tableLeft.left();
+            tableLeft.setFillParent(true);
+    
+            powerInv = new Label("PowerUps", hudLabelStyle);
+            powerInv.setFontScale(fontScale);
+            // final Signal gameSignal = signal;
+            
+    
+            Texture speedTexture =  new Texture(Gdx.files.internal("speed_boost32.png"));
+            Texture speedPressedTexture = new Texture(Gdx.files.internal("speed_boost32_pressed.png"));
+            // Texture speedRejectTexutre =  new Texture(Gdx.files.internal("speed_boost32_x.png"));
+            ImageButton speedButton = new ImageButton(new TextureRegionDrawable(speedTexture), new TextureRegionDrawable(speedPressedTexture));
+            speedBoostTimer = new Label("", hudLabelStyle);
+            Label speedCost = new Label("Cost:15", hudGreenLabelStyle); 
+            speedCost.setFontScale(0.5f);
+            speedButton.setSize(64, 64);
+            speedBoostTimer.setFontScale(0.5f);
+    
+            Texture instaTexture = new Texture(Gdx.files.internal("instantCook32.png"));
+            Texture instaPressedTexture = new Texture(Gdx.files.internal("instantCook32_pressed.png"));
+            ImageButton instaCook = new ImageButton(new TextureRegionDrawable(instaTexture), new TextureRegionDrawable(instaPressedTexture));
+            InstaCookTimer = new Label("", hudLabelStyle);
+            Label instaCost = new Label("Cost:20", hudGreenLabelStyle);
+            instaCost.setFontScale(0.5f);
+            InstaCookTimer.setFontScale(0.5f);
+            
+            Texture binCustomerTexture = new Texture(Gdx.files.internal("binOrder32.png"));
+            Texture binCustomerPressed = new Texture(Gdx.files.internal("binOrder32_pressed.png"));
+            ImageButton binCustomer = new ImageButton(new TextureRegionDrawable(binCustomerTexture), new TextureRegionDrawable(binCustomerPressed));
+            Label binCost = new Label("Cost:50", hudGreenLabelStyle);
+            binCost.setFontScale(0.5f);
+            binCustomer.setSize(64, 64);
+    
+            Texture doubleRepTexture = new Texture(Gdx.files.internal("doubleRep32.png"));
+            Texture doubleRepPressed = new Texture(Gdx.files.internal("doubleRep32_pressed.png"));
+            ImageButton doubleRep = new ImageButton(new TextureRegionDrawable(doubleRepTexture), new TextureRegionDrawable(doubleRepPressed));
+            DoublePointsTimer  = new Label("", hudLabelStyle);
+            Label doubleRepCost = new Label("Cost:30", hudGreenLabelStyle);
+            doubleRepCost.setFontScale(0.5f);
+            doubleRep.setSize(64, 64);
+            DoublePointsTimer.setFontScale(0.5f);
+    
+            Texture timeFreezeTexture = new Texture(Gdx.files.internal("timeFreeze32.png"));
+            Texture timeFreezePressed = new Texture(Gdx.files.internal("timeFreeze32_pressed.png"));
+            ImageButton timeFreeze = new ImageButton(new TextureRegionDrawable(timeFreezeTexture), new TextureRegionDrawable(timeFreezePressed));
+            TimeFreezeTimer = new Label("", hudLabelStyle);
+            Label timeCost = new Label("Cost:100", hudGreenLabelStyle);
+            timeCost.setFontScale(0.5f);
+            timeFreeze.setSize(64, 64);
+            TimeFreezeTimer.setFontScale(0.5f);
+    
+            
+            speedButton.addListener(new ClickListener(){
+                public void clicked(InputEvent event, float x, float y){
+                    powerUps.SpeedActive();
+                    System.out.print("SpeedBoost boost is true");
+                    SpeedActive = true;
+                    SpeedCounter = 30;
+    
+           
+                }
+            });
+    
+            instaCook.addListener(new ClickListener(){
+                public void clicked(InputEvent event, float x, float y){
+                    // gameSignal.dispatch(PowerUpType.InstaCook);
+                    powerUps.InstaActive();
+                    System.out.print("InstaCook is Active");
+                    InstaActive = true;
+                    InstaCounter = 30;
+                    
+                }
+    
+            });
+    
+            binCustomer.addListener(new ClickListener(){
+                public void clicked(InputEvent event, float x, float y){
+                    powerUps.BinActive();
+                    System.out.print("BinACustomer is active");
+                    InstaCounter = 30;
+                    
+                }
+            });
+    
+            doubleRep.addListener(new ClickListener(){
+                public void clicked(InputEvent event, float x, float y ){ 
+                    powerUps.DoubleActive();
+                    System.out.println("DoubleRep active");
+                    DoubleActive = true;
+                    DoubleCounter = 30;
+                }
+            });
+    
+            timeFreeze.addListener(new ClickListener(){
+                public void clicked(InputEvent event, float x, float y){ 
+                    powerUps.TimeActive();
+                    System.out.print("TimeFreeze active");
+                    FreezeActive = true;
+                    FreezeCounter = 30;
+                }
+            });
 
-        powerInv = new Label("PowerUps", hudLabelStyle);
-        powerInv.setFontScale(fontScale);
-        // final Signal gameSignal = signal;
+            tableLeft.add(powerInv);
+            tableLeft.row();
+            tableLeft.add(speedButton);
+            tableLeft.add(speedBoostTimer);
+            tableLeft.row();
+            tableLeft.add(speedCost);
+            tableLeft.row();
+            tableLeft.add(instaCook);
+            tableLeft.add(InstaCookTimer);
+            tableLeft.row();
+            tableLeft.add(instaCost);
+            tableLeft.row();
+            tableLeft.add(binCustomer);
+            tableLeft.row();
+            tableLeft.add(binCost);
+            tableLeft.row();
+            tableLeft.add(doubleRep);
+            tableLeft.add(DoublePointsTimer);
+            tableLeft.row();
+            tableLeft.add(doubleRepCost);
+            tableLeft.row();
+            tableLeft.add(timeFreeze);
+            tableLeft.add(TimeFreezeTimer);
+            tableLeft.row();
+            tableLeft.add(timeCost);
+
+
+
+
+
+        }
         
-
-        Texture speedTexture =  new Texture(Gdx.files.internal("speed_boost32.png"));
-        Texture speedPressedTexture = new Texture(Gdx.files.internal("speed_boost32_pressed.png"));
-        // Texture speedRejectTexutre =  new Texture(Gdx.files.internal("speed_boost32_x.png"));
-        ImageButton speedButton = new ImageButton(new TextureRegionDrawable(speedTexture), new TextureRegionDrawable(speedPressedTexture));
-        speedBoostTimer = new Label("", hudLabelStyle);
-        Label speedCost = new Label("Cost:15", hudGreenLabelStyle); 
-        speedCost.setFontScale(0.5f);
-        speedButton.setSize(64, 64);
-        speedBoostTimer.setFontScale(0.5f);
-
-        Texture instaTexture = new Texture(Gdx.files.internal("instantCook32.png"));
-        Texture instaPressedTexture = new Texture(Gdx.files.internal("instantCook32_pressed.png"));
-        ImageButton instaCook = new ImageButton(new TextureRegionDrawable(instaTexture), new TextureRegionDrawable(instaPressedTexture));
-        InstaCookTimer = new Label("", hudLabelStyle);
-        Label instaCost = new Label("Cost:20", hudGreenLabelStyle);
-        instaCost.setFontScale(0.5f);
-        InstaCookTimer.setFontScale(0.5f);
-        
-        Texture binCustomerTexture = new Texture(Gdx.files.internal("binOrder32.png"));
-        Texture binCustomerPressed = new Texture(Gdx.files.internal("binOrder32_pressed.png"));
-        ImageButton binCustomer = new ImageButton(new TextureRegionDrawable(binCustomerTexture), new TextureRegionDrawable(binCustomerPressed));
-        Label binCost = new Label("Cost:50", hudGreenLabelStyle);
-        binCost.setFontScale(0.5f);
-        binCustomer.setSize(64, 64);
-
-        Texture doubleRepTexture = new Texture(Gdx.files.internal("doubleRep32.png"));
-        Texture doubleRepPressed = new Texture(Gdx.files.internal("doubleRep32_pressed.png"));
-        ImageButton doubleRep = new ImageButton(new TextureRegionDrawable(doubleRepTexture), new TextureRegionDrawable(doubleRepPressed));
-        DoublePointsTimer  = new Label("", hudLabelStyle);
-        Label doubleRepCost = new Label("Cost:30", hudGreenLabelStyle);
-        doubleRepCost.setFontScale(0.5f);
-        doubleRep.setSize(64, 64);
-        DoublePointsTimer.setFontScale(0.5f);
-
-        Texture timeFreezeTexture = new Texture(Gdx.files.internal("timeFreeze32.png"));
-        Texture timeFreezePressed = new Texture(Gdx.files.internal("timeFreeze32_pressed.png"));
-        ImageButton timeFreeze = new ImageButton(new TextureRegionDrawable(timeFreezeTexture), new TextureRegionDrawable(timeFreezePressed));
-        TimeFreezeTimer = new Label("", hudLabelStyle);
-        Label timeCost = new Label("Cost:100", hudGreenLabelStyle);
-        timeCost.setFontScale(0.5f);
-        timeFreeze.setSize(64, 64);
-        TimeFreezeTimer.setFontScale(0.5f);
-
-        
-        speedButton.addListener(new ClickListener(){
-            public void clicked(InputEvent event, float x, float y){
-                powerUps.SpeedActive();
-                System.out.print("SpeedBoost boost is true");
-                SpeedActive = true;
-                SpeedCounter = 30;
-
-       
-            }
-        });
-
-        instaCook.addListener(new ClickListener(){
-            public void clicked(InputEvent event, float x, float y){
-                // gameSignal.dispatch(PowerUpType.InstaCook);
-                powerUps.InstaActive();
-                System.out.print("InstaCook is Active");
-                InstaActive = true;
-                InstaCounter = 30;
-                
-            }
-
-        });
-
-        binCustomer.addListener(new ClickListener(){
-            public void clicked(InputEvent event, float x, float y){
-                powerUps.BinActive();
-                System.out.print("BinACustomer is active");
-                InstaCounter = 30;
-                
-            }
-        });
-
-        doubleRep.addListener(new ClickListener(){
-            public void clicked(InputEvent event, float x, float y ){ 
-                powerUps.DoubleActive();
-                System.out.println("DoubleRep active");
-                DoubleActive = true;
-                DoubleCounter = 30;
-            }
-        });
-
-        timeFreeze.addListener(new ClickListener(){
-            public void clicked(InputEvent event, float x, float y){ 
-                powerUps.TimeActive();
-                System.out.print("TimeFreeze active");
-                FreezeActive = true;
-                FreezeCounter = 30;
-            }
-        });
-
-        tableLeft.add(powerInv);
-        tableLeft.row();
-        tableLeft.add(speedButton);
-        tableLeft.add(speedBoostTimer);
-        tableLeft.row();
-        tableLeft.add(speedCost);
-        tableLeft.row();
-        tableLeft.add(instaCook);
-        tableLeft.add(InstaCookTimer);
-        tableLeft.row();
-        tableLeft.add(instaCost);
-        tableLeft.row();
-        tableLeft.add(binCustomer);
-        tableLeft.row();
-        tableLeft.add(binCost);
-        tableLeft.row();
-        tableLeft.add(doubleRep);
-        tableLeft.row();
-        tableLeft.add(doubleRepCost);
-        tableLeft.row();
-        tableLeft.add(timeFreeze);
-        tableLeft.row();
-        tableLeft.add(timeCost);
-
         tableBottomLabel = new Table();
         tableBottomLabel.bottom();
         tableBottomLabel.setFillParent(true);
@@ -375,9 +385,11 @@ public class Hud extends ApplicationAdapter {
         stage.addActor(tableTop);
         stage.addActor(tableRight);
         stage.addActor(tableBottom);
-        stage.addActor(tableLeft);
         stage.addActor(tableBottomLabel);
         stage.addActor(infoTable);
+        if(difficulty != Difficulty.SCENARIO){
+            stage.addActor(tableLeft);
+        }
     }
 
     /**

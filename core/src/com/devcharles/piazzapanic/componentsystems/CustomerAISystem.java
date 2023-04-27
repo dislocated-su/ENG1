@@ -46,6 +46,7 @@ public class CustomerAISystem extends IteratingSystem {
     private boolean firstSpawn = true;
     private GameScreen gameScreen;
     private Integer timeFrozen = 30000;
+    private  Integer DoubleRepCounter = 30000;
 
     // List of customers, on removal we move the other customers up a place (queueing).
     private final ArrayList<Entity> customers = new ArrayList<Entity>() {
@@ -129,6 +130,14 @@ public class CustomerAISystem extends IteratingSystem {
             // If endless mode then decrease customer spawn frequency by one second every time a customer is served.
             // Result is customers will arrive more often over time in endless mode.
             if(firstSpawn==false && difficulty != GameScreen.Difficulty.SCENARIO){
+                if(gameScreen.TimeFreeze){
+                    if(timeFrozen <= 0){
+                        spawnTimer.start();
+                        timeFrozen = 30000;    
+                    }
+                    spawnTimer.stop();
+                    timeFrozen = timeFrozen - 17;
+                }
                 spawnTimer = new GdxTimer((difficulty.getSpawnFrequency()-((999-CUSTOMER)*1000)),true,true);
                 Gdx.app.log("Info","Spawn frequency is now " + (difficulty.getSpawnFrequency()-((999-CUSTOMER)*1000)));
             }
@@ -180,12 +189,21 @@ public class CustomerAISystem extends IteratingSystem {
         }
 
         if(gameScreen.BinACustomer){
-            fulfillOrder(entity, customer, entity, gameScreen.BinACustomer);
+            fulfillOrder(entity, customer, entity, gameScreen.BinACustomer, gameScreen.DoubleRep);
             gameScreen.BinOff();
         }
 
         if(gameScreen.TimeFreeze){
             timeFreeze(customer);
+        }
+
+        if(gameScreen.DoubleRep){
+            DoubleRepCounter -= 17;
+            if(DoubleRepCounter <= 0){
+                gameScreen.DoubleOff();
+                DoubleRepCounter = 30000;
+                
+            }
         }
 
         if (customer.interactingCook != null) {
@@ -209,7 +227,7 @@ public class CustomerAISystem extends IteratingSystem {
             if (Mappers.food.get(food).type == customer.order) {
                 // Fulfill order
                 Gdx.app.log("Order success", customer.order.name());
-                fulfillOrder(entity, customer, food, gameScreen.BinACustomer);
+                fulfillOrder(entity, customer, food, gameScreen.BinACustomer, gameScreen.DoubleRep);
 
             } else {
                 getEngine().removeEntity(food);
@@ -220,10 +238,8 @@ public class CustomerAISystem extends IteratingSystem {
 
     private void timeFreeze(CustomerComponent customer){
         customer.timer.stop();
-        timeFrozen = timeFrozen - 17;
-        if(timeFrozen == 0){
+        if(timeFrozen <= 0){
             customer.timer.start();
-            timeFrozen = 30000;
             gameScreen.TimeOff();
         }
     }
@@ -274,7 +290,7 @@ public class CustomerAISystem extends IteratingSystem {
     /**
      * Give customer food, send them away and remove the order from the list
      */
-    private void fulfillOrder(Entity entity, CustomerComponent customer, Entity foodEntity, Boolean BinACustomer) {
+    private void fulfillOrder(Entity entity, CustomerComponent customer, Entity foodEntity, Boolean BinACustomer, Boolean DoubleRep) {
 
             if(BinACustomer){
             getEngine().removeEntity(entity);
@@ -293,7 +309,12 @@ public class CustomerAISystem extends IteratingSystem {
             if(customerTip>0){
                 hud.displayInfoMessage("Customer has tipped $ " + Float.toString(customerTip));
             }
-    
+
+            if(DoubleRep){
+                float doublePrice = customer.order.getPrice() * 2f;
+                tillBalance[0] += doublePrice + customerTip;
+            }
+
             tillBalance[0]+=customer.order.getPrice() + customerTip;
             customer.order = null;
     

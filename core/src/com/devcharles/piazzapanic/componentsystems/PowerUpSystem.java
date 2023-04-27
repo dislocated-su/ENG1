@@ -16,7 +16,7 @@ import com.devcharles.piazzapanic.utility.Mappers;
 
 public class PowerUpSystem extends IteratingSystem{
 
-    public Integer timer = 15;
+    public Integer timer = 30000;
     public GameScreen gameScreen;
     Integer InstaCookTimer = 30000;
 
