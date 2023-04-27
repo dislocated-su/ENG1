@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorldContactListener.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility.box2d</a> &gt; <span class="el_source">WorldContactListener.java</span></div><h1>WorldContactListener.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility.box2d;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
+import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.utility.Mappers;
+import com.devcharles.piazzapanic.utility.Pair;
+
+/**
+ * Handles collision events, allows interactivity between the player and other objects.
+ */
+<span class="fc" id="L16">public class WorldContactListener implements ContactListener {</span>
+
+    @Override
+    public void beginContact(Contact contact) {
+<span class="nc" id="L20">        Pair&lt;StationComponent, Entity&gt; stationCook = stationInteractResolver(contact);</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if (stationCook != null) {</span>
+<span class="nc" id="L22">            stationCook.first.interactingCook = stationCook.second;</span>
+<span class="nc" id="L23">            return;</span>
+        }
+
+<span class="nc" id="L26">        Pair&lt;Entity, Entity&gt; customerCook = customerInteractResolver(contact);</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (customerCook != null) {</span>
+            // Gdx.app.log(&quot;Begin contact&quot;, &quot;Cook+Customer&quot;);
+<span class="nc" id="L29">            Mappers.customer.get(customerCook.first).interactingCook = customerCook.second;</span>
+        }
+<span class="nc" id="L31">    }</span>
+
+    @Override
+    public void endContact(Contact contact) {
+<span class="nc" id="L35">        Pair&lt;StationComponent, Entity&gt; stationCook = stationInteractResolver(contact);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (stationCook != null) {</span>
+<span class="nc" id="L37">            stationCook.first.interactingCook = null;</span>
+<span class="nc" id="L38">            return;</span>
+        }
+
+<span class="nc" id="L41">        Pair&lt;Entity, Entity&gt; customerCook = customerInteractResolver(contact);</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (customerCook != null) {</span>
+            // Gdx.app.log(&quot;End contact&quot;, &quot;Cook+Customer&quot;);
+<span class="nc" id="L44">            Mappers.customer.get(customerCook.first).interactingCook = null;</span>
+        }
+
+<span class="nc" id="L47">    }</span>
+
+    private Pair&lt;StationComponent, Entity&gt; stationInteractResolver(Contact contact) {
+<span class="nc" id="L50">        Object objA = contact.getFixtureA().getUserData();</span>
+<span class="nc" id="L51">        Object objB = contact.getFixtureB().getUserData();</span>
+
+<span class="nc bnc" id="L53" title="All 4 branches missed.">        if (objA == null || objB == null) {</span>
+<span class="nc" id="L54">            return null;</span>
+        }
+
+<span class="nc" id="L57">        boolean objAStation = (StationComponent.class.isAssignableFrom(objA.getClass()));</span>
+<span class="nc" id="L58">        boolean objBStation = (StationComponent.class.isAssignableFrom(objB.getClass()));</span>
+
+<span class="nc bnc" id="L60" title="All 4 branches missed.">        if (objAStation || objBStation) {</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            Object station = objAStation ? objA : objB;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">            Entity cook = station == objA ? ((Entity) objB) : ((Entity) objA);</span>
+
+<span class="nc" id="L64">            PlayerComponent player = Mappers.player.get(cook);</span>
+
+<span class="nc bnc" id="L66" title="All 4 branches missed.">            if (cook != null &amp;&amp; player != null) {</span>
+<span class="nc" id="L67">                player.putDown = false;</span>
+<span class="nc" id="L68">                player.pickUp = false;</span>
+<span class="nc" id="L69">                return new Pair&lt;StationComponent, Entity&gt;((StationComponent) station, cook);</span>
+            }
+        }
+<span class="nc" id="L72">        return null;</span>
+    }
+
+    private Pair&lt;Entity, Entity&gt; customerInteractResolver(Contact contact) {
+<span class="nc" id="L76">        Object objA = contact.getFixtureA().getUserData();</span>
+<span class="nc" id="L77">        Object objB = contact.getFixtureB().getUserData();</span>
+
+<span class="nc bnc" id="L79" title="All 4 branches missed.">        if (objA == null || objB == null) {</span>
+<span class="nc" id="L80">            return null;</span>
+        }
+
+<span class="nc" id="L83">        boolean objAEntity = (Entity.class.isAssignableFrom(objA.getClass()));</span>
+<span class="nc" id="L84">        boolean objBEntity = (Entity.class.isAssignableFrom(objB.getClass()));</span>
+
+<span class="nc bnc" id="L86" title="All 4 branches missed.">        if (!objAEntity || !objBEntity) {</span>
+<span class="nc" id="L87">            return null;</span>
+        }
+
+<span class="nc" id="L90">        Entity a = (Entity) objA;</span>
+<span class="nc" id="L91">        Entity b = (Entity) objB;</span>
+
+<span class="nc bnc" id="L93" title="All 4 branches missed.">        if (Mappers.customer.has(a) || Mappers.customer.has(b)) {</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            Entity customer = Mappers.customer.has(a) ? a : b;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">            Entity cook = (customer == a) ? b : a;</span>
+
+<span class="nc" id="L97">            PlayerComponent player = Mappers.player.get(cook);</span>
+
+<span class="nc bnc" id="L99" title="All 4 branches missed.">            if (cook != null &amp;&amp; player != null) {</span>
+<span class="nc" id="L100">                player.putDown = false;</span>
+<span class="nc" id="L101">                return new Pair&lt;Entity, Entity&gt;(customer, cook);</span>
+            }
+        }
+<span class="nc" id="L104">        return null;</span>
+    }
+
+    @Override
+    public void preSolve(Contact contact, Manifold oldManifold) {
+<span class="nc" id="L109">    }</span>
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+<span class="nc" id="L113">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

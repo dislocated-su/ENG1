@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorldTilemapRenderer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility</a> &gt; <span class="el_source">WorldTilemapRenderer.java</span></div><h1>WorldTilemapRenderer.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility;
+
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import java.util.HashMap;
+
+/**
+ * Renders a {@link TiledMap} that is loaded using {@link MapLoader}.
+ */
+public class WorldTilemapRenderer {
+
+    private final TiledMap map;
+
+    private final OrthogonalTiledMapRenderer renderer;
+
+    private final OrthographicCamera camera;
+
+    /**
+     * Pixels per tile. The tileset we are using is 32x32, so this effectively doubles apparent size.
+     */
+<span class="fc" id="L29">    final int ppt = 16;</span>
+
+    private final TiledMapTileLayer floor;
+    private final TiledMapTileLayer front_wall;
+    private final TiledMapTileLayer station;
+    private final TiledMapTileLayer countertop;
+    private final TiledMapTileLayer back_wall;
+
+    private final TiledMapTileLayer countertop_f;
+    private final TiledMapTileLayer station_f;
+    private AnimatedTiledMapTile ovenAnimation;
+    private TiledMapTile ovenTile;
+<span class="fc" id="L41">    private final HashMap&lt;Integer,TiledMapTile&gt; unlockedTiles = new HashMap&lt;&gt;(3);</span>
+
+    /**
+     * Create a new renderer with existing {@link TiledMap}, camera and {@link SpriteBatch}.
+     * The renderer will not own any of these objects.
+     * @param map {@link TiledMap} instance with required layers, see constructor.
+     * @param mainCamera camera to render to. 
+     * @param batch spritebatch to use.
+     */
+<span class="fc" id="L50">    public WorldTilemapRenderer(TiledMap map, OrthographicCamera mainCamera, SpriteBatch batch) {</span>
+<span class="fc" id="L51">        this.camera = mainCamera;</span>
+<span class="fc" id="L52">        this.map = map;</span>
+
+<span class="fc" id="L54">        renderer = new OrthogonalTiledMapRenderer(map, 1f / ppt, batch);</span>
+
+<span class="fc" id="L56">        floor = (TiledMapTileLayer) map.getLayers().get(&quot;floor&quot;);</span>
+<span class="fc" id="L57">        front_wall = (TiledMapTileLayer) map.getLayers().get(&quot;wall_f&quot;);</span>
+<span class="fc" id="L58">        back_wall = (TiledMapTileLayer) map.getLayers().get(&quot;wall_b&quot;);</span>
+
+        // Station-related layers
+<span class="fc" id="L61">        station = (TiledMapTileLayer) map.getLayers().get(&quot;station&quot;);</span>
+<span class="fc" id="L62">        station_f = (TiledMapTileLayer) map.getLayers().get(&quot;station_f&quot;);</span>
+<span class="fc" id="L63">        countertop = (TiledMapTileLayer) map.getLayers().get(&quot;countertop&quot;);</span>
+<span class="fc" id="L64">        countertop_f = (TiledMapTileLayer) map.getLayers().get(&quot;countertop_f&quot;);</span>
+
+<span class="fc" id="L66">        findUnlockedTiles();</span>
+<span class="fc" id="L67">        buildOvenAnimation();</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Render all layers that appear behind entities.
+     */
+    public void renderBackground() {
+<span class="nc" id="L74">        renderer.setView(camera);</span>
+<span class="nc" id="L75">        renderer.renderTileLayer(floor);</span>
+<span class="nc" id="L76">        renderer.renderTileLayer(back_wall);</span>
+<span class="nc" id="L77">        renderer.renderTileLayer(countertop);</span>
+<span class="nc" id="L78">        renderer.renderTileLayer(station);</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Render all layers that appear in front of entities.
+     */
+    public void renderForeground() {
+<span class="nc" id="L85">        renderer.setView(camera);</span>
+<span class="nc" id="L86">        renderer.renderTileLayer(countertop_f);</span>
+<span class="nc" id="L87">        renderer.renderTileLayer(station_f);</span>
+<span class="nc" id="L88">        renderer.renderTileLayer(front_wall);</span>
+<span class="nc" id="L89">        AnimatedTiledMapTile.updateAnimationBaseTime();</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Creates an animated tile where the frames are the oven tiles in the tileset with the fire property.
+     * Stores the default oven tile in the ovenTile variable so that the animation can be undone.
+     */
+    public void buildOvenAnimation() {
+<span class="fc" id="L97">        Array&lt;StaticTiledMapTile&gt; frameTiles = new Array&lt;&gt;(2);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (TiledMapTile tile : map.getTileSets().getTileSet(&quot;objects&quot;)) {</span>
+<span class="fc bfc" id="L99" title="All 4 branches covered.">            if (tile.getProperties().containsKey(&quot;fire&quot;) &amp;&amp; !tile.getProperties().get(&quot;fire&quot;, String.class).equals(&quot;0&quot;)) {</span>
+<span class="fc" id="L100">                frameTiles.add((StaticTiledMapTile) tile);</span>
+            }
+<span class="fc bfc" id="L102" title="All 4 branches covered.">            if (tile.getProperties().containsKey(&quot;fire&quot;) &amp;&amp; tile.getProperties().get(&quot;fire&quot;, String.class).equals(&quot;0&quot;)) {</span>
+<span class="fc" id="L103">                ovenTile = tile;</span>
+            }
+<span class="fc" id="L105">        }</span>
+<span class="fc" id="L106">        ovenAnimation = new AnimatedTiledMapTile(1 / 3f, frameTiles);</span>
+<span class="fc" id="L107">    }</span>
+
+    /**
+     * Changes an oven tile at a specified position into an animated oven tile.
+     * @param position - The position on the tile map.
+     */
+    public void animateOven(Vector2 position){
+<span class="nc" id="L114">        TiledMapTileLayer.Cell cell = station.getCell((int)position.x,(int)position.y);</span>
+<span class="nc" id="L115">        cell.setTile(ovenAnimation);</span>
+<span class="nc" id="L116">        station.setCell((int)position.x,(int)position.y,cell);</span>
+<span class="nc" id="L117">    }</span>
+
+    /**
+     * Removes oven animation for oven at specified position.
+     * @param position - The position on the tile map.
+     */
+    public void removeOvenAnimation(Vector2 position){
+<span class="nc" id="L124">        TiledMapTileLayer.Cell cell = station.getCell((int)position.x,(int)position.y);</span>
+<span class="nc" id="L125">        cell.setTile(ovenTile);</span>
+<span class="nc" id="L126">        station.setCell((int)position.x,(int)position.y,cell);</span>
+<span class="nc" id="L127">    }</span>
+
+    /**
+     * Changes a locked tile on the tile map into the unlocked version of it.
+     * @param position - The position of the tile on the tile map
+     * @param stationId - The id for the station. eg 1 for oven.
+     */
+    public void unlockStation(Vector2 position, int stationId){
+<span class="nc" id="L135">        TiledMapTileLayer.Cell cell = station.getCell((int)position.x,(int)position.y);</span>
+<span class="nc" id="L136">        cell.setTile(unlockedTiles.get(stationId));</span>
+<span class="nc" id="L137">        station.setCell((int)position.x,(int)position.y,cell);</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Ovens, cutting boards and grills need to be unlockable.
+     * Maps the station id of these three stations to their tile image.
+     * Allows the locked station tile to be replaced with the unlocked version.
+     */
+    public void findUnlockedTiles(){
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        for(TiledMapTile tile : map.getTileSets().getTileSet(&quot;objects&quot;)){</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">            if(tile.getProperties().get(&quot;stationID&quot;) instanceof Integer){</span>
+<span class="fc" id="L148">                int id = (int) tile.getProperties().get(&quot;stationID&quot;);</span>
+<span class="fc bfc" id="L149" title="All 6 branches covered.">                if(id == 1 || id == 2 || id == 3){</span>
+<span class="fc" id="L150">                    unlockedTiles.put(id,tile);</span>
+                }
+            }
+<span class="fc" id="L153">        }</span>
+<span class="fc" id="L154">    }</span>
+
+    public void dispose() {
+<span class="nc" id="L157">        map.dispose();</span>
+<span class="nc" id="L158">        renderer.dispose();</span>
+<span class="nc" id="L159">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

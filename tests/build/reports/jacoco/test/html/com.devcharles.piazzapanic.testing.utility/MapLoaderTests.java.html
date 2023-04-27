@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapLoaderTests.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.testing.utility</a> &gt; <span class="el_source">MapLoaderTests.java</span></div><h1>MapLoaderTests.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.testing.utility;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
+import com.devcharles.piazzapanic.testing.BasicTest;
+import com.devcharles.piazzapanic.testing.GdxTestRunner;
+import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.MapLoader;
+
+import box2dLight.RayHandler;
+
+@RunWith(GdxTestRunner.class)
+<span class="fc" id="L18">public class MapLoaderTests implements BasicTest {</span>
+
+    private PooledEngine engine;
+    private World world;
+
+    @Override
+    @Before
+    public void initialize() throws Exception {
+<span class="fc" id="L26">        engine = new PooledEngine();</span>
+<span class="fc" id="L27">        world = new World(new Vector2(0, 0), false);</span>
+<span class="fc" id="L28">    }</span>
+
+    @Override
+    @Test
+    public void constructorTest() throws Exception {
+<span class="fc" id="L33">        MapLoader mapLoader = new MapLoader(&quot;v2/map.tmx&quot;, 1, new EntityFactory(engine, world));</span>
+<span class="fc" id="L34">    }</span>
+
+    @Test
+    public void buildStationsTest() throws Exception {
+<span class="fc" id="L38">        MapLoader mapLoader = new MapLoader(&quot;v2/map.tmx&quot;, 1, new EntityFactory(engine, world));</span>
+<span class="fc" id="L39">        mapLoader.buildStations(engine, world);</span>
+<span class="fc" id="L40">    }</span>
+
+    @Test
+    public void buildCollisionsTest() throws Exception {
+<span class="fc" id="L44">        MapLoader mapLoader = new MapLoader(&quot;v2/map.tmx&quot;, 1, new EntityFactory(engine, world));</span>
+<span class="fc" id="L45">        mapLoader.buildCollisions(world);</span>
+<span class="fc" id="L46">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

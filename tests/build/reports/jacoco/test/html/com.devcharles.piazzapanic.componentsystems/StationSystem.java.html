@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StationSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.componentsystems</a> &gt; <span class="el_source">StationSystem.java</span></div><h1>StationSystem.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.componentsystems;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.devcharles.piazzapanic.GameScreen;
+import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.FoodComponent;
+import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.components.TintComponent;
+import com.devcharles.piazzapanic.components.CookingComponent;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.scene2d.Hud;
+import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.Mappers;
+import com.devcharles.piazzapanic.utility.Station;
+import com.devcharles.piazzapanic.utility.Station.StationType;
+import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
+
+import static com.devcharles.piazzapanic.utility.Station.StationType.oven;
+
+/**
+ * This system manages player-station interaction and station food processing.
+ */
+public class StationSystem extends IteratingSystem {
+
+    KeyboardInput input;
+
+<span class="fc" id="L38">    boolean interactingStation = false;</span>
+
+    EntityFactory factory;
+    WorldTilemapRenderer mapRenderer;
+    Hud hud;
+
+    private TintComponent readyTint;
+<span class="fc" id="L45">    private float tickAccumulator = 0;</span>
+    private final Float[] tillBalance;
+    private GameScreen.Difficulty difficulty;
+
+
+    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, GameScreen.Difficulty difficulty) {
+<span class="fc" id="L51">        super(Family.all(StationComponent.class).get());</span>
+<span class="fc" id="L52">        this.input = input;</span>
+<span class="fc" id="L53">        this.factory = factory;</span>
+<span class="fc" id="L54">        this.mapRenderer=mapRenderer;</span>
+<span class="fc" id="L55">        this.tillBalance=tillBalance;</span>
+<span class="fc" id="L56">        this.hud=hud;</span>
+<span class="fc" id="L57">        this.difficulty=difficulty;</span>
+<span class="fc" id="L58">    }</span>
+
+    @Override
+    public void update(float deltaTime) {
+<span class="nc" id="L62">        tickAccumulator += deltaTime;</span>
+<span class="nc" id="L63">        super.update(deltaTime);</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (tickAccumulator &gt; 0.5f) {</span>
+<span class="nc" id="L65">            tickAccumulator -= 0.5f;</span>
+        }
+<span class="nc" id="L67">    }</span>
+
+    @Override
+    protected void processEntity(Entity entity, float deltaTime) {
+<span class="nc" id="L71">        StationComponent station = Mappers.station.get(entity);</span>
+
+<span class="nc" id="L73">        stationTick(station, deltaTime);</span>
+
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (station.interactingCook != null) {</span>
+
+<span class="nc" id="L77">            PlayerComponent player = Mappers.player.get(station.interactingCook);</span>
+
+<span class="nc bnc" id="L79" title="All 2 branches missed.">            if (player == null) {</span>
+<span class="nc" id="L80">                return;</span>
+            }
+
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if (player.putDown) {</span>
+<span class="nc" id="L84">                player.putDown = false;</span>
+
+<span class="nc" id="L86">                ControllableComponent controllable = Mappers.controllable.get(station.interactingCook);</span>
+
+<span class="nc bnc" id="L88" title="All 4 branches missed.">                switch (station.type) {</span>
+                    case ingredient:
+<span class="nc" id="L90">                        controllable.currentFood.pushItem(factory.createFood(station.ingredient),</span>
+                                station.interactingCook);
+<span class="nc" id="L92">                        System.out.println(station.ingredient);</span>
+<span class="nc" id="L93">                        break;</span>
+                    case bin:
+<span class="nc" id="L95">                        processBin(controllable);</span>
+<span class="nc" id="L96">                        break;</span>
+
+                    case serve:
+<span class="nc" id="L99">                        processServe(station.interactingCook);</span>
+<span class="nc" id="L100">                        break;</span>
+
+                    default:
+<span class="nc" id="L103">                        processStation(controllable, station);</span>
+                        break;
+                }
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            } else if (player.pickUp) {</span>
+<span class="nc" id="L107">                player.pickUp = false;</span>
+
+<span class="nc" id="L109">                ControllableComponent controllable = Mappers.controllable.get(station.interactingCook);</span>
+
+<span class="nc bnc" id="L111" title="All 3 branches missed.">                switch (station.type) {</span>
+                    case ingredient:
+<span class="nc" id="L113">                        controllable.currentFood.pushItem(factory.createFood(station.ingredient),</span>
+                                station.interactingCook);
+<span class="nc" id="L115">                        break;</span>
+                    case bin:
+                    case serve:
+<span class="nc" id="L118">                        break;</span>
+                    default:
+<span class="nc" id="L120">                        stationPickup(station, controllable);</span>
+                        break;
+                }
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            } else if (player.interact) {</span>
+<span class="nc" id="L124">                player.interact = false;</span>
+<span class="nc" id="L125">                interactStation(station);</span>
+            }
+        }
+<span class="nc" id="L128">    }</span>
+
+    /**
+     * Try and process the food from the player.
+     */
+    private void processStation(ControllableComponent controllable, StationComponent station) {
+
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if(station.locked){</span>
+<span class="nc" id="L136">            tryBuy(station);</span>
+<span class="nc" id="L137">            return;</span>
+        }
+
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (controllable.currentFood.isEmpty()) {</span>
+<span class="nc" id="L141">            return;</span>
+        }
+
+<span class="nc" id="L144">        Gdx.app.log(&quot;putDown&quot;, Mappers.food.get(controllable.currentFood.peek()).type.name());</span>
+
+<span class="nc" id="L146">        FoodComponent food = Mappers.food.get(controllable.currentFood.peek());</span>
+
+<span class="nc" id="L148">        HashMap&lt;FoodType, FoodType&gt; recipes = Station.recipeMap.get(station.type);</span>
+
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (recipes == null) {</span>
+<span class="nc" id="L151">            return;</span>
+        }
+
+<span class="nc" id="L154">        FoodType result = recipes.get(food.type);</span>
+
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (result == null) {</span>
+<span class="nc" id="L157">            return;</span>
+        }
+
+<span class="nc" id="L160">        int foodIndex = station.food.indexOf(null);</span>
+
+        // If there is space on the station
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (foodIndex != -1) {</span>
+            // Pop if off player stack
+            // Store in station
+<span class="nc" id="L166">            station.food.set(foodIndex, controllable.currentFood.pop());</span>
+        } else {
+<span class="nc" id="L168">            return;</span>
+        }
+
+        // success
+
+<span class="nc" id="L173">        CookingComponent cooking = getEngine().createComponent(CookingComponent.class);</span>
+
+<span class="nc" id="L175">        cooking.timer.start();</span>
+
+<span class="nc" id="L177">        station.food.get(foodIndex).add(cooking);</span>
+
+<span class="nc" id="L179">        Gdx.app.log(&quot;Food processed&quot;, String.format(&quot;%s turned into %s&quot;, food.type, result));</span>
+
+        // If the station is an oven start the cooking animation.
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if(station.type==oven){</span>
+<span class="nc" id="L183">            mapRenderer.animateOven(station.tileMapPosition);</span>
+        }
+
+
+<span class="nc" id="L187">    }</span>
+
+    /**
+     * Perform special action (flipping patties, etc.)
+     * 
+     * @param station the station the action is being performed on.
+     */
+    private void interactStation(StationComponent station) {
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        for (Entity food : station.food) {</span>
+<span class="nc bnc" id="L196" title="All 4 branches missed.">            if (food == null || !Mappers.cooking.has(food)) {</span>
+<span class="nc" id="L197">                continue;</span>
+            }
+
+<span class="nc" id="L200">            CookingComponent cooking = Mappers.cooking.get(food);</span>
+
+            // Check if it's ready without ticking the timer
+<span class="nc" id="L203">            boolean ready = cooking.timer.tick(0);</span>
+
+<span class="nc bnc" id="L205" title="All 4 branches missed.">            if (ready &amp;&amp; !cooking.processed) {</span>
+<span class="nc" id="L206">                food.remove(TintComponent.class);</span>
+<span class="nc" id="L207">                cooking.processed = true;</span>
+<span class="nc" id="L208">                cooking.timer.reset();</span>
+<span class="nc" id="L209">                return;</span>
+            }
+<span class="nc" id="L211">        }</span>
+<span class="nc" id="L212">    }</span>
+
+    /**
+     * Try to combine the ingredients at the top of the player's inventory stack
+     * (max 3) into a ready meal.
+     * 
+     * @param cook the cook whos inventory is being used for creating the food.
+     */
+    private void processServe(Entity cook) {
+<span class="nc" id="L221">        ControllableComponent controllable = Mappers.controllable.get(cook);</span>
+
+<span class="nc bnc" id="L223" title="All 2 branches missed.">        if (controllable.currentFood.size() &lt; 2) {</span>
+<span class="nc" id="L224">            return;</span>
+        }
+
+<span class="nc" id="L227">        int count = 2;</span>
+<span class="nc" id="L228">        FoodType result = tryAssemble(controllable, count);</span>
+
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        if (result == null) {</span>
+<span class="nc" id="L231">            result = tryAssemble(controllable, ++count);</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">            if (result == null) {</span>
+<span class="nc" id="L233">                return;</span>
+            }
+        }
+
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        for (int i = 0; i &lt; count; i++) {</span>
+<span class="nc" id="L238">            Entity e = controllable.currentFood.pop();</span>
+<span class="nc" id="L239">            getEngine().removeEntity(e);</span>
+        }
+
+<span class="nc" id="L242">        controllable.currentFood.pushItem(factory.createFood(result), cook);</span>
+
+<span class="nc" id="L244">    }</span>
+
+    /**
+     * Attempt to create a food.
+     * @param count number of ingredients to combine
+     */
+    private FoodType tryAssemble(ControllableComponent controllable, int count) {
+<span class="nc" id="L251">        Set&lt;FoodType&gt; ingredients = new HashSet&lt;FoodType&gt;();</span>
+<span class="nc" id="L252">        int i = 0;</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        for (Entity foodEntity : controllable.currentFood) {</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">            if (i &gt; count - 1) {</span>
+<span class="nc" id="L255">                break;</span>
+            }
+<span class="nc" id="L257">            ingredients.add(Mappers.food.get(foodEntity).type);</span>
+
+<span class="nc" id="L259">            i++;</span>
+<span class="nc" id="L260">        }</span>
+
+<span class="nc" id="L262">        return Station.assembleRecipes.get(ingredients);</span>
+    }
+
+    /**
+     * Destroy the top food in the inventory of a cook.
+     */
+    private void processBin(ControllableComponent controllable) {
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (controllable.currentFood.isEmpty()) {</span>
+<span class="nc" id="L270">            return;</span>
+        }
+
+<span class="nc" id="L273">        Entity e = controllable.currentFood.pop();</span>
+<span class="nc" id="L274">        getEngine().removeEntity(e);</span>
+<span class="nc" id="L275">    }</span>
+
+    /**
+     * Pick up ready food from a station
+     */
+    private void stationPickup(StationComponent station, ControllableComponent controllable) {
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        for (Entity foodEntity : station.food) {</span>
+<span class="nc bnc" id="L282" title="All 4 branches missed.">            if (foodEntity != null &amp;&amp; !Mappers.cooking.has(foodEntity)) {</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                if (controllable.currentFood.pushItem(foodEntity, station.interactingCook)) {</span>
+<span class="nc" id="L284">                    station.food.set(station.food.indexOf(foodEntity), null);</span>
+<span class="nc" id="L285">                    Mappers.transform.get(foodEntity).scale.set(1, 1);</span>
+<span class="nc" id="L286">                    Gdx.app.log(&quot;Picked up&quot;, Mappers.food.get(foodEntity).type.toString());</span>
+                }
+<span class="nc" id="L288">                return;</span>
+            }
+<span class="nc" id="L290">        }</span>
+<span class="nc" id="L291">    }</span>
+
+    /**
+     * Cook the food in the station. This progresses the timer in the food being cooked in the station.
+     * @param station
+     * @param deltaTime
+     */
+    private void stationTick(StationComponent station, float deltaTime) {
+<span class="nc bnc" id="L299" title="All 4 branches missed.">        if (station.type == StationType.cutting_board &amp;&amp; station.interactingCook == null) {</span>
+<span class="nc" id="L300">            return;</span>
+        }
+
+<span class="nc bnc" id="L303" title="All 2 branches missed.">        for (Entity foodEntity : station.food) {</span>
+
+<span class="nc bnc" id="L305" title="All 4 branches missed.">            if (foodEntity == null || !Mappers.cooking.has(foodEntity)) {</span>
+<span class="nc" id="L306">                continue;</span>
+            }
+
+<span class="nc" id="L309">            CookingComponent cooking = Mappers.cooking.get(foodEntity);</span>
+
+<span class="nc" id="L311">            boolean ready = cooking.timer.tick(deltaTime);</span>
+
+<span class="nc bnc" id="L313" title="All 4 branches missed.">            if (ready &amp;&amp; cooking.processed) {</span>
+<span class="nc" id="L314">                cooking.timer.stop();</span>
+<span class="nc" id="L315">                cooking.timer.reset();</span>
+
+<span class="nc" id="L317">                FoodComponent food = Mappers.food.get(foodEntity);</span>
+                // Process the food into its next form
+<span class="nc" id="L319">                food.type = Station.recipeMap.get(station.type).get(food.type);</span>
+<span class="nc" id="L320">                Mappers.texture.get(foodEntity).region = EntityFactory.getFoodTexture(food.type);</span>
+<span class="nc" id="L321">                foodEntity.remove(CookingComponent.class);</span>
+<span class="nc" id="L322">                Gdx.app.log(&quot;Food ready&quot;, food.type.name());</span>
+
+                // If the station is an oven turn off the animation.
+<span class="nc bnc" id="L325" title="All 2 branches missed.">                if(station.type==oven){</span>
+<span class="nc" id="L326">                    mapRenderer.removeOvenAnimation(station.tileMapPosition);</span>
+                }
+<span class="nc bnc" id="L328" title="All 2 branches missed.">            } else if (ready) {</span>
+
+<span class="nc bnc" id="L330" title="All 2 branches missed.">                if (tickAccumulator &gt; 0.5f) {</span>
+
+<span class="nc bnc" id="L332" title="All 2 branches missed.">                    if (!Mappers.tint.has(foodEntity)) {</span>
+<span class="nc" id="L333">                        foodEntity.add(readyTint);</span>
+                    } else {
+<span class="nc" id="L335">                        foodEntity.remove(TintComponent.class);</span>
+                    }
+                }
+
+            }
+
+<span class="nc" id="L341">        }</span>
+<span class="nc" id="L342">    }</span>
+
+
+    /**
+     * Unlocks the current station if the player is in endless mode and has enough money.
+     * @param station The current station component with details about the current station.
+     */
+    public void tryBuy(StationComponent station){
+        // TODO sound effect for success or failure.
+        // TODO set price for new stations.
+<span class="nc bnc" id="L352" title="All 2 branches missed.">        if(difficulty== GameScreen.Difficulty.SCENARIO){</span>
+<span class="nc" id="L353">            hud.displayInfoMessage(&quot;You can only unlock new stations in endless mode&quot;);</span>
+<span class="nc" id="L354">            return;</span>
+        }
+<span class="nc" id="L356">        float priceOfNewStation = 5;</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">        if(tillBalance[0]-priceOfNewStation&lt;0){</span>
+<span class="nc" id="L358">            hud.displayInfoMessage(&quot;Insufficient funds - Each station costs $&quot;+priceOfNewStation);</span>
+        }
+        else{
+<span class="nc" id="L361">            mapRenderer.unlockStation(station.tileMapPosition,station.type.getValue());</span>
+<span class="nc" id="L362">            tillBalance[0]-=priceOfNewStation;</span>
+<span class="nc" id="L363">            station.locked=false;</span>
+<span class="nc" id="L364">            hud.displayInfoMessage(&quot;New station unlocked!&quot;);</span>
+        }
+<span class="nc" id="L366">    }</span>
+
+    @Override
+    public void addedToEngine(Engine engine) {
+<span class="fc" id="L370">        super.addedToEngine(engine);</span>
+<span class="fc" id="L371">        readyTint = getEngine().createComponent(TintComponent.class);</span>
+<span class="fc" id="L372">        readyTint.tint = Color.ORANGE;</span>
+<span class="fc" id="L373">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

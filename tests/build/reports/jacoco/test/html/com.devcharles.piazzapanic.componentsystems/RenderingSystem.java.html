@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RenderingSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.componentsystems</a> &gt; <span class="el_source">RenderingSystem.java</span></div><h1>RenderingSystem.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.componentsystems;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Vector3;
+import com.devcharles.piazzapanic.components.TextureComponent;
+import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.utility.Mappers;
+import com.devcharles.piazzapanic.utility.WalkAnimator;
+import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
+import com.devcharles.piazzapanic.utility.YComparator;
+import com.devcharles.piazzapanic.utility.ZComparator;
+import com.devcharles.piazzapanic.utility.Station.StationType;
+
+public class RenderingSystem extends IteratingSystem {
+
+    private SpriteBatch sb;
+    private OrthographicCamera camera;
+<span class="fc" id="L29">    private float renderingAccumulator = 0f;</span>
+    private WorldTilemapRenderer mapRenderer;
+
+    private ZComparator Zcomparator;
+    private YComparator Ycomparator;
+
+<span class="fc" id="L35">    List&lt;Entity&gt; entities = new ArrayList&lt;Entity&gt;();</span>
+
+    public RenderingSystem(TiledMap map, SpriteBatch batch, OrthographicCamera camera, WorldTilemapRenderer mapRenderer) {
+<span class="fc" id="L38">        super(Family.all(TransformComponent.class, TextureComponent.class).get());</span>
+<span class="fc" id="L39">        this.sb = batch;</span>
+<span class="fc" id="L40">        this.camera = camera;</span>
+<span class="fc" id="L41">        this.mapRenderer = mapRenderer;</span>
+<span class="fc" id="L42">        this.Zcomparator = new ZComparator();</span>
+<span class="fc" id="L43">        this.Ycomparator = new YComparator();</span>
+<span class="fc" id="L44">    }</span>
+
+    @Override
+    public void update(float deltaTime) {
+<span class="nc" id="L48">        super.update(deltaTime);</span>
+
+<span class="nc" id="L50">        renderingAccumulator += deltaTime;</span>
+
+<span class="nc" id="L52">        Collections.shuffle(entities);</span>
+<span class="nc" id="L53">        Collections.sort(entities, Zcomparator);</span>
+<span class="nc" id="L54">        Collections.sort(entities, Ycomparator);</span>
+
+
+<span class="nc" id="L57">        sb.setProjectionMatrix(camera.combined);</span>
+<span class="nc" id="L58">        camera.update();</span>
+<span class="nc" id="L59">        sb.begin();</span>
+
+<span class="nc" id="L61">        mapRenderer.renderBackground();</span>
+
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        for (Entity entity : entities) {</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">            if (entity == null) {</span>
+<span class="nc" id="L65">                continue;</span>
+            }
+<span class="nc" id="L67">            TextureComponent texture = Mappers.texture.get(entity);</span>
+<span class="nc" id="L68">            TransformComponent transform = Mappers.transform.get(entity);</span>
+
+            // Hidden flag skips rendering
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            if (transform.isHidden) {</span>
+<span class="nc" id="L72">                continue;</span>
+            }
+            
+<span class="nc" id="L75">            TextureRegion toRender = texture.region;</span>
+<span class="nc" id="L76">            Float rotation = null;</span>
+<span class="nc" id="L77">            boolean flip = false;</span>
+
+            // If this is a station, update locations of the food.
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (Mappers.station.has(entity)) {</span>
+<span class="nc" id="L81">                setFoodTransform(entity);</span>
+            }
+
+            // If this is the player, update the camera position.
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (Mappers.player.has(entity)) {</span>
+<span class="nc" id="L86">                camera.position.lerp(new Vector3(transform.position.x, transform.position.y, 0), 0.1f);</span>
+<span class="nc" id="L87">                camera.position.x = (float) Math.round(camera.position.x * 1000f) / 1000f;</span>
+<span class="nc" id="L88">                camera.position.y = (float) Math.round(camera.position.y * 1000f) / 1000f;</span>
+            }
+            // If this is an animated TextureRegion
+<span class="nc bnc" id="L91" title="All 2 branches missed.">            if (Mappers.animation.has(entity)) {</span>
+                // Handle animation logic here
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                if (Mappers.walkingAnimation.has(entity)) {</span>
+                    // Animation for walking have the correct orientation already.
+<span class="nc" id="L95">                    rotation = 0f;</span>
+<span class="nc" id="L96">                    WalkAnimator walkAnimator = Mappers.walkingAnimation.get(entity).animator;</span>
+
+<span class="nc" id="L98">                    int holdingCount = 0;</span>
+
+<span class="nc bnc" id="L100" title="All 2 branches missed.">                    if (Mappers.controllable.has(entity)) {</span>
+<span class="nc" id="L101">                        holdingCount = Mappers.controllable.get(entity).currentFood.size();</span>
+<span class="nc bnc" id="L102" title="All 4 branches missed.">                    } else if (Mappers.customer.has(entity) &amp;&amp; Mappers.customer.get(entity).food != null) {</span>
+<span class="nc" id="L103">                        holdingCount = 1;</span>
+                    }
+                    // Set the rendering texture to the current frame of the animation.
+<span class="nc" id="L106">                    toRender = walkAnimator.getFrame(transform.rotation, transform.isMoving, renderingAccumulator,</span>
+                            holdingCount);
+
+                } else {
+                    // Other animations can be handled like:
+                    // Animation&lt;TextureRegion&gt; animation = anMap.get(entity).animation;
+                    continue;
+                }
+            }
+
+            // If by this point there is no texture, skip rendering.
+<span class="nc bnc" id="L117" title="All 2 branches missed.">            if (toRender == null) {</span>
+<span class="nc" id="L118">                continue;</span>
+            }
+
+            // Rendering logic.
+<span class="nc" id="L122">            float width = toRender.getRegionWidth();</span>
+<span class="nc" id="L123">            float height = toRender.getRegionHeight();</span>
+
+<span class="nc" id="L125">            float originX = width / 2f;</span>
+<span class="nc" id="L126">            float originY = height / 2f;</span>
+
+<span class="nc" id="L128">            boolean tint = Mappers.tint.has(entity);</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            if (tint) {</span>
+                // Apply a tint for this draw call.
+<span class="nc" id="L132">                sb.setColor(Mappers.tint.get(entity).tint);</span>
+            }
+
+<span class="nc" id="L135">            sb.draw(</span>
+                    toRender,
+                    transform.position.x - originX,
+                    transform.position.y - originY,
+                    originX, originY,
+                    width, height,
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                    transform.scale.x * texture.scale.x * (flip ? -1 : 1),</span>
+                    transform.scale.y * texture.scale.y,
+<span class="nc bnc" id="L143" title="All 2 branches missed.">                    rotation == null ? transform.rotation : rotation);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">            if (tint) {</span>
+<span class="nc" id="L145">                sb.setColor(Color.WHITE);</span>
+            }
+<span class="nc" id="L147">        }</span>
+<span class="nc" id="L148">        mapRenderer.renderForeground();</span>
+<span class="nc" id="L149">        sb.end();</span>
+<span class="nc" id="L150">        entities.clear();</span>
+<span class="nc" id="L151">    }</span>
+
+    private void setFoodTransform(Entity station) {
+<span class="nc" id="L154">        ArrayList&lt;Entity&gt; foods = Mappers.station.get(station).food;</span>
+
+<span class="nc" id="L156">        Vector3 stationPos = Mappers.transform.get(station).position;</span>
+
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        for (Entity entity : foods) {</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">            if (entity == null) {</span>
+<span class="nc" id="L160">                continue;</span>
+            }
+
+<span class="nc" id="L163">            Vector3 foodPos = stationPos.cpy();</span>
+
+<span class="nc" id="L165">            int order = foods.indexOf(entity);</span>
+
+            // move food to different spots on the station
+<span class="nc bnc" id="L168" title="All 5 branches missed.">            switch (order) {</span>
+                case 0:
+<span class="nc" id="L170">                    foodPos.add(-0.5f, 0.65f, 0);</span>
+<span class="nc" id="L171">                    break;</span>
+                case 1:
+<span class="nc" id="L173">                    foodPos.add(-0.1f, 0.65f, 0);</span>
+<span class="nc" id="L174">                    break;</span>
+                case 2:
+<span class="nc" id="L176">                    foodPos.add(0.3f, 0.65f, 0);</span>
+<span class="nc" id="L177">                    break;</span>
+                case 3:
+<span class="nc" id="L179">                    foodPos.add(0.7f, 0.65f, 0);</span>
+                    break;
+            }
+
+<span class="nc" id="L183">            TransformComponent transformFood = Mappers.transform.get(entity);</span>
+<span class="nc" id="L184">            transformFood.position.set(foodPos.cpy());</span>
+            
+<span class="nc bnc" id="L186" title="All 2 branches missed.">            if (Mappers.station.get(station).type == StationType.cutting_board) {</span>
+<span class="nc" id="L187">                transformFood.scale.set(0.4f, 0.4f);</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            } else if (Mappers.station.get(station).type == StationType.oven) {</span>
+<span class="nc" id="L189">                transformFood.isHidden = true;</span>
+            } else {
+<span class="nc" id="L191">                transformFood.scale.set(0.5f, 0.5f);</span>
+            }
+<span class="nc" id="L193">        }</span>
+<span class="nc" id="L194">    }</span>
+
+    protected void processEntity(Entity entity, float deltaTime) {
+<span class="nc" id="L197">        entities.add(entity);</span>
+<span class="nc" id="L198">    }</span>
+
+    @Override
+    public void addedToEngine(Engine engine) {
+<span class="fc" id="L202">        super.addedToEngine(engine);</span>
+<span class="fc" id="L203">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Box2dLocationTests.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.testing.utility.box2d</a> &gt; <span class="el_source">Box2dLocationTests.java</span></div><h1>Box2dLocationTests.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.testing.utility.box2d;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import com.badlogic.gdx.math.Vector2;
+import com.devcharles.piazzapanic.testing.BasicTest;
+import com.devcharles.piazzapanic.testing.GdxTestRunner;
+import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
+
+@RunWith(GdxTestRunner.class)
+<span class="fc" id="L16">public class Box2dLocationTests implements BasicTest {</span>
+
+    private Box2dLocation b2dloc;
+    private Vector2 vec;
+    private float orient;
+
+    @Override
+    @Before
+    public void initialize() throws Exception {
+<span class="fc" id="L25">        b2dloc = new Box2dLocation(new Vector2(0, 0), 0f);</span>
+<span class="fc" id="L26">    }</span>
+
+    @Override
+    @Test
+    public void constructorTest() throws Exception {
+<span class="fc" id="L31">        b2dloc = new Box2dLocation();</span>
+
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        assertTrue(&quot;Check orientation is default value&quot;, b2dloc.getOrientation() == 0);</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        assertFalse(&quot;Check position isn't null&quot;, b2dloc.getPosition() == null);</span>
+<span class="fc" id="L35">        assertTrue(&quot;Check position is a Vector2 &quot;, b2dloc.getPosition() instanceof Vector2);</span>
+<span class="fc" id="L36">    }</span>
+
+    @Test
+    public void getTests() throws Exception {
+<span class="fc" id="L40">        orient = 4.0f;</span>
+<span class="fc" id="L41">        vec = new Vector2(0, 0);</span>
+<span class="fc" id="L42">        b2dloc = new Box2dLocation(vec, orient);</span>
+
+<span class="fc" id="L44">        assertTrue(&quot;Check Box2dLocation's attribute vector is the parameter given in the constructor&quot;,</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                b2dloc.getPosition() == vec);</span>
+<span class="fc" id="L46">        assertTrue(&quot;Check Box2dLocation's attribute orientation is the parameter given in the constructor&quot;,</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                b2dloc.getOrientation() == orient);</span>
+<span class="fc" id="L48">    }</span>
+
+    @Test
+    public void setTests() throws Exception {
+<span class="fc" id="L52">        b2dloc = new Box2dLocation();</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        assertTrue(&quot;Check orientation is default value&quot;, b2dloc.getOrientation() == 0);</span>
+<span class="fc" id="L54">        assertTrue(&quot;Check position is a Vector2 &quot;, b2dloc.getPosition() instanceof Vector2);</span>
+
+<span class="fc" id="L56">        orient = 4.0f;</span>
+<span class="fc" id="L57">        b2dloc.setOrientation(orient);</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        assertTrue(&quot;Check orientation is updated to new value&quot;, b2dloc.getOrientation() == orient);</span>
+<span class="fc" id="L59">    }</span>
+
+    @Test
+    public void newLocationTest() throws Exception {
+<span class="fc" id="L63">        b2dloc.newLocation();</span>
+<span class="fc" id="L64">    }</span>
+
+    @Test
+    public void vectorAngleConversionTest() throws Exception {
+<span class="fc" id="L68">        b2dloc.vectorToAngle(new Vector2(0, 0));</span>
+<span class="fc" id="L69">        b2dloc.angleToVector(new Vector2(0, 0), 0.1f);</span>
+<span class="fc" id="L70">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

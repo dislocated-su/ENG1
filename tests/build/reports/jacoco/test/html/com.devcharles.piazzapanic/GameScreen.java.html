@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic</a> &gt; <span class="el_source">GameScreen.java</span></div><h1>GameScreen.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic;
+
+import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
+import com.devcharles.piazzapanic.componentsystems.StationSystem;
+import com.devcharles.piazzapanic.componentsystems.CarryItemsSystem;
+import com.devcharles.piazzapanic.componentsystems.CustomerAISystem;
+import com.devcharles.piazzapanic.componentsystems.InventoryUpdateSystem;
+import com.devcharles.piazzapanic.componentsystems.LightingSystem;
+import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
+import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
+import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
+import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.MapLoader;
+import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
+import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
+import com.devcharles.piazzapanic.scene2d.Hud;
+import box2dLight.RayHandler;
+
+public class GameScreen implements Screen {
+
+    private PooledEngine engine;
+
+    private KeyboardInput kbInput;
+
+    private World world;
+
+    private OrthographicCamera camera;
+
+    private PiazzaPanic game;
+
+    private Hud hud;
+
+    private InputMultiplexer multiplexer;
+
+    private RayHandler rayhandler;
+
+    private MapLoader mapLoader;
+    private WorldTilemapRenderer mapRenderer;
+
+<span class="fc" id="L48">    private Integer[] reputationPoints = { 3 };</span>
+<span class="fc" id="L49">    private Float[] tillBalance = {0f};</span>
+
+<span class="fc" id="L51">    private Integer[] customersServed = { 0 };</span>
+
+<span class="fc" id="L53">    public enum Difficulty {</span>
+<span class="fc" id="L54">        SCENARIO(&quot;Scenario&quot;,30000),</span>
+<span class="fc" id="L55">        ENDLESS_EASY(&quot;Endless - Easy&quot;,120000),</span>
+<span class="fc" id="L56">        ENDLESS_NORMAL(&quot;Endless - Normal&quot;,60000),</span>
+<span class="fc" id="L57">        ENDLESS_HARD(&quot;Endless - Hard&quot;,30000);</span>
+
+        private String displayName;
+        private int spawnFrequency;
+<span class="fc" id="L61">        Difficulty(String displayName, int spawnFrequency){</span>
+<span class="fc" id="L62">            this.displayName=displayName;</span>
+<span class="fc" id="L63">            this.spawnFrequency=spawnFrequency;</span>
+<span class="fc" id="L64">        }</span>
+        public String getDisplayName(){
+<span class="nc" id="L66">            return this.displayName;</span>
+        }
+<span class="fc" id="L68">        public int getSpawnFrequency(){ return this.spawnFrequency;}</span>
+    }
+
+<span class="fc" id="L71">    public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty) {</span>
+<span class="fc" id="L72">        this.game = game;</span>
+
+<span class="fc" id="L74">        kbInput = new KeyboardInput();</span>
+
+        // Create a world with no gravity.
+<span class="fc" id="L77">        world = new World(new Vector2(0, 0), true);</span>
+
+<span class="fc" id="L79">        camera = new OrthographicCamera();</span>
+
+<span class="fc" id="L81">        engine = new PooledEngine();</span>
+
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (!this.game.TESTMODE) {</span>
+            // The rayhandler is responsible for rendering the lights.
+<span class="nc" id="L85">            rayhandler = new RayHandler(world);</span>
+<span class="nc" id="L86">            rayhandler.setAmbientLight(0.4f);</span>
+        }
+
+<span class="fc" id="L89">        EntityFactory factory = new EntityFactory(engine, world);</span>
+<span class="fc" id="L90">        EntityFactory.cutFood(null);</span>
+
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (!this.game.TESTMODE) {</span>
+<span class="nc" id="L93">            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed);</span>
+        }
+      
+<span class="fc" id="L96">        mapLoader = new MapLoader(null, null, factory);</span>
+<span class="fc" id="L97">        mapLoader.buildCollisions(world);</span>
+
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (!this.game.TESTMODE) {</span>
+<span class="nc" id="L100">            mapLoader.buildFromObjects(engine, rayhandler);</span>
+        }
+<span class="fc" id="L102">        mapLoader.buildStations(engine, world);</span>
+<span class="fc" id="L103">        mapRenderer = new WorldTilemapRenderer(mapLoader.map,camera,game.batch);</span>
+<span class="fc" id="L104">        engine.addSystem(new PhysicsSystem(world));</span>
+<span class="fc" id="L105">        engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera,mapRenderer));</span>
+<span class="fc" id="L106">        engine.addSystem(new LightingSystem(rayhandler, camera));</span>
+        // This can be commented in during debugging.
+        // engine.addSystem(new DebugRendererSystem(world, camera));
+<span class="fc" id="L109">        engine.addSystem(new PlayerControlSystem(kbInput));</span>
+<span class="fc" id="L110">        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance,customersServed));</span>
+<span class="fc" id="L111">        engine.addSystem(new StationSystem(kbInput, factory,mapRenderer,tillBalance,hud,difficulty));</span>
+<span class="fc" id="L112">        engine.addSystem(new CarryItemsSystem());</span>
+<span class="fc" id="L113">        engine.addSystem(new InventoryUpdateSystem(hud));</span>
+
+<span class="fc" id="L115">        world.setContactListener(new WorldContactListener());</span>
+
+        // set the input processor
+<span class="fc" id="L118">        multiplexer = new InputMultiplexer();</span>
+<span class="fc" id="L119">        multiplexer.addProcessor(kbInput);</span>
+
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (!this.game.TESTMODE) {</span>
+<span class="nc" id="L122">            multiplexer.addProcessor(hud.stage);</span>
+        }
+<span class="fc" id="L124">    }</span>
+
+    @Override
+    public void show() {
+<span class="nc" id="L128">        Gdx.input.setInputProcessor(multiplexer);</span>
+<span class="nc" id="L129">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L133">        Gdx.gl.glClearColor(0, 0, 0, 1);</span>
+<span class="nc" id="L134">        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);</span>
+<span class="nc" id="L135">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (hud.paused) {</span>
+<span class="nc" id="L138">            engine.update(0);</span>
+        } else {
+<span class="nc" id="L140">            engine.update(delta);</span>
+        }
+
+<span class="nc" id="L143">        game.batch.setProjectionMatrix(hud.stage.getCamera().combined);</span>
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (!kbInput.disableHud) {</span>
+<span class="nc" id="L146">            hud.update(delta);</span>
+        }
+<span class="nc" id="L148">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L152">        camera.setToOrtho(false, game.VIRTUAL_HEIGHT * width / (float) height, game.VIRTUAL_HEIGHT);</span>
+<span class="nc" id="L153">        hud.resize(width, height);</span>
+<span class="nc" id="L154">    }</span>
+
+    @Override
+    public void pause() {
+<span class="nc" id="L158">        kbInput.clearInputs();</span>
+<span class="nc" id="L159">        Gdx.input.setInputProcessor(hud.stage);</span>
+<span class="nc" id="L160">    }</span>
+
+    @Override
+    public void resume() {
+<span class="nc" id="L164">        kbInput.clearInputs();</span>
+<span class="nc" id="L165">        Gdx.input.setInputProcessor(multiplexer);</span>
+<span class="nc" id="L166">    }</span>
+
+    @Override
+    public void hide() {
+<span class="nc" id="L170">    }</span>
+
+    @Override
+    public void dispose() {
+        // TODO Figure out what to dispose
+<span class="nc" id="L175">        world.dispose();</span>
+<span class="nc" id="L176">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
