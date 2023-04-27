@@ -4,18 +4,18 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 
-<span class="nc" id="L7">public class CookingComponent implements Component, Poolable {</span>
-<span class="nc" id="L8">    public GdxTimer timer = new GdxTimer(5000, false, false);</span>
+<span class="fc" id="L7">public class CookingComponent implements Component, Poolable {</span>
+<span class="fc" id="L8">    public GdxTimer timer = new GdxTimer(5000, false, false);</span>
     /**
      * If patty is flipped, onion is chopped, etc.
      */
-<span class="nc" id="L12">    public boolean processed = false;</span>
+<span class="fc" id="L12">    public boolean processed = false;</span>
 
     @Override
     public void reset() {
-<span class="nc" id="L16">        timer.stop();</span>
-<span class="nc" id="L17">        timer.reset();</span>
-<span class="nc" id="L18">        processed = false;</span>
-<span class="nc" id="L19">    }</span>
+<span class="fc" id="L16">        timer.stop();</span>
+<span class="fc" id="L17">        timer.reset();</span>
+<span class="fc" id="L18">        processed = false;</span>
+<span class="fc" id="L19">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

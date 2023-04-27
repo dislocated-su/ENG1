@@ -32,5 +32,17 @@ import box2dLight.RayHandler;
     public void constructorTest() throws Exception {
 <span class="fc" id="L33">        MapLoader mapLoader = new MapLoader(&quot;v2/map.tmx&quot;, 1, new EntityFactory(engine, world));</span>
 <span class="fc" id="L34">    }</span>
+
+    @Test
+    public void buildStationsTest() throws Exception {
+<span class="fc" id="L38">        MapLoader mapLoader = new MapLoader(&quot;v2/map.tmx&quot;, 1, new EntityFactory(engine, world));</span>
+<span class="fc" id="L39">        mapLoader.buildStations(engine, world);</span>
+<span class="fc" id="L40">    }</span>
+
+    @Test
+    public void buildCollisionsTest() throws Exception {
+<span class="fc" id="L44">        MapLoader mapLoader = new MapLoader(&quot;v2/map.tmx&quot;, 1, new EntityFactory(engine, world));</span>
+<span class="fc" id="L45">        mapLoader.buildCollisions(world);</span>
+<span class="fc" id="L46">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

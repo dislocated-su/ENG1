@@ -32,4 +32,16 @@ public class MapLoaderTests implements BasicTest {
     public void constructorTest() throws Exception {
         MapLoader mapLoader = new MapLoader("v2/map.tmx", 1, new EntityFactory(engine, world));
     }
+
+    @Test
+    public void buildStationsTest() throws Exception {
+        MapLoader mapLoader = new MapLoader("v2/map.tmx", 1, new EntityFactory(engine, world));
+        mapLoader.buildStations(engine, world);
+    }
+
+    @Test
+    public void buildCollisionsTest() throws Exception {
+        MapLoader mapLoader = new MapLoader("v2/map.tmx", 1, new EntityFactory(engine, world));
+        mapLoader.buildCollisions(world);
+    }
 }
