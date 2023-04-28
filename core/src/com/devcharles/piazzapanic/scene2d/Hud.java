@@ -37,7 +37,7 @@ import java.awt.*;
 public class Hud extends ApplicationAdapter {
     public Stage stage;
     private Viewport viewport;
-    private Integer customerTimer = 000;
+    private Integer[] customerTimer;
     private float timeCounter = 0;
     private Integer[] reputation;
     private Float[] tillBalance;
@@ -83,12 +83,13 @@ public class Hud extends ApplicationAdapter {
      * @param game {@link PiazzaPanic} instance for switching screens.
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, Difficulty difficulty, Float[] tillBalance) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, Difficulty difficulty, Float[] tillBalance, Integer[] customerTimer) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;
         this.difficulty=difficulty;
         this.tillBalance=tillBalance;
+        this.customerTimer = customerTimer;
 
         // Setup the viewport
         viewport = new ScreenViewport(new OrthographicCamera(1280, 720));
@@ -137,7 +138,7 @@ public class Hud extends ApplicationAdapter {
 
     private void createTables() {
 
-        timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);
+        timerLabel = new Label(String.format("%03d", customerTimer[0]), hudLabelStyle);
         reputationLabel = new Label(String.format("%01d", reputation[0]), hudLabelStyle);
         difficultyLabel = new Label(difficulty.getDisplayName(),hudLabelStyle);
         timeNameLabel = new Label("Time", hudLabelStyle);
@@ -299,8 +300,8 @@ public class Hud extends ApplicationAdapter {
         timeCounter += won ? 0 : deltaTime;
         // Staggered once per second using timeCounter makes it way faster
         if (timeCounter >= 1) {
-            customerTimer++;
-            timerLabel.setText(String.format("%03d", customerTimer));
+            customerTimer[0]++;
+            timerLabel.setText(String.format("%03d", customerTimer[0]));
             reputationLabel.setText(reputation[0]);
             tillBalanceLabel.setText(Float.toString(tillBalance[0]));
             tillBalanceLabel.setStyle(tillBalance[0]>0 ? hudGreenLabelStyle : hudRedLabelStyle);

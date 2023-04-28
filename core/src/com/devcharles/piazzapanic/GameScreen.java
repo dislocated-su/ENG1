@@ -1,5 +1,9 @@
 package com.devcharles.piazzapanic;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -49,6 +53,7 @@ public class GameScreen implements Screen {
 
     private Integer[] reputationPoints = { 3 };
     private Float[] tillBalance = {0f};
+    private Integer[] timer = {0};
 
     public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty) {
         this.game = game;
@@ -69,7 +74,7 @@ public class GameScreen implements Screen {
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
-        hud = new Hud(game.batch, this, game, reputationPoints,difficulty,tillBalance);
+        hud = new Hud(game.batch, this, game, reputationPoints,difficulty,tillBalance,timer);
 
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
@@ -94,9 +99,14 @@ public class GameScreen implements Screen {
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.stage);
 
-        SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty);
-        saveLoad.save();
-        //saveLoad.load();
+        // Attempt to load save data if it exists
+        try {
+            SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
+            String saveData = new String(Files.readAllBytes(Paths.get("./save.csv")));
+
+            saveLoad.load(saveData);
+            System.out.println("Save data loaded"); 
+        } catch (IOException e) { System.out.println("No save data to load"); }
     }
 
     @Override
