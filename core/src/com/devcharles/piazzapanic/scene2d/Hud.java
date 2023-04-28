@@ -84,7 +84,7 @@ public class Hud extends ApplicationAdapter {
     Boolean DoubleActive = false;
     Boolean FreezeActive = false;
 
-
+    public EntityFactory factory;
     private GameScreen powerUps;
     // an image used as the background of recipe book and tutorial
     private Image photo;
@@ -107,7 +107,7 @@ public class Hud extends ApplicationAdapter {
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
     public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty, Float[] tillBalance, Integer[] customersServed,
-        GameScreen Gamescreen) {
+        GameScreen Gamescreen, EntityFactory factory) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;
@@ -115,6 +115,7 @@ public class Hud extends ApplicationAdapter {
         this.tillBalance=tillBalance;
         this.customersServed=customersServed;
         this.powerUps = Gamescreen;
+        this.factory = factory;
 
         // Setup the viewport
         viewport = new ScreenViewport(new OrthographicCamera(1280, 720));
@@ -254,26 +255,39 @@ public class Hud extends ApplicationAdapter {
             timeCost.setFontScale(0.5f);
             timeFreeze.setSize(64, 64);
             TimeFreezeTimer.setFontScale(0.5f);
+
+            Texture addChef = new Texture(Gdx.files.internal("chef.png"));
+            Texture addChefClicked = new Texture(Gdx.files.internal("chef_clicked.png"));
+            ImageButton chefButton = new ImageButton(new TextureRegionDrawable(addChef), new TextureRegionDrawable(addChefClicked));
+            Label chefCost = new Label("Cost 300", hudGreenLabelStyle);
+            chefCost.setFontScale(0.5f);
+            chefButton.setSize(64, 64);
+
+
     
             
             speedButton.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){
-                    powerUps.SpeedActive();
-                    System.out.print("SpeedBoost boost is true");
-                    SpeedActive = true;
-                    SpeedCounter = 30;
-    
-           
+                    if (tillBalance[0] - 15 >0){
+                        powerUps.SpeedActive();
+                        System.out.print("SpeedBoost boost is true");
+                        SpeedActive = true;
+                        SpeedCounter = 30;
+                    }
+                    displayInfoMessage("Insufficient Till Balance!!");
                 }
             });
     
             instaCook.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){
-                    // gameSignal.dispatch(PowerUpType.InstaCook);
-                    powerUps.InstaActive();
-                    System.out.print("InstaCook is Active");
-                    InstaActive = true;
-                    InstaCounter = 30;
+                    if(tillBalance[0] - 20 > 0){
+                        powerUps.InstaActive();
+                        System.out.print("InstaCook is Active");
+                        InstaActive = true;
+                        InstaCounter = 30;
+                    }
+                    displayInfoMessage("Insufficient Till Balance!!");
+                    
                     
                 }
     
@@ -281,28 +295,46 @@ public class Hud extends ApplicationAdapter {
     
             binCustomer.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){
-                    powerUps.BinActive();
-                    System.out.print("BinACustomer is active");
-                    InstaCounter = 30;
+                    if(tillBalance[0] - 50 > 0){
+                        powerUps.BinActive();
+                        System.out.print("BinACustomer is active");
+                        InstaCounter = 30;
+                    }
+                    displayInfoMessage("Insufficient Till Balance!!");
                     
                 }
             });
     
             doubleRep.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y ){ 
-                    powerUps.DoubleActive();
-                    System.out.println("DoubleRep active");
-                    DoubleActive = true;
-                    DoubleCounter = 30;
+                    if(tillBalance[0] - 30 > 0){
+                        powerUps.DoubleActive();
+                        System.out.println("DoubleRep active");
+                        DoubleActive = true;
+                        DoubleCounter = 30;
+                    }
+                    displayInfoMessage("Insufficient Till Balance!!");
                 }
             });
     
             timeFreeze.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){ 
-                    powerUps.TimeActive();
-                    System.out.print("TimeFreeze active");
-                    FreezeActive = true;
-                    FreezeCounter = 30;
+                    if(tillBalance[0] - 100 > 0){
+                        powerUps.TimeActive();
+                        System.out.print("TimeFreeze active");
+                        FreezeActive = true;
+                        FreezeCounter = 30;
+                    }
+                    displayInfoMessage("Insufficient Till Balance!!");
+                }
+            });
+
+            chefButton.addListener(new ClickListener(){
+                public void clicked(InputEvent event, float x, float y){
+                    if(tillBalance[0] - 300 > 0){
+                        factory.createCook((int)60.00, (int)28.00);
+                    }
+                    displayInfoMessage("Insufficient Till Balance!!");
                 }
             });
 
@@ -331,6 +363,10 @@ public class Hud extends ApplicationAdapter {
             tableLeft.add(TimeFreezeTimer);
             tableLeft.row();
             tableLeft.add(timeCost);
+            tableLeft.add().row(); 
+            tableLeft.add(chefButton);
+            tableLeft.add().row();
+            tableLeft.add(chefCost);
 
 
 

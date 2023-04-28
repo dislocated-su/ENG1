@@ -189,6 +189,9 @@ public class CustomerAISystem extends IteratingSystem {
         }
 
         if(gameScreen.BinACustomer){
+            if(CUSTOMER == 0){
+                gameScreen.BinOff();
+            }
             fulfillOrder(entity, customer, entity, gameScreen.BinACustomer, gameScreen.DoubleRep);
             gameScreen.BinOff();
         }

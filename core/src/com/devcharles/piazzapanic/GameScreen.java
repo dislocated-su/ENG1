@@ -97,7 +97,7 @@ public class GameScreen implements Screen {
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
-        hud = new Hud(game.batch, this, game, reputationPoints,difficulty,tillBalance,customersServed,this);
+        hud = new Hud(game.batch, this, game, reputationPoints,difficulty,tillBalance,customersServed,this, factory);
 
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
