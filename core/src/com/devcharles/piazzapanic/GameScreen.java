@@ -19,6 +19,7 @@ import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.MapLoader;
+import com.devcharles.piazzapanic.utility.MusicSystem;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import box2dLight.RayHandler;
@@ -36,6 +37,8 @@ public class GameScreen implements Screen {
     private PiazzaPanic game;
 
     private Hud hud;
+
+    private MusicSystem music = new MusicSystem();
 
     private InputMultiplexer multiplexer;
 
@@ -83,6 +86,8 @@ public class GameScreen implements Screen {
         engine.addSystem(new InventoryUpdateSystem(hud));
 
         world.setContactListener(new WorldContactListener());
+        
+        music.play();
 
         // set the input processor
         multiplexer = new InputMultiplexer();
