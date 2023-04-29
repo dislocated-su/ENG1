@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
     private Float[] tillBalance = {0f};
     private Integer[] timer = {0};
 
-    public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty) {
+    public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty, boolean loadSave) {
         this.game = game;
 
         kbInput = new KeyboardInput();
@@ -100,13 +100,15 @@ public class GameScreen implements Screen {
         multiplexer.addProcessor(hud.stage);
 
         // Attempt to load save data if it exists
-        try {
-            SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
-            String saveData = new String(Files.readAllBytes(Paths.get("./save.csv")));
+        if (loadSave) {
+            try {
+                SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
+                String saveData = new String(Files.readAllBytes(Paths.get("./save.csv")));
 
-            saveLoad.load(saveData);
-            System.out.println("Save data loaded"); 
-        } catch (IOException e) { System.out.println("No save data to load"); }
+                saveLoad.load(saveData);
+                System.out.println("Save data loaded"); 
+            } catch (IOException e) { System.out.println("No save data to load"); }
+        }
     }
 
     @Override

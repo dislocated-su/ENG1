@@ -91,7 +91,7 @@ public class EndlessMenuScreen extends ApplicationAdapter implements Screen {
                         difficulty= Difficulty.ENDLESS_HARD;
                         break;
                 }
-                game.setScreen(new GameScreen(game,999,difficulty));
+                game.setScreen(new GameScreen(game,999,difficulty,false));
             }
         });
 

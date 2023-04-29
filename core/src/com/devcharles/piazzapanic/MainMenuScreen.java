@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.devcharles.piazzapanic.scene2d.Slideshow;
+import com.devcharles.piazzapanic.utility.Difficulty;
 
 /**
  * Main menu of the game, transitions the player to the Tutorial
@@ -68,11 +69,11 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         root.add(subtitle).expandX().padBottom(50);
         root.row();
         TextButton startScenarioButton = new TextButton("Scenario", skin);
-        TextButton loadGameButton = new TextButton("Resume game", skin);
+        TextButton loadGameButton = new TextButton("Load game", skin);
         TextButton startEndlessButton = new TextButton("Endless", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
 
-        loadGameButton.setDisabled(true);
+        //loadGameButton.setDisabled(true);
         root.add(startScenarioButton);
         root.row();
         root.add(startEndlessButton);
@@ -95,9 +96,17 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
                 dispose();
             }
         });
+
         tutorialButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new Slideshow(game,Slideshow.Type.tutorial,new MainMenuScreen(game)));
+                dispose();
+            }
+        });
+
+        loadGameButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameScreen(game, 999, Difficulty.ENDLESS_EASY, true));
                 dispose();
             }
         });

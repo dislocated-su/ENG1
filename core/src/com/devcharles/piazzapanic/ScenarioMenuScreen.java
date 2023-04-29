@@ -82,7 +82,7 @@ public class ScenarioMenuScreen extends ApplicationAdapter implements Screen {
 
                 try {
                     if(Integer.parseInt(numOfCustomers.getText())>0) {
-                        game.setScreen(new GameScreen(game, Integer.parseInt(numOfCustomers.getText()),Difficulty.SCENARIO));
+                        game.setScreen(new GameScreen(game, Integer.parseInt(numOfCustomers.getText()),Difficulty.SCENARIO, false));
                         dispose();
                     }
                     else{
