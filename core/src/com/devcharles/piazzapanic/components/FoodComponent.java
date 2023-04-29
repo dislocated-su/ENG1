@@ -66,4 +66,61 @@ public class FoodComponent implements Component {
             return _map.get(value);
         }
     }
+
+    static public FoodType getFood(String name) {
+        switch (name) {
+            case "UnformedPatty":
+                return FoodType.unformedPatty;
+            case "FormedPatty":
+                return FoodType.formedPatty;
+            case "GrilledPatty":
+                return FoodType.grilledPatty;
+            case "Buns":
+                return FoodType.buns;
+            case "ToastedBuns":
+                return FoodType.toastedBuns;
+            case "Burger":
+                return FoodType.burger;
+            case "Lettuce":
+                return FoodType.lettuce;
+            case "SlicedLettuce":
+                return FoodType.slicedLettuce;
+            case "Tomato":
+                return FoodType.tomato;
+            case "SlicedTomato":
+                return FoodType.slicedTomato;
+            case "Onion":
+                return FoodType.onion;
+            case "SlicedOnion":
+                return FoodType.slicedOnion;
+            case "Salad":
+                return FoodType.salad;
+            case "Potato":
+                return FoodType.potato;
+            case "ButterlessJacketPotato":
+                return FoodType.butterlessJacketPotato;
+            case "JacketPotato":
+                return FoodType.jacketPotato;
+            case "Butter":
+                return FoodType.butter;
+            case "Dough":
+                return FoodType.dough;
+            case "RolledDough":
+                return FoodType.rolledDough;
+            case "TomatoDough":
+                return FoodType.tomatoDough;
+            case "TomatoCheeseDough":
+                return FoodType.tomatoCheeseDough;
+            case "Pizza":
+                return FoodType.pizza;
+            case "TomatoPaste":
+                return FoodType.tomatoPaste;
+            case "Cheese":
+                return FoodType.cheese;
+            case "GratedCheese":
+                return FoodType.gratedCheese;
+        }
+
+        return FoodType.dough;
+    }
 }

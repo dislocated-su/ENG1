@@ -1,8 +1,6 @@
 Player,10000,1000,0
-Player1,X,Y
-Player2,X,Y
-Inventory1,Food,Food,Food
-Inventory2,Food,Food,Food
+Inventory,Burger,Burger,Salad
+Inventory,Pizza,Pizza,JacketPotato
 Orders,Dish,Time,Dish,Time,Dish,Time
 Time,284
 Reputation,83

@@ -1,6 +1,5 @@
 package com.devcharles.piazzapanic.utility;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,20 +13,18 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
-import com.devcharles.piazzapanic.components.B2dBodyComponent;
 import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
-import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.components.StationComponent;
-import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
-import com.devcharles.piazzapanic.utility.Mappers;
+import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.utility.EntityFactory;
 
 public class SaveLoad {
     private PooledEngine engine;
     private World world;
+    private EntityFactory factory;
+
     private Float[] balance;
     private Integer[] reputation;
     private Difficulty difficulty;
@@ -36,6 +33,7 @@ public class SaveLoad {
     public SaveLoad(PooledEngine engine, World world, Float[] tillBalance, Integer[] reputation, Difficulty difficulty, Integer[] timer) {
         this.engine = engine;
         this.world = world;
+        this.factory = new EntityFactory(engine, world);
 
         this.balance = tillBalance;
         this.reputation = reputation;
@@ -71,6 +69,9 @@ public class SaveLoad {
     public void load(String saveData) {
         // TODO
         HashMap<String, List<Entity>> data = select();
+
+        int player_counter = 0;
+        int inventory_counter = 0;
         
         Scanner scanner = new Scanner(saveData);
         while (scanner.hasNextLine()) {
@@ -99,19 +100,28 @@ public class SaveLoad {
                 }
                 break;
             case "Player":
-                Entity player = data.get("players").get(1);
+                Entity player = data.get("players").get(player_counter);
                 Vector3 position = Mappers.transform.get(player).position;
                 Body bodyC = Mappers.b2body.get(player).body;
-                System.out.println(position);
+                //System.out.println(position);
                 position.x = Float.parseFloat(vars[1]);
                 position.y = Float.parseFloat(vars[2]);
                 position.z = Float.parseFloat(vars[3]);
-                System.out.println(position);
+                //System.out.println(position);
+
+                player_counter = (player_counter + 1) % 2;
                 break;
             case "Inventory":
-                String food = vars[1];
-                Entity guy = data.get("players").get(0);
+                Entity guy = data.get("players").get(inventory_counter);
                 FoodStack foodStack = Mappers.controllable.get(guy).currentFood;
+
+                for (int i = 1; i < vars.length; i++) {
+                    String food_name = vars[i];
+                    Entity food = this.factory.createFood(FoodComponent.getFood(food_name));
+                    foodStack.pushItem(food, guy);
+                }
+
+                inventory_counter = (inventory_counter + 1) % 2;
                 break;
             case "Orders":
                 for (Entity customer : data.get("customers")) {
