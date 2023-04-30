@@ -174,8 +174,8 @@ public class StationSystem extends IteratingSystem {
 
         cooking.timer.start();
 
+        // Flag the food as processed if InstaCook is active
         if(InstaCook.InstaCook){
-            // controllable.currentPowerup.remove(PowerUpType.InstaCook);
             cooking.processed = true;
 
         }
@@ -207,9 +207,11 @@ public class StationSystem extends IteratingSystem {
 
             // Check if it's ready without ticking the timer
             boolean ready = cooking.timer.tick(0);
-
+            
+            // Make the food ready if the InstaCook powerup is active
             if(InstaCook.InstaCook){
                 ready = true;
+                return;
             }
 
             if(cooking.processed){
@@ -312,23 +314,6 @@ public class StationSystem extends IteratingSystem {
      */
     private void stationTick(StationComponent station, float deltaTime) {
         
-        // if(cook.currentPowerup.contains(PowerUpType.InstaCook)){
-        //     cook.currentPowerup.remove(PowerUpType.InstaCook);
-        //     for(Entity foodEntity : station.food){
-        //         if (foodEntity == null || !Mappers.cooking.has(foodEntity)) {
-        //             continue;
-        //         }
-                
-        //         FoodComponent food = Mappers.food.get(foodEntity);
-
-        //         food.type = Station.recipeMap.get(station.type).get(food.type);
-        //         Mappers.texture.get(foodEntity).region = EntityFactory.getFoodTexture(food.type);
-        //         foodEntity.remove(CookingComponent.class);
-        //         Gdx.app.log("Food ready", food.type.name());
-
-        //     }
-        // }
-        
         if (station.type == StationType.cutting_board && station.interactingCook == null) {
             return;
         }
@@ -342,6 +327,9 @@ public class StationSystem extends IteratingSystem {
             CookingComponent cooking = Mappers.cooking.get(foodEntity);
 
             boolean ready = cooking.timer.tick(deltaTime);
+            if(InstaCook.InstaCook){
+                ready = true;
+            }
 
             if (ready && cooking.processed) {
                 cooking.timer.stop();

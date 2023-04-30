@@ -129,6 +129,7 @@ public class CustomerAISystem extends IteratingSystem {
 
             // If endless mode then decrease customer spawn frequency by one second every time a customer is served.
             // Result is customers will arrive more often over time in endless mode.
+            // If the time freeze powerup has been purchased pause the spawn timer until the powerup time has passed.
             if(firstSpawn==false && difficulty != GameScreen.Difficulty.SCENARIO){
                 if(gameScreen.TimeFreeze){
                     if(timeFrozen <= 0){
@@ -136,7 +137,7 @@ public class CustomerAISystem extends IteratingSystem {
                         timeFrozen = 30000;    
                     }
                     spawnTimer.stop();
-                    timeFrozen = timeFrozen - 17;
+                    timeFrozen = timeFrozen - 25;
                 }
                 spawnTimer = new GdxTimer((difficulty.getSpawnFrequency()-((999-CUSTOMER)*1000)),true,true);
                 Gdx.app.log("Info","Spawn frequency is now " + (difficulty.getSpawnFrequency()-((999-CUSTOMER)*1000)));
@@ -188,6 +189,7 @@ public class CustomerAISystem extends IteratingSystem {
             customer.timer.stop();
         }
 
+        // Remove a customer upon activation of the BinACustomer powerup.
         if(gameScreen.BinACustomer){
             if(CUSTOMER == 0){
                 gameScreen.BinOff();
@@ -196,10 +198,12 @@ public class CustomerAISystem extends IteratingSystem {
             gameScreen.BinOff();
         }
 
+        // Freeze the customer timers for all customers whilst the powerup is active.
         if(gameScreen.TimeFreeze){
             timeFreeze(customer);
         }
 
+        // Decrease the timer for the double money powerup. 
         if(gameScreen.DoubleRep){
             DoubleRepCounter -= 17;
             if(DoubleRepCounter <= 0){
@@ -238,7 +242,11 @@ public class CustomerAISystem extends IteratingSystem {
 
         }
     }
-
+    
+    /**
+     * 
+     * @param customer for freezeing the customers order timer whilst the powerup is active
+     */
     private void timeFreeze(CustomerComponent customer){
         customer.timer.stop();
         if(timeFrozen <= 0){
@@ -313,6 +321,7 @@ public class CustomerAISystem extends IteratingSystem {
                 hud.displayInfoMessage("Customer has tipped $ " + Float.toString(customerTip));
             }
 
+            // if double rep powerup is active double the price of the order
             if(DoubleRep){
                 float doublePrice = customer.order.getPrice() * 2f;
                 tillBalance[0] += doublePrice + customerTip;

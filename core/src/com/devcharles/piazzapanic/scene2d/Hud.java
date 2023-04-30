@@ -202,15 +202,14 @@ public class Hud extends ApplicationAdapter {
         tableTop.add(tillBalanceLabel).expandX();
         tableTop.add(difficultyLabel).expandX();
         
+        // add the powerUps on the hud
         if(difficulty != Difficulty.SCENARIO){
-            // the powerUps on the hud
             tableLeft = new Table();
             tableLeft.left();
             tableLeft.setFillParent(true);
     
             powerInv = new Label("PowerUps", hudLabelStyle);
             powerInv.setFontScale(fontScale);
-            // final Signal gameSignal = signal;
             
     
             Texture speedTexture =  new Texture(Gdx.files.internal("speed_boost32.png"));
@@ -265,76 +264,92 @@ public class Hud extends ApplicationAdapter {
 
 
     
-            
+            // add functionality to the powerup buttons by reducing the till balance and setting the timers            
             speedButton.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){
-                    if (tillBalance[0] - 15 >0){
+                    if (tillBalance[0] - 15 < 0 || tillBalance[0] <=14){
+                        displayInfoMessage("Insufficient Till Balance!!");
+                    }
+                    if(tillBalance[0] - 15 > 0){
                         powerUps.SpeedActive();
-                        System.out.print("SpeedBoost boost is true");
+                        tillBalance[0] -= 15;
                         SpeedActive = true;
                         SpeedCounter = 30;
                     }
-                    displayInfoMessage("Insufficient Till Balance!!");
+
+                    
+                    
                 }
             });
     
             instaCook.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){
+                    if(tillBalance[0] - 20 < 0 || tillBalance[0] <=19){
+                        displayInfoMessage("Insufficient Till Balance!!");
+                    }
                     if(tillBalance[0] - 20 > 0){
                         powerUps.InstaActive();
+                        tillBalance[0] -= 20;
                         System.out.print("InstaCook is Active");
                         InstaActive = true;
                         InstaCounter = 30;
-                    }
-                    displayInfoMessage("Insufficient Till Balance!!");
-                    
-                    
+                    }                    
                 }
     
             });
     
             binCustomer.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){
-                    if(tillBalance[0] - 50 > 0){
-                        powerUps.BinActive();
-                        System.out.print("BinACustomer is active");
-                        InstaCounter = 30;
+                    if(tillBalance[0] - 50 < 0|| tillBalance[0] <=49){
+                        displayInfoMessage("Insufficient Till Balance!!");
                     }
-                    displayInfoMessage("Insufficient Till Balance!!");
-                    
+                    if(tillBalance[0] - 50 > 0){
+                    powerUps.BinActive();
+                    tillBalance[0] -= 50;
+                    System.out.print("BinACustomer is active");
+                    }
                 }
             });
     
             doubleRep.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y ){ 
-                    if(tillBalance[0] - 30 > 0){
-                        powerUps.DoubleActive();
-                        System.out.println("DoubleRep active");
-                        DoubleActive = true;
-                        DoubleCounter = 30;
+                    if(tillBalance[0] - 30 < 0 || tillBalance[0] <= 29){
+                        displayInfoMessage("Insufficient Till Balance!!");
                     }
-                    displayInfoMessage("Insufficient Till Balance!!");
+                    if(tillBalance[0] - 30 > 0){
+                    powerUps.DoubleActive();
+                    tillBalance[0] -= 30;
+                    System.out.println("DoubleRep active");
+                    DoubleActive = true;
+                    DoubleCounter = 30;
+                    }
                 }
             });
     
             timeFreeze.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){ 
+                    if(tillBalance[0] - 100 < 0 || tillBalance[0] <=99){
+                        displayInfoMessage("Insufficient Till Balance!!");
+                    }
                     if(tillBalance[0] - 100 > 0){
                         powerUps.TimeActive();
+                        tillBalance[0] -= 100;
                         System.out.print("TimeFreeze active");
                         FreezeActive = true;
                         FreezeCounter = 30;
                     }
-                    displayInfoMessage("Insufficient Till Balance!!");
                 }
             });
 
             chefButton.addListener(new ClickListener(){
                 public void clicked(InputEvent event, float x, float y){
+                    if(tillBalance[0] - 300 < 0 || tillBalance[0] <= 259){
+                        displayInfoMessage("Insufficient Till Balance!!");
+                    }
                     if(tillBalance[0] - 300 > 0){
                         factory.createCook((int)60.00, (int)28.00);
+                        tillBalance[0] -= 300;
                     }
-                    displayInfoMessage("Insufficient Till Balance!!");
                 }
             });
 
@@ -528,6 +543,7 @@ public class Hud extends ApplicationAdapter {
 
             timeCounter -= 1;
 
+            // adjust the timers for the powerups
             if(SpeedCounter == 0){
                 SpeedActive = false;
                 speedBoostTimer.setText("");
