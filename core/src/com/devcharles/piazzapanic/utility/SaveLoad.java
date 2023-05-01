@@ -12,8 +12,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.devcharles.piazzapanic.components.ControllableComponent;
@@ -22,11 +20,9 @@ import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
-import com.devcharles.piazzapanic.utility.EntityFactory;
 
 public class SaveLoad {
     private PooledEngine engine;
-    private World world;
     private EntityFactory factory;
 
     private Float[] balance;
@@ -36,7 +32,6 @@ public class SaveLoad {
 
     public SaveLoad(PooledEngine engine, World world, Float[] tillBalance, Integer[] reputation, Difficulty difficulty, Integer[] timer) {
         this.engine = engine;
-        this.world = world;
         this.factory = new EntityFactory(engine, world);
 
         this.balance = tillBalance;
@@ -47,7 +42,6 @@ public class SaveLoad {
 
     public void save() {
         HashMap<String, List<Entity>> data = select();
-        System.out.println(Arrays.asList(data));
 
         try {
             PrintWriter writer = new PrintWriter("./save.csv", "utf-8");

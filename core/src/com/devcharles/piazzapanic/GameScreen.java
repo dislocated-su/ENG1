@@ -99,12 +99,13 @@ public class GameScreen implements Screen {
         multiplexer.addProcessor(kbInput);
         multiplexer.addProcessor(hud.stage);
 
+        SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
+        hud.addSaveLoad(saveLoad);
+
         // Attempt to load save data if it exists
         if (loadSave) {
             try {
-                SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
-                String saveData = new String(Files.readAllBytes(Paths.get("/home/mateusz/Code/ENG-ASSESSMENT-2/save.csv")));
-
+                String saveData = new String(Files.readAllBytes(Paths.get("./save.csv")));
                 saveLoad.load(saveData);
                 System.out.println("Save data loaded"); 
             } catch (IOException e) { System.out.println("No save data to load"); }

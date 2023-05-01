@@ -27,6 +27,7 @@ import com.devcharles.piazzapanic.PiazzaPanic;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.GdxTimer;
+import com.devcharles.piazzapanic.utility.SaveLoad;
 import com.devcharles.piazzapanic.utility.Difficulty;
 
 import java.awt.*;
@@ -42,6 +43,7 @@ public class Hud extends ApplicationAdapter {
     private Integer[] reputation;
     private Float[] tillBalance;
     private Skin skin;
+    private SaveLoad saveLoad = null;
 
     private final float fontScale = 0.6f;
 
@@ -136,6 +138,11 @@ public class Hud extends ApplicationAdapter {
         createTables();
     }
 
+    public void addSaveLoad(SaveLoad saveLoad) {
+        this.saveLoad = saveLoad;
+        System.out.println("this is an important function which makes saveLoad not null!");
+    }
+
     private void createTables() {
 
         timerLabel = new Label(String.format("%03d", customerTimer[0]), hudLabelStyle);
@@ -210,12 +217,18 @@ public class Hud extends ApplicationAdapter {
         tablePause.add(tutorialButton).width(240).height(70).padBottom(30);
         tablePause.row();
 
+        //if (difficulty != Difficulty.SCENARIO && saveLoad != null) {
         if (difficulty != Difficulty.SCENARIO) {
             TextButton saveButton = new TextButton("Save Game", skin);
 
             saveButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
-                    // save()
+                    if (saveLoad != null) {
+                        saveLoad.save();
+                        System.out.println("Saved game data");
+
+                        pauseToggled = true;
+                    }
                 }
             });
 
