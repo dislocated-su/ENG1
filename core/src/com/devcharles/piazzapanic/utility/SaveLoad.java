@@ -10,6 +10,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -71,6 +72,7 @@ public class SaveLoad {
 
         int player_counter = 0;
         int inventory_counter = 0;
+        int customer_count = 0;
         
         Scanner scanner = new Scanner(saveData);
         while (scanner.hasNextLine()) {
@@ -121,12 +123,16 @@ public class SaveLoad {
 
                 inventory_counter = (inventory_counter + 1) % 2;
                 break;
-            case "Orders":
-                for (Entity customer : data.get("customers")) {
-                    CustomerComponent customerComponent = Mappers.customer.get(customer);
-                    customerComponent.order = FoodType.buns;
-                    //int time = customerComponent.timer.getElapsed();
-                }
+            case "Order":
+                FoodType dish = FoodComponent.getFood(vars[1]);
+                int time = Integer.parseInt(vars[2]);
+
+                //Entity customer = factory.createCustomer(new Vector2(100 - customer_count*10, 25));
+                //CustomerComponent component = Mappers.customer.get(customer);
+                //component.order = dish;
+                //component.setTimer(time);
+
+                customer_count++;
                 break;
             case "CuttingBoard":
                 break;

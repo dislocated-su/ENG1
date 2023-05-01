@@ -2,7 +2,9 @@ Player,60,10,0
 Player,60,15,0
 Inventory,Burger,Burger,Salad
 Inventory,Pizza,Pizza,JacketPotato
-Orders,Dish,Time,Dish,Time,Dish,Time
+Order,Pizza,100
+Order,Burger,90
+Order,Dough,80
 Time,284
 Reputation,83
 Balance,100.0

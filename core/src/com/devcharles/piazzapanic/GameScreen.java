@@ -103,7 +103,7 @@ public class GameScreen implements Screen {
         if (loadSave) {
             try {
                 SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
-                String saveData = new String(Files.readAllBytes(Paths.get("./save.csv")));
+                String saveData = new String(Files.readAllBytes(Paths.get("/home/mateusz/Code/ENG-ASSESSMENT-2/save.csv")));
 
                 saveLoad.load(saveData);
                 System.out.println("Save data loaded"); 
