@@ -12,6 +12,13 @@ public class PiazzaPanic extends Game {
 
 	public SpriteBatch batch;
 
+	// TESTMODE allows the game to run without graphics
+	protected boolean TESTMODE = false;
+
+	public void setTESTMODE(boolean b) {
+		this.TESTMODE = true;
+	}
+
 	public void create() {
 		batch = new SpriteBatch();
 		this.setScreen(new MainMenuScreen(this));

@@ -41,6 +41,7 @@ public class CustomerAISystem extends IteratingSystem {
     private final Difficulty difficulty;
     private final Integer[] reputationPoints;
     private final Float[] tillBalance;
+    private final Integer[] customersServed;
     private int CUSTOMER;
     private boolean firstSpawn = true;
 
@@ -73,7 +74,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
      */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer[] reputationPoints, int customer, Difficulty difficulty, Float[] tillBalance) {
+            Integer[] reputationPoints, int customer, Difficulty difficulty, Float[] tillBalance, Integer[] customersServed) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.CUSTOMER=customer;
@@ -83,6 +84,7 @@ public class CustomerAISystem extends IteratingSystem {
         this.reputationPoints = reputationPoints;
         this.difficulty=difficulty;
         this.tillBalance=tillBalance;
+        this.customersServed=customersServed;
 
         // Use a reference to the world to destroy box2d bodies when despawning
         // customers
@@ -138,8 +140,8 @@ public class CustomerAISystem extends IteratingSystem {
             i++;
         }
 
-        if (!hud.won && customers.size() == 0 && CUSTOMER==0) {
-            hud.triggerWin = true;
+        if ((!hud.gameOver && customers.size() == 0 && CUSTOMER==0) || reputationPoints[0]==0) {
+            hud.triggerGameOver = true;
         }
 
         super.update(deltaTime);
@@ -164,10 +166,12 @@ public class CustomerAISystem extends IteratingSystem {
 
         aiAgent.steeringBody.update(deltaTime);
 
-        // lower reputation points if they have waited longer than time alloted (1 min)
+        // Lower reputation points only in endless if they have waited longer than time alloted.
         if (customer.timer.tick(deltaTime)) {
             if (reputationPoints[0] > 0) {
-                reputationPoints[0]--;
+                if(difficulty != Difficulty.SCENARIO){
+                    reputationPoints[0]--;
+                }
             }
             customer.timer.stop();
         }
@@ -276,6 +280,7 @@ public class CustomerAISystem extends IteratingSystem {
         customers.remove(entity);
         numOfCustomerTotal--;
         CUSTOMER--;
+        customersServed[0]++;
     }
 
     /**

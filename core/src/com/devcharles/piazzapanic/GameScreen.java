@@ -55,6 +55,8 @@ public class GameScreen implements Screen {
     private Float[] tillBalance = {0f};
     private Integer[] timer = {0};
 
+    private Integer[] customersServed = { 0 };
+
     public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty, boolean loadSave) {
         this.game = game;
 
@@ -67,18 +69,25 @@ public class GameScreen implements Screen {
 
         engine = new PooledEngine();
 
-        // The rayhandler is responsible for rendering the lights.
-        rayhandler = new RayHandler(world);
-        rayhandler.setAmbientLight(0.4f);
+        if (!this.game.TESTMODE) {
+            // The rayhandler is responsible for rendering the lights.
+            rayhandler = new RayHandler(world);
+            rayhandler.setAmbientLight(0.4f);
+        }
 
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
-        hud = new Hud(game.batch, this, game, reputationPoints,difficulty,tillBalance,timer);
-
+        if (!this.game.TESTMODE) {
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, timer);
+        }
+      
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
-        mapLoader.buildFromObjects(engine, rayhandler);
+
+        if (!this.game.TESTMODE) {
+            mapLoader.buildFromObjects(engine, rayhandler);
+        }
         mapLoader.buildStations(engine, world);
         mapRenderer = new WorldTilemapRenderer(mapLoader.map,camera,game.batch);
         engine.addSystem(new PhysicsSystem(world));
@@ -87,8 +96,8 @@ public class GameScreen implements Screen {
         // This can be commented in during debugging.
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance,customersServed));
         engine.addSystem(new StationSystem(kbInput, factory,mapRenderer,tillBalance,hud,difficulty));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
 
@@ -97,7 +106,9 @@ public class GameScreen implements Screen {
         // set the input processor
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
-        multiplexer.addProcessor(hud.stage);
+        if (!this.game.TESTMODE) {
+            multiplexer.addProcessor(hud.stage);
+        }
 
         SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
         hud.addSaveLoad(saveLoad);
@@ -109,6 +120,7 @@ public class GameScreen implements Screen {
                 saveLoad.load(saveData);
                 System.out.println("Save data loaded"); 
             } catch (IOException e) { System.out.println("No save data to load"); }
+
         }
     }
 

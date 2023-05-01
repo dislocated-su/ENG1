@@ -30,8 +30,6 @@ import com.devcharles.piazzapanic.utility.GdxTimer;
 import com.devcharles.piazzapanic.utility.SaveLoad;
 import com.devcharles.piazzapanic.utility.Difficulty;
 
-import java.awt.*;
-
 /**
  * HUD user interface rendering for the game, also includes the win screen.
  */
@@ -42,6 +40,7 @@ public class Hud extends ApplicationAdapter {
     private float timeCounter = 0;
     private Integer[] reputation;
     private Float[] tillBalance;
+    private Integer[] customersServed;
     private Skin skin;
     private SaveLoad saveLoad = null;
 
@@ -60,6 +59,9 @@ public class Hud extends ApplicationAdapter {
     Label difficultyNameLabel;
     Label tillBalanceNameLabel;
     Label tillBalanceLabel;
+
+    Label customersServedLabel;
+    Label customersServedNameLabel;
 
     Label difficultyLabel;
     Label pausedNameLabel;
@@ -85,13 +87,14 @@ public class Hud extends ApplicationAdapter {
      * @param game {@link PiazzaPanic} instance for switching screens.
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, Difficulty difficulty, Float[] tillBalance, Integer[] customerTimer) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, Difficulty difficulty, Float[] tillBalance, Integer[] customersServed, Integer[] customerTimer) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;
         this.difficulty=difficulty;
         this.tillBalance=tillBalance;
-        this.customerTimer = customerTimer;
+        this.customerTimer=customerTimer;
+        this.customersServed=customersServed;
 
         // Setup the viewport
         viewport = new ScreenViewport(new OrthographicCamera(1280, 720));
@@ -154,6 +157,7 @@ public class Hud extends ApplicationAdapter {
         tillBalanceNameLabel = new Label("Till Balance",hudLabelStyle);
         tillBalanceLabel = new Label("0", hudRedLabelStyle);
         infoMsgLabel = new Label("",titleLabelStyle);
+
         // Creates a bunch of labels and sets the fontsize
         reputationLabel.setFontScale(fontScale + 0.1f);
         timerLabel.setFontScale(fontScale + 0.1f);
@@ -323,7 +327,7 @@ public class Hud extends ApplicationAdapter {
             infoTimer.stop();
             infoTimer.reset();
         }
-        timeCounter += won ? 0 : deltaTime;
+        timeCounter += gameOver ? 0 : deltaTime;
         // Staggered once per second using timeCounter makes it way faster
         if (timeCounter >= 1) {
             customerTimer[0]++;
@@ -332,9 +336,9 @@ public class Hud extends ApplicationAdapter {
             tillBalanceLabel.setText(Float.toString(tillBalance[0]));
             tillBalanceLabel.setStyle(tillBalance[0]>0 ? hudGreenLabelStyle : hudRedLabelStyle);
 
-            if (triggerWin) {
-                triggerWin = false;
-                win();
+            if (triggerGameOver) {
+                triggerGameOver = false;
+                gameOver();
             }
             if (pauseToggled) {
                 pauseToggled = false;
@@ -383,14 +387,14 @@ public class Hud extends ApplicationAdapter {
         super.resume();
     }
 
-    public boolean won;
-    public boolean triggerWin = false;
+    public boolean gameOver;
+    public boolean triggerGameOver = false;
 
     /**
-     * Win screen
+     * Win screen Refactored into game over screen to account for both winning and losing the game.
      */
-    private void win() {
-        won = true;
+    private void gameOver() {
+        gameOver = true;
         // winscreen table made
         stage.clear();
         Table centerTable = new Table();
@@ -398,25 +402,37 @@ public class Hud extends ApplicationAdapter {
         // labels given different fonts so it looks nicer
         Label congrats = new Label("Congratulations!", titleLabelStyle);
         Label congratsSubtitle = new Label("You won!", hudLabelStyle);
+        customersServedNameLabel = new Label("Customers served",hudLabelStyle);
+        customersServedLabel = new Label(customersServed[0].toString(),hudLabelStyle);
+        customersServedLabel.setFontScale(fontScale + 0.1f);
+        customersServedNameLabel.setFontScale(fontScale + 0.1f);
+
+        if(reputation[0]==0){
+            congrats.setText("Game Over");
+            congratsSubtitle.setText("You lost!");
+        }
+
         //colspan2 important! do some googling if you dont know what it does (scene2d)
-        centerTable.add(congrats).padBottom(40).colspan(2);
+        centerTable.add(congrats).padBottom(40).colspan(3);
         centerTable.row();
-        centerTable.add(congratsSubtitle).padBottom(30).colspan(2);
+        centerTable.add(congratsSubtitle).padBottom(30).colspan(3);
 
         centerTable.row();
 
         centerTable.add(timeNameLabel);
+        centerTable.add(customersServedNameLabel);
         centerTable.add(reputationNameLabel);
 
         centerTable.row();
 
         centerTable.add(timerLabel);
+        centerTable.add(customersServedLabel);
         centerTable.add(reputationLabel);
 
         centerTable.row();
 
         TextButton returnToMenuButton = new TextButton("Main menu", skin);
-        centerTable.add(returnToMenuButton).width(240).height(70).padTop(50).colspan(2);
+        centerTable.add(returnToMenuButton).width(240).height(70).padTop(50).colspan(3);
 
         returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));
 
