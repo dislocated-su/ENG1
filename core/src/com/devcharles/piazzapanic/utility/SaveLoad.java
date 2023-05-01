@@ -1,5 +1,7 @@
 package com.devcharles.piazzapanic.utility;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,6 +21,7 @@ import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.components.StationComponent;
+import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 
 public class SaveLoad {
@@ -46,11 +49,55 @@ public class SaveLoad {
         HashMap<String, List<Entity>> data = select();
         System.out.println(Arrays.asList(data));
 
-        // Save players
-        List<Entity> players = data.get("chefs");
-        for (Entity player : players) {
-            Vector3 position = Mappers.transform.get(player).position;
-        }
+        try {
+            PrintWriter writer = new PrintWriter("./save.csv", "utf-8");
+
+            // Save reputation
+            writer.println(String.join(",", "Reputation", Integer.toString(this.reputation[0])));
+
+            // Save balance
+            writer.println(String.join(",", "Balance", Float.toString(this.balance[0])));
+
+            // Save time
+            writer.println(String.join(",", "Time", Integer.toString(this.timer[0])));
+
+            // Save difficulty
+            switch (this.difficulty) {
+                case ENDLESS_EASY:
+                    writer.println("Difficulty,Easy");
+                    break;
+                case ENDLESS_NORMAL:
+                    writer.println("Difficulty,Normal");
+                    break;
+                case ENDLESS_HARD:
+                    writer.println("Difficulty,Hard");
+                    break;
+                default:
+                    break;
+            }
+
+            // Save players
+            List<Entity> players = data.get("players");
+            for (Entity player : players) {
+                // Saving player position
+                TransformComponent transform = Mappers.transform.get(player);
+                writer.println(String.join(",", "Player", Float.toString(transform.position.x), Float.toString(transform.position.y)));
+                writer.println(String.join(",", "Player", Float.toString(transform.position.x), Float.toString(transform.position.y)));
+
+                // Saving player inventory
+                FoodStack inventory = Mappers.controllable.get(player).currentFood;
+                List<String> stringventory = new ArrayList<>();
+
+                for (Entity food : inventory) {
+                    FoodType type = Mappers.food.get(food).type;
+                    stringventory.add(FoodComponent.toString(type));
+                }
+
+                writer.println(String.join(",", "Inventory", String.join(",", stringventory)));
+            }
+
+            writer.close();
+        } catch (IOException e) { }
     }
 
     public void load(String saveData) {
@@ -90,10 +137,9 @@ public class SaveLoad {
                 Entity player = data.get("players").get(player_counter);
                 Float x = Float.parseFloat(vars[1]);
                 Float y = Float.parseFloat(vars[2]);
-                Float angle = Float.parseFloat(vars[3]);
 
                 Body body = Mappers.b2body.get(player).body;
-                body.setTransform(x, y, angle);;
+                body.setTransform(x, y, 0);;
 
                 player_counter = (player_counter + 1) % 2;
                 break;

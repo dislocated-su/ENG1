@@ -1,5 +1,5 @@
-Player,60,10,0
-Player,60,15,0
+Player,60,10
+Player,60,15
 Inventory,Burger,Burger,Salad
 Inventory,Pizza,Pizza,JacketPotato
 Order,Pizza,100

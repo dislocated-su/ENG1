@@ -123,4 +123,61 @@ public class FoodComponent implements Component {
 
         return FoodType.dough;
     }
+
+    static public String toString(FoodType food) {
+        switch (food) {
+            case unformedPatty:
+                return "UnformedPatty";
+            case formedPatty:
+                return "FormedPatty";
+            case grilledPatty:
+                return "GrilledPatty";
+            case buns:
+                return "Buns";
+            case toastedBuns:
+                return "ToastedBuns";
+            case burger:
+                return "Burger";
+            case lettuce:
+                return "Lettuce";
+            case slicedLettuce:
+                return "SlicedLettuce";
+            case tomato:
+                return "Tomato";
+            case slicedTomato:
+                return "SlicedTomato";
+            case onion:
+                return "Onion";
+            case slicedOnion:
+                return "SlicedOnion";
+            case salad:
+                return "Salad";
+            case potato:
+                return "Potato";
+            case butterlessJacketPotato:
+                return "ButterlessJacketPotato";
+            case jacketPotato:
+                return "JacketPotato";
+            case butter:
+                return "Butter";
+            case dough:
+                return "Dough";
+            case rolledDough:
+                return "RolledDough";
+            case tomatoDough:
+                return "TomatoDough";
+            case tomatoCheeseDough:
+                return "TomatoCheeseDough";
+            case pizza:
+                return "Pizza";
+            case tomatoPaste:
+                return "TomatoPaste";
+            case cheese:
+                return "Cheese";
+            case gratedCheese:
+                return "GratedCheese";
+            default:
+                return "?";
+        }
+    }
 }
