@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Box2dLocation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility.box2d</a> &gt; <span class="el_source">Box2dLocation.java</span></div><h1>Box2dLocation.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Copyright 2014 davebaol https://github.com/davebaol
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+package com.devcharles.piazzapanic.utility.box2d;
+
+import com.badlogic.gdx.ai.utils.Location;
+import com.badlogic.gdx.math.Vector2;
+
+/**
+ * {@link Vector2} wrapper that contains body orientation.
+ */
+public class Box2dLocation implements Location&lt;Vector2&gt; {
+
+	Vector2 position;
+	float orientation;
+
+<span class="fc" id="L30">	public Box2dLocation () {</span>
+<span class="fc" id="L31">		this.position = new Vector2();</span>
+<span class="fc" id="L32">		this.orientation = 0;</span>
+<span class="fc" id="L33">	}</span>
+
+	/**
+	 * Create a new location.
+	 * @param position {@link com.badlogic.gdx.physics.box2d.World} position vector.
+	 * @param orientation rotation in radians
+	 */
+<span class="fc" id="L40">    public Box2dLocation(Vector2 position, float orientation) {</span>
+<span class="fc" id="L41">        this.position = position;</span>
+<span class="fc" id="L42">        this.orientation = orientation;</span>
+<span class="fc" id="L43">    }</span>
+
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.ai.utils.Location#getPosition()
+	 */
+	@Override
+	public Vector2 getPosition () {
+<span class="fc" id="L50">		return position;</span>
+	}
+
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.ai.utils.Location#getOrientation()
+	 */
+	@Override
+	public float getOrientation () {
+<span class="fc" id="L58">		return orientation;</span>
+	}
+
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.ai.utils.Location#setOrientation(float)
+	 */
+	@Override
+	public void setOrientation (float orientation) {
+<span class="fc" id="L66">		this.orientation = orientation;</span>
+<span class="fc" id="L67">	}</span>
+
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.ai.utils.Location#newLocation()
+	 */
+	@Override
+	public Location&lt;Vector2&gt; newLocation () {
+<span class="fc" id="L74">		return new Box2dLocation();</span>
+	}
+
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.ai.utils.Location#vectorToAngle(com.badlogic.gdx.math.Vector)
+	 */
+	@Override
+	public float vectorToAngle (Vector2 vector) {
+<span class="fc" id="L82">        return (float)Math.atan2(-vector.x, vector.y);</span>
+	}
+
+	/* (non-Javadoc)
+	 * @see com.badlogic.gdx.ai.utils.Location#angleToVector(com.badlogic.gdx.math.Vector, float)
+	 */
+	@Override
+	public Vector2 angleToVector (Vector2 outVector, float angle) {
+<span class="fc" id="L90">        outVector.x = -(float)Math.sin(angle);</span>
+<span class="fc" id="L91">		outVector.y = (float)Math.cos(angle);</span>
+<span class="fc" id="L92">		return outVector;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

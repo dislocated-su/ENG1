@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InventoryUpdateSystem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.componentsystems</a> &gt; <span class="el_source">InventoryUpdateSystem.java</span></div><h1>InventoryUpdateSystem.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.componentsystems;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
+import com.devcharles.piazzapanic.components.ControllableComponent;
+import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.scene2d.Hud;
+import com.devcharles.piazzapanic.utility.Mappers;
+/**
+ * Links up the cook's inventory to the hud.
+ */
+public class InventoryUpdateSystem extends IteratingSystem {
+
+    private Hud hud;
+    public InventoryUpdateSystem(Hud hud) {
+<span class="fc" id="L18">        super(Family.all(PlayerComponent.class, ControllableComponent.class).get());</span>
+<span class="fc" id="L19">        this.hud = hud;</span>
+<span class="fc" id="L20">    }</span>
+    @Override
+    protected void processEntity(Entity entity, float deltaTime) {
+<span class="nc" id="L23">        ControllableComponent cook = Mappers.controllable.get(entity);</span>
+
+<span class="nc" id="L25">        FoodType[] foods = new FoodType[cook.currentFood.size()];</span>
+
+<span class="nc" id="L27">        int i = 0;</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        for (Entity food : cook.currentFood){</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">            if (Mappers.food.get(food).type != null) {</span>
+<span class="nc" id="L30">                foods[i] = Mappers.food.get(food).type;</span>
+<span class="nc" id="L31">                i++;</span>
+            }            
+<span class="nc" id="L33">        }</span>
+<span class="nc" id="L34">        hud.updateInventory(foods);</span>
+        
+<span class="nc" id="L36">    }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

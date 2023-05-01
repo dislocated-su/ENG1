@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility</a> &gt; <span class="el_source">MapLoader.java</span></div><h1>MapLoader.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.utility.Station.StationType;
+import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
+import com.devcharles.piazzapanic.utility.box2d.LightBuilder;
+import com.devcharles.piazzapanic.utility.box2d.MapBodyBuilder;
+
+import box2dLight.RayHandler;
+
+/**
+ * Loads and owns the {@link TiledMap} object. Creates entities from map
+ * metadata.
+ */
+public class MapLoader {
+
+    public TiledMap map;
+
+<span class="fc" id="L39">    private int ppt = 16;</span>
+
+    private EntityFactory factory;
+
+    // Object properties
+    static final String lightIdProperty = &quot;lightID&quot;;
+    static final String cookSpawnPoint = &quot;cookspawnpoint&quot;;
+    static final String aiSpawnPoint = &quot;aispawnpoint&quot;;
+    static final String aiObjective = &quot;aiobjective&quot;;
+
+    // Layers relevant to loading the map
+    static final String objectLayer = &quot;MapObjects&quot;;
+    static final String collisionLayer = &quot;Obstacles&quot;;
+    static final String stationLayer = &quot;station&quot;;
+    static final String counterTopLayer = &quot;countertop&quot;;
+
+    // Tile properties
+    static final String stationIdProperty = &quot;stationID&quot;;
+    static final String ingredientTypeProperty = &quot;ingredientType&quot;;
+
+    private Map&lt;Integer, Box2dLocation&gt; aiObjectives;
+
+    /**
+     * Load the {@link TiledMap} from a {@code .tmx} file.
+     * 
+     * @param path    Path to map file.
+     * @param ppt     Pixels per tile (default 16).
+     * @param factory {@link EntityFactory} instance to create entities based on the
+     *                map metadata.
+     */
+<span class="fc" id="L69">    public MapLoader(String path, Integer ppt, EntityFactory factory) {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (ppt != null) {</span>
+<span class="fc" id="L71">            this.ppt = ppt;</span>
+        }
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (path != null) {</span>
+<span class="fc" id="L74">            map = new TmxMapLoader().load(path);</span>
+        } else {
+<span class="fc" id="L76">            map = new TmxMapLoader().load(&quot;v2/map.tmx&quot;);</span>
+        }
+
+<span class="fc" id="L79">        this.factory = factory;</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * 
+     * @param world The Box2D world instance to add bodies to.
+     * @return The bodies created from the map.
+     */
+    public Array&lt;Body&gt; buildCollisions(World world) {
+<span class="fc" id="L88">        return MapBodyBuilder.buildShapes(map, ppt, world);</span>
+    }
+
+    /**
+     * Create lights, spawnpoints, AI paths from map metadata.
+     * 
+     * @param engine     Ashley {@link Engine} instance.
+     * @param rayHandler {@link RayHandler} to add lights to.
+     */
+    public void buildFromObjects(Engine engine, RayHandler rayHandler) {
+<span class="nc" id="L98">        MapObjects objects = map.getLayers().get(objectLayer).getObjects();</span>
+
+<span class="nc" id="L100">        aiObjectives = new HashMap&lt;Integer, Box2dLocation&gt;();</span>
+
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        for (MapObject mapObject : objects) {</span>
+
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            if (mapObject instanceof RectangleMapObject) {</span>
+<span class="nc" id="L105">                MapProperties properties = mapObject.getProperties();</span>
+<span class="nc" id="L106">                RectangleMapObject point = (RectangleMapObject) mapObject;</span>
+
+<span class="nc" id="L108">                Vector2 pos = new Vector2(point.getRectangle().x / ppt, point.getRectangle().y / ppt);</span>
+
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                if (properties.containsKey(lightIdProperty)) {</span>
+<span class="nc" id="L111">                    int lightID = (int) properties.get(lightIdProperty);</span>
+<span class="nc" id="L112">                    Gdx.app.log(&quot;map parsing&quot;,</span>
+<span class="nc" id="L113">                            String.format(&quot;Light typeid %d at x:%.2f y:%.2f&quot;, lightID, pos.x, pos.y));</span>
+<span class="nc bnc" id="L114" title="All 5 branches missed.">                    switch (lightID) {</span>
+                        case 0:
+<span class="nc" id="L116">                            LightBuilder.createPointLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.25f),</span>
+                                    10, true);
+<span class="nc" id="L118">                            break;</span>
+                        case 1:
+<span class="nc" id="L120">                            LightBuilder.createPointLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.5f),</span>
+                                    0.8f, false);
+<span class="nc" id="L122">                            break;</span>
+                        case 2:
+<span class="nc" id="L124">                            LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.25f),</span>
+                                    25, true);
+<span class="nc" id="L126">                            break;</span>
+                        case 3:
+<span class="nc" id="L128">                            LightBuilder.createRoomLight(rayHandler, pos.x, pos.y, Color.TAN.cpy().sub(0, 0, 0, 0.25f),</span>
+                                    25, false);
+                            break;
+                    }
+
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                } else if (properties.containsKey(cookSpawnPoint)) {</span>
+<span class="nc" id="L134">                    int cookID = (int) properties.get(cookSpawnPoint);</span>
+<span class="nc" id="L135">                    Gdx.app.log(&quot;map parsing&quot;, String.format(&quot;Cook spawn point at x:%.2f y:%.2f&quot;, pos.x, pos.y));</span>
+<span class="nc" id="L136">                    Entity cook = factory.createCook((int) pos.x, (int) pos.y);</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">                    if (cookID == 0) {</span>
+<span class="nc" id="L138">                        cook.add(new PlayerComponent());</span>
+                    }
+
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                } else if (properties.containsKey(aiSpawnPoint)) {</span>
+<span class="nc" id="L142">                    Gdx.app.log(&quot;map parsing&quot;, String.format(&quot;Ai spawn point at x:%.2f y:%.2f&quot;, pos.x, pos.y));</span>
+<span class="nc" id="L143">                    aiObjectives.put(-2, new Box2dLocation(pos, 0));</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                } else if (properties.containsKey(aiObjective)) {</span>
+<span class="nc" id="L145">                    int objective = (int) properties.get(aiObjective);</span>
+<span class="nc" id="L146">                    aiObjectives.put(objective, new Box2dLocation(new Vector2(pos.x, pos.y), (float) (1.5f * Math.PI)));</span>
+<span class="nc" id="L147">                    Gdx.app.log(&quot;map parsing&quot;,</span>
+<span class="nc" id="L148">                            String.format(&quot;Ai objective %d at x:%.2f y:%.2f&quot;, objective, pos.x, pos.y));</span>
+                }
+            }
+<span class="nc" id="L151">        }</span>
+<span class="nc" id="L152">    }</span>
+
+    /**
+     * Get the {@link Map} of objectives the AI can travel to.
+     * See the map file in the Tiled editor to preview ai objectives.
+     * 
+     * @return
+     */
+    public Map&lt;Integer, Box2dLocation&gt; getObjectives() {
+<span class="fc" id="L161">        return aiObjectives;</span>
+    }
+
+    /**
+     * Create station entities from map metadata. Metadata is given to the tile in
+     * Edit Tileset -&gt; Tile Properties.
+     * 
+     * @param engine Ashley {@link Engine} instance.
+     * @param world The Box2D world instance to add sensor bodies to.
+     */
+    public void buildStations(Engine engine, World world) {
+<span class="fc" id="L172">        TiledMapTileLayer stations = (TiledMapTileLayer) (map.getLayers().get(stationLayer));</span>
+<span class="fc" id="L173">        TiledMapTileLayer stations_f = (TiledMapTileLayer) (map.getLayers().get(stationLayer + &quot;_f&quot;));</span>
+
+<span class="fc" id="L175">        int columns = stations.getWidth();</span>
+<span class="fc" id="L176">        int rows = stations.getHeight();</span>
+
+        Cell currentCell;
+
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        for (int i = 0; i &lt; columns; i++) {</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            for (int j = 0; j &lt; rows; j++) {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                currentCell = stations.getCell(i, j) != null ? stations.getCell(i, j) : stations_f.getCell(i, j);</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">                if (currentCell != null) {</span>
+<span class="fc" id="L184">                    Object object = currentCell.getTile().getProperties().get(stationIdProperty);</span>
+<span class="pc bpc" id="L185" title="1 of 4 branches missed.">                    if (object != null &amp;&amp; object instanceof Integer) {</span>
+<span class="fc" id="L186">                        StationType stationType = StationType.from((int) object);</span>
+
+<span class="fc" id="L188">                        FoodType ingredientType = null;</span>
+
+<span class="fc bfc" id="L190" title="All 2 branches covered.">                        if (stationType == StationType.ingredient) {</span>
+<span class="fc" id="L191">                            ingredientType = FoodType</span>
+<span class="fc" id="L192">                                    .from((Integer) currentCell.getTile().getProperties().get(ingredientTypeProperty));</span>
+                        }
+<span class="fc" id="L194">                        Object lockedProperty = currentCell.getTile().getProperties().get(&quot;locked&quot;);</span>
+<span class="fc" id="L195">                        boolean locked =false;</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">                        if(lockedProperty!=null){</span>
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">                            if(lockedProperty.equals(true)){</span>
+<span class="fc" id="L198">                                locked=true;</span>
+                            }
+                        }
+
+<span class="fc" id="L202">                        factory.createStation(stationType, new Vector2((i * 2) + 1, (j * 2) + 1), ingredientType, new Vector2(i,j),locked);</span>
+                    }
+                }
+            }
+        }
+<span class="fc" id="L207">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

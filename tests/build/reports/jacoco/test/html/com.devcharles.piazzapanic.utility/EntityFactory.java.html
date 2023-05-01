@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EntityFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility</a> &gt; <span class="el_source">EntityFactory.java</span></div><h1>EntityFactory.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility;
+
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.HashMap;
+
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.devcharles.piazzapanic.components.*;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.utility.box2d.Box2dSteeringBody;
+import com.devcharles.piazzapanic.utility.box2d.CollisionCategory;
+
+/**
+ * Factory pattern class that creates entities used in the game.
+ */
+public class EntityFactory {
+
+    private final PooledEngine engine;
+    private final World world;
+
+    private FixtureDef movingFixtureDef;
+    private BodyDef movingBodyDef;
+    private CircleShape circleShape;
+
+<span class="fc" id="L36">    public EntityFactory(PooledEngine engine, World world) {</span>
+<span class="fc" id="L37">        this.engine = engine;</span>
+<span class="fc" id="L38">        this.world = world;</span>
+
+<span class="fc" id="L40">        createDefinitions();</span>
+<span class="fc" id="L41">    }</span>
+
+<span class="fc" id="L43">    private static final Map&lt;FoodType, TextureRegion&gt; foodTextures = new HashMap&lt;FoodType, TextureRegion&gt;();</span>
+
+    /**
+     * Create reusable definitions for bodies and fixtures. These can be then be
+     * used while creating the bodies for entities.
+     */
+    private void createDefinitions() {
+
+        // Moving bodies
+
+        // BodyDef
+<span class="fc" id="L54">        movingBodyDef = new BodyDef();</span>
+
+<span class="fc" id="L56">        movingBodyDef.type = BodyType.DynamicBody;</span>
+<span class="fc" id="L57">        movingBodyDef.linearDamping = 20f;</span>
+<span class="fc" id="L58">        movingBodyDef.fixedRotation = true;</span>
+
+        // Shape - needs to be disposed
+<span class="fc" id="L61">        circleShape = new CircleShape();</span>
+<span class="fc" id="L62">        circleShape.setRadius(0.5f);</span>
+
+        // FixtureDef
+<span class="fc" id="L65">        movingFixtureDef = new FixtureDef();</span>
+<span class="fc" id="L66">        movingFixtureDef.shape = circleShape;</span>
+<span class="fc" id="L67">        movingFixtureDef.density = 20f;</span>
+<span class="fc" id="L68">        movingFixtureDef.friction = 0.4f;</span>
+<span class="fc" id="L69">        movingFixtureDef.filter.categoryBits = CollisionCategory.ENTITY.getValue();</span>
+<span class="fc" id="L70">        movingFixtureDef.filter.maskBits = (short) (CollisionCategory.BOUNDARY.getValue()</span>
+<span class="fc" id="L71">                | CollisionCategory.ENTITY.getValue());</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Creates cook entity, and adds it to the engine.
+     * 
+     * @return Reference to the entity.
+     */
+    public Entity createCook(int x, int y) {
+<span class="fc" id="L80">        Entity entity = engine.createEntity();</span>
+
+<span class="fc" id="L82">        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);</span>
+
+<span class="fc" id="L84">        TransformComponent transform = engine.createComponent(TransformComponent.class);</span>
+
+<span class="fc" id="L86">        ControllableComponent controllable = engine.createComponent(ControllableComponent.class);</span>
+
+<span class="fc" id="L88">        TextureComponent texture = engine.createComponent(TextureComponent.class);</span>
+
+<span class="fc" id="L90">        AnimationComponent an = engine.createComponent(AnimationComponent.class);</span>
+
+<span class="fc" id="L92">        WalkingAnimationComponent animation = engine.createComponent(WalkingAnimationComponent.class);</span>
+
+<span class="fc" id="L94">        controllable.currentFood.init(engine);</span>
+
+<span class="fc" id="L96">        animation.animator = new CookAnimator();</span>
+        // Texture
+<span class="fc" id="L98">        TextureRegion[][] tempRegions = TextureRegion.split(new Texture(&quot;droplet.png&quot;), 32, 32);</span>
+
+<span class="fc" id="L100">        texture.region = tempRegions[0][0];</span>
+        // TODO: Set size in viewport units instead of scale
+<span class="fc" id="L102">        texture.scale.set(0.1f, 0.1f);</span>
+
+        // Box2D body
+<span class="fc" id="L105">        BodyDef bodyDef = new BodyDef();</span>
+<span class="fc" id="L106">        bodyDef.type = BodyType.DynamicBody;</span>
+<span class="fc" id="L107">        bodyDef.linearDamping = 20f;</span>
+<span class="fc" id="L108">        bodyDef.fixedRotation = true;</span>
+<span class="fc" id="L109">        bodyDef.awake = true;</span>
+
+<span class="fc" id="L111">        bodyDef.position.set(x, y);</span>
+
+<span class="fc" id="L113">        b2dBody.body = world.createBody(bodyDef);</span>
+
+        // Create a circle shape and set its radius to 1
+<span class="fc" id="L116">        CircleShape circle = new CircleShape();</span>
+<span class="fc" id="L117">        circle.setRadius(0.5f);</span>
+        // Create a fixture definition to apply our shape to
+<span class="fc" id="L119">        FixtureDef fixtureDef = new FixtureDef();</span>
+<span class="fc" id="L120">        fixtureDef.shape = circle;</span>
+<span class="fc" id="L121">        fixtureDef.density = 20f;</span>
+<span class="fc" id="L122">        fixtureDef.friction = 0.4f;</span>
+<span class="fc" id="L123">        fixtureDef.filter.categoryBits = CollisionCategory.ENTITY.getValue();</span>
+<span class="fc" id="L124">        fixtureDef.filter.maskBits = (short) (CollisionCategory.BOUNDARY.getValue()</span>
+<span class="fc" id="L125">                | CollisionCategory.NO_SHADOWBOUNDARY.getValue()</span>
+<span class="fc" id="L126">                | CollisionCategory.ENTITY.getValue());</span>
+
+        // Create our fixture and attach it to the body
+<span class="fc" id="L129">        b2dBody.body.createFixture(fixtureDef).setUserData(entity);</span>
+
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+<span class="fc" id="L132">        circle.dispose();</span>
+
+<span class="fc" id="L134">        entity.add(b2dBody);</span>
+<span class="fc" id="L135">        entity.add(transform);</span>
+<span class="fc" id="L136">        entity.add(controllable);</span>
+<span class="fc" id="L137">        entity.add(texture);</span>
+<span class="fc" id="L138">        entity.add(an);</span>
+<span class="fc" id="L139">        entity.add(animation);</span>
+
+<span class="fc" id="L141">        engine.addEntity(entity);</span>
+
+<span class="fc" id="L143">        return entity;</span>
+    }
+
+    /**
+     * Create the food entity at 0,0.
+     * 
+     * @param foodType The type of food to create.
+     * @return reference to the {@link Entity}
+     */
+    public Entity createFood(FoodType foodType) {
+<span class="fc" id="L153">        Entity entity = engine.createEntity();</span>
+
+<span class="fc" id="L155">        TextureComponent texture = engine.createComponent(TextureComponent.class);</span>
+
+<span class="fc" id="L157">        TransformComponent transform = engine.createComponent(TransformComponent.class);</span>
+
+<span class="fc" id="L159">        FoodComponent food = engine.createComponent(FoodComponent.class);</span>
+
+        // Texture
+<span class="fc" id="L162">        texture.region = getFoodTexture(foodType);</span>
+        // TODO: Set size in viewport units instead of scale
+<span class="fc" id="L164">        texture.scale.set(0.05f, 0.05f);</span>
+
+        // food creation
+<span class="fc" id="L167">        food.type = foodType;</span>
+
+        // add components to the entity
+<span class="fc" id="L170">        entity.add(transform);</span>
+<span class="fc" id="L171">        entity.add(texture);</span>
+<span class="fc" id="L172">        entity.add(food);</span>
+
+<span class="fc" id="L174">        engine.addEntity(entity);</span>
+
+<span class="fc" id="L176">        return entity;</span>
+    }
+
+    /**
+     * Create a station entity with interactable features enabled. This does not
+     * render the station as it is rendered in the tilemap.
+     * 
+     * @param type           Type of station to create. See
+     *                       {@link Station.StationType}.
+     * @param position       position vector (z is set to 0).
+     * @param ingredientType (optional) if this is an Ingredient station, which
+     *                       ingredient should it spawn.
+     */
+    public Entity createStation(Station.StationType type, Vector2 position, FoodType ingredientType, Vector2 tileOnMap, boolean locked) {
+<span class="fc" id="L190">        Entity entity = engine.createEntity();</span>
+
+<span class="fc" id="L192">        float[] size = { 1f, 1f };</span>
+
+<span class="fc" id="L194">        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);</span>
+
+<span class="fc" id="L196">        TextureComponent texture = engine.createComponent(TextureComponent.class);</span>
+
+<span class="fc" id="L198">        TransformComponent transform = engine.createComponent(TransformComponent.class);</span>
+
+<span class="fc" id="L200">        StationComponent station = engine.createComponent(StationComponent.class);</span>
+
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        if(type != Station.StationType.ingredient){</span>
+<span class="fc" id="L203">            station.tileMapPosition =tileOnMap;</span>
+        }
+<span class="fc" id="L205">        station.type=type;</span>
+<span class="fc" id="L206">        station.locked=locked;</span>
+
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        if (type == Station.StationType.ingredient) {</span>
+<span class="fc" id="L209">            station.ingredient = ingredientType;</span>
+        }
+        // Box2D body
+<span class="fc" id="L212">        BodyDef bodyDef = new BodyDef();</span>
+<span class="fc" id="L213">        bodyDef.type = BodyType.StaticBody;</span>
+<span class="fc" id="L214">        bodyDef.position.set(position.x, position.y);</span>
+
+<span class="fc" id="L216">        b2dBody.body = world.createBody(bodyDef);</span>
+
+        // Create a PolygonShape and set it to be a box of 1x1
+<span class="fc" id="L219">        PolygonShape stationBox = new PolygonShape();</span>
+<span class="fc" id="L220">        stationBox.setAsBox(size[0], size[1]);</span>
+
+        // Create our fixture and attach it to the body
+<span class="fc" id="L223">        FixtureDef fixtureDef = new FixtureDef();</span>
+<span class="fc" id="L224">        fixtureDef.shape = stationBox;</span>
+<span class="fc" id="L225">        fixtureDef.isSensor = true;</span>
+<span class="fc" id="L226">        fixtureDef.filter.categoryBits = CollisionCategory.NO_SHADOWBOUNDARY.getValue();</span>
+<span class="fc" id="L227">        fixtureDef.filter.maskBits = CollisionCategory.ENTITY.getValue();</span>
+<span class="fc" id="L228">        b2dBody.body.createFixture(fixtureDef).setUserData(station);</span>
+
+        // BodyDef and FixtureDef don't need disposing, but shapes do.
+<span class="fc" id="L231">        stationBox.dispose();</span>
+
+        // add components to the entity
+<span class="fc" id="L234">        entity.add(b2dBody);</span>
+<span class="fc" id="L235">        entity.add(transform);</span>
+<span class="fc" id="L236">        entity.add(texture);</span>
+<span class="fc" id="L237">        entity.add(station);</span>
+
+<span class="fc" id="L239">        engine.addEntity(entity);</span>
+
+<span class="fc" id="L241">        return entity;</span>
+    }
+
+    /**
+     * Cut the food textures, run at game initialisation.
+     * 
+     * @param path (optional) custom path for food textures.
+     */
+    public static void cutFood(String path) {
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">        if (path == null) {</span>
+<span class="fc" id="L251">            path = &quot;v2/food.png&quot;;</span>
+        }
+
+<span class="fc" id="L254">        Texture foodSheet = new Texture(path);</span>
+
+<span class="fc" id="L256">        TextureRegion[][] tmp = TextureRegion.split(foodSheet, 32, 32);</span>
+
+<span class="fc" id="L258">        int rows = tmp.length;</span>
+<span class="fc" id="L259">        int cols = tmp[0].length;</span>
+
+        // Flatten the array
+<span class="fc" id="L262">        TextureRegion[] frames = new TextureRegion[rows * cols];</span>
+<span class="fc" id="L263">        int index = 0;</span>
+<span class="fc bfc" id="L264" title="All 2 branches covered.">        for (int i = 0; i &lt; rows; i++) {</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">            for (int j = 0; j &lt; cols; j++) {</span>
+<span class="fc" id="L266">                frames[index++] = tmp[i][j];</span>
+            }
+        }
+
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        for (int i = 1; i &lt; 26; i++) {</span>
+<span class="fc" id="L271">            foodTextures.put(FoodType.from(i), frames[i]);</span>
+        }
+<span class="fc" id="L273">    }</span>
+
+    /**
+     * Get the texture associated with a certain food.
+     * 
+     * @return {@link TextureRegion} of the food.
+     */
+    public static TextureRegion getFoodTexture(FoodType type) {
+<span class="fc" id="L281">        return foodTextures.get(type);</span>
+    }
+
+    /**
+     * Create an AI customer entity. The entity will not walk until it receives a
+     * {@link com.badlogic.gdx.ai.steer.SteeringBehavior}.
+     * 
+     * @param position of the customer at spawn point.
+     * @return reference to the entity.
+     */
+    public Entity createCustomer(Vector2 position) {
+<span class="fc" id="L292">        Entity entity = engine.createEntity();</span>
+
+<span class="fc" id="L294">        B2dBodyComponent b2dBody = engine.createComponent(B2dBodyComponent.class);</span>
+
+<span class="fc" id="L296">        TextureComponent texture = engine.createComponent(TextureComponent.class);</span>
+
+<span class="fc" id="L298">        TransformComponent transform = engine.createComponent(TransformComponent.class);</span>
+
+<span class="fc" id="L300">        AnimationComponent an = engine.createComponent(AnimationComponent.class);</span>
+
+<span class="fc" id="L302">        CustomerComponent customer = engine.createComponent(CustomerComponent.class);</span>
+
+<span class="fc" id="L304">        WalkingAnimationComponent walkingAnimation = engine.createComponent(WalkingAnimationComponent.class);</span>
+
+<span class="fc" id="L306">        AIAgentComponent aiAgent = engine.createComponent(AIAgentComponent.class);</span>
+
+<span class="fc" id="L308">        walkingAnimation.animator = new CustomerAnimator();</span>
+
+        // Reuse existing body definition
+<span class="fc" id="L311">        movingBodyDef.position.set(position.x, position.y);</span>
+<span class="fc" id="L312">        b2dBody.body = world.createBody(movingBodyDef);</span>
+<span class="fc" id="L313">        b2dBody.body.createFixture(movingFixtureDef).setUserData(entity);</span>
+
+<span class="fc" id="L315">        texture.region = new TextureRegion(new Texture(&quot;droplet.png&quot;));</span>
+<span class="fc" id="L316">        texture.scale.set(0.1f, 0.1f);</span>
+
+<span class="fc" id="L318">        transform.isHidden = false;</span>
+
+        // Create a steering body with no behaviour (to be set later)
+<span class="fc" id="L321">        aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, true, 0.5f);</span>
+
+<span class="fc" id="L323">        FoodType[] s = Station.serveRecipes;</span>
+<span class="fc" id="L324">        int orderIndex = ThreadLocalRandom.current().nextInt(0, s.length);</span>
+
+<span class="fc" id="L326">        customer.order = FoodType.from(s[orderIndex].getValue());</span>
+
+<span class="fc" id="L328">        Gdx.app.log(&quot;Order received&quot;, customer.order.name());</span>
+<span class="fc" id="L329">        entity.add(b2dBody);</span>
+<span class="fc" id="L330">        entity.add(transform);</span>
+<span class="fc" id="L331">        entity.add(texture);</span>
+<span class="fc" id="L332">        entity.add(an);</span>
+<span class="fc" id="L333">        entity.add(walkingAnimation);</span>
+<span class="fc" id="L334">        entity.add(aiAgent);</span>
+<span class="fc" id="L335">        entity.add(customer);</span>
+<span class="fc" id="L336">        engine.addEntity(entity);</span>
+
+<span class="fc" id="L338">        return entity;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

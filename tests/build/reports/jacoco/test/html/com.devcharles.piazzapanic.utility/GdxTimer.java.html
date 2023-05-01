@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GdxTimer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility</a> &gt; <span class="el_source">GdxTimer.java</span></div><h1>GdxTimer.java</h1><pre class="source lang-java linenums">// Simple timer by @tedigc
+// https://gist.github.com/tedigc/fe28616706025b00c6c540af4d03c827
+
+package com.devcharles.piazzapanic.utility;
+
+/**
+ * Simple timer class suitable for this project.
+ * Modified for this project.
+ * @author tedigc
+ */
+public class GdxTimer {
+
+    private int delay;
+    private int elapsed;
+    private boolean running;
+    private boolean looping;
+
+    /**
+     * Create a timer.
+     * 
+     * @param delay   delay in milliseconds.
+     * @param running whether the timer is running when it's created
+     * @param looping does the timer restart itself after elapsing.
+     */
+<span class="fc" id="L25">    public GdxTimer(int delay, boolean running, boolean looping) {</span>
+<span class="fc" id="L26">        this.delay = delay;</span>
+<span class="fc" id="L27">        this.running = running;</span>
+<span class="fc" id="L28">        this.looping = looping;</span>
+<span class="fc" id="L29">    }</span>
+
+    /**
+     * Progress the timer
+     * 
+     * @param delta time since last frame.
+     * @return Whether the timer is finished.
+     */
+    public boolean tick(float delta) {
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        if (running) {</span>
+<span class="fc" id="L39">            elapsed += delta * 1000;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">            if (elapsed &gt; delay) {</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                elapsed -= looping ? delay : 0;</span>
+<span class="fc" id="L42">                return true;</span>
+            }
+        }
+<span class="fc" id="L45">        return false;</span>
+    }
+
+<span class="nc" id="L48">    public int getElapsed(){return this.elapsed;}</span>
+
+    public void start() {
+<span class="nc" id="L51">        this.running = true;</span>
+<span class="nc" id="L52">    }</span>
+
+    public void stop() {
+<span class="fc" id="L55">        this.running = false;</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Reset the timer. This does not stop it, for that use {@code GdxTimer.stop()}
+     */
+    public void reset() {
+<span class="fc" id="L62">        this.elapsed = 0;</span>
+<span class="fc" id="L63">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

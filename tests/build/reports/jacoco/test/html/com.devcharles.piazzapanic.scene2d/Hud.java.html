@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Hud.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.scene2d</a> &gt; <span class="el_source">Hud.java</span></div><h1>Hud.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.scene2d;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.devcharles.piazzapanic.GameScreen;
+import com.devcharles.piazzapanic.MainMenuScreen;
+import com.devcharles.piazzapanic.PiazzaPanic;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.GdxTimer;
+
+/**
+ * HUD user interface rendering for the game, also includes the win screen.
+ */
+public class Hud extends ApplicationAdapter {
+    public Stage stage;
+    private Viewport viewport;
+<span class="nc" id="L37">    private Integer customerTimer = 000;</span>
+<span class="nc" id="L38">    private float timeCounter = 0;</span>
+    private Integer[] reputation;
+    private Float[] tillBalance;
+    private Integer[] customersServed;
+    private Skin skin;
+
+<span class="nc" id="L44">    private final float fontScale = 0.6f;</span>
+
+    // A label is basically a widget
+    LabelStyle hudLabelStyle;
+    LabelStyle hudRedLabelStyle;
+    LabelStyle hudGreenLabelStyle;
+    LabelStyle titleLabelStyle;
+
+    Label timerLabel;
+    Label timeNameLabel;
+    Label reputationLabel;
+    Label reputationNameLabel;
+    Label difficultyNameLabel;
+    Label tillBalanceNameLabel;
+    Label tillBalanceLabel;
+
+    Label customersServedLabel;
+    Label customersServedNameLabel;
+
+    Label difficultyLabel;
+    Label pausedNameLabel;
+    Label infoMsgLabel;
+    BitmapFont uiFont, uiTitleFont;
+    // an image used as the background of recipe book and tutorial
+    private Image photo;
+
+    private Game game;
+    private GameScreen.Difficulty difficulty;
+    private Table tableBottom, tableRight, tableTop, tablePause, tableBottomLabel, infoTable;
+
+<span class="nc" id="L74">    private boolean pauseToggled = false;</span>
+<span class="nc" id="L75">    public boolean paused = false;</span>
+
+    private GameScreen gameScreen;
+<span class="nc" id="L78">    private GdxTimer infoTimer = new GdxTimer(2000,false,false);</span>
+
+    /**
+     * Create the hud.
+     * @param spriteBatch the batch to draw the HUD with
+     * @param savedGame reference to the screen drawing the hud to switch back to in case of screen transitions.
+     * @param game {@link PiazzaPanic} instance for switching screens.
+     * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
+     */
+<span class="nc" id="L87">    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty, Float[] tillBalance, Integer[] customersServed) {</span>
+<span class="nc" id="L88">        this.game = game;</span>
+<span class="nc" id="L89">        this.reputation = reputationPoints;</span>
+<span class="nc" id="L90">        this.gameScreen = savedGame;</span>
+<span class="nc" id="L91">        this.difficulty=difficulty;</span>
+<span class="nc" id="L92">        this.tillBalance=tillBalance;</span>
+<span class="nc" id="L93">        this.customersServed=customersServed;</span>
+
+        // Setup the viewport
+<span class="nc" id="L96">        viewport = new ScreenViewport(new OrthographicCamera(1280, 720));</span>
+<span class="nc" id="L97">        stage = new Stage(viewport, spriteBatch);</span>
+<span class="nc" id="L98">        viewport.apply();</span>
+
+        // Import the custom skin with different fonts
+<span class="nc" id="L101">        skin = new Skin(Gdx.files.internal(&quot;craftacular/skin/craftacular-ui.json&quot;));</span>
+<span class="nc" id="L102">        uiFont = new BitmapFont(Gdx.files.internal(&quot;craftacular/raw/font-export.fnt&quot;));</span>
+<span class="nc" id="L103">        uiTitleFont = new BitmapFont(Gdx.files.internal(&quot;craftacular/raw/font-title-export.fnt&quot;));</span>
+
+        // Create generic style for labels with the different fonts
+<span class="nc" id="L106">        hudLabelStyle = new Label.LabelStyle();</span>
+<span class="nc" id="L107">        hudRedLabelStyle = new Label.LabelStyle();</span>
+<span class="nc" id="L108">        hudGreenLabelStyle = new Label.LabelStyle();</span>
+<span class="nc" id="L109">        hudRedLabelStyle.font = uiFont;</span>
+<span class="nc" id="L110">        hudGreenLabelStyle.font = uiFont;</span>
+<span class="nc" id="L111">        hudRedLabelStyle.fontColor = Color.RED;</span>
+<span class="nc" id="L112">        hudGreenLabelStyle.fontColor = Color.GREEN;</span>
+<span class="nc" id="L113">        hudLabelStyle.font = uiFont;</span>
+<span class="nc" id="L114">        titleLabelStyle = new Label.LabelStyle();</span>
+<span class="nc" id="L115">        titleLabelStyle.font = uiTitleFont;</span>
+
+<span class="nc" id="L117">        stage.addListener(new InputListener() {</span>
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                if (keycode == Keys.ESCAPE) {</span>
+<span class="nc" id="L121">                    pauseToggled = true;</span>
+                    // sets game to go bigscreen if F11 is pressed or sets it to go small screen
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                } else if (keycode == Keys.F11) {</span>
+<span class="nc" id="L124">                    Boolean fullScreen = Gdx.graphics.isFullscreen();</span>
+<span class="nc" id="L125">                    Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                    if (fullScreen == true) {</span>
+<span class="nc" id="L127">                        Gdx.graphics.setWindowedMode(1280, 720);</span>
+                    } else {
+<span class="nc" id="L129">                        Gdx.graphics.setFullscreenMode(currentMode);</span>
+                    }
+                }
+<span class="nc" id="L132">                return true;</span>
+            }
+        });
+
+        // Create the UI layout.
+<span class="nc" id="L137">        createTables();</span>
+<span class="nc" id="L138">    }</span>
+
+    private void createTables() {
+
+<span class="nc" id="L142">        timerLabel = new Label(String.format(&quot;%03d&quot;, customerTimer), hudLabelStyle);</span>
+<span class="nc" id="L143">        reputationLabel = new Label(String.format(&quot;%01d&quot;, reputation[0]), hudLabelStyle);</span>
+<span class="nc" id="L144">        difficultyLabel = new Label(difficulty.getDisplayName(),hudLabelStyle);</span>
+<span class="nc" id="L145">        timeNameLabel = new Label(&quot;Time&quot;, hudLabelStyle);</span>
+<span class="nc" id="L146">        reputationNameLabel = new Label(&quot;Reputation&quot;, hudLabelStyle);</span>
+<span class="nc" id="L147">        difficultyNameLabel = new Label(&quot;Game Mode&quot;,hudLabelStyle);</span>
+<span class="nc" id="L148">        tillBalanceNameLabel = new Label(&quot;Till Balance&quot;,hudLabelStyle);</span>
+<span class="nc" id="L149">        tillBalanceLabel = new Label(&quot;0&quot;, hudRedLabelStyle);</span>
+<span class="nc" id="L150">        infoMsgLabel = new Label(&quot;&quot;,titleLabelStyle);</span>
+
+        // Creates a bunch of labels and sets the fontsize
+<span class="nc" id="L153">        reputationLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L154">        timerLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L155">        timeNameLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L156">        reputationNameLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L157">        difficultyNameLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L158">        difficultyLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L159">        tillBalanceNameLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L160">        tillBalanceLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L161">        infoMsgLabel.setFontScale(fontScale);</span>
+
+        // lays out timer and reputation
+<span class="nc" id="L164">        tableTop = new Table();</span>
+<span class="nc" id="L165">        tableTop.top();</span>
+<span class="nc" id="L166">        tableTop.setFillParent(true);</span>
+
+<span class="nc" id="L168">        tableTop.add(timeNameLabel).expandX().padTop(10);</span>
+<span class="nc" id="L169">        tableTop.add(reputationNameLabel).expandX().padTop(10);</span>
+<span class="nc" id="L170">        tableTop.add(tillBalanceNameLabel).expandX().padTop(10);</span>
+<span class="nc" id="L171">        tableTop.add(difficultyNameLabel).expandX().padTop(10);</span>
+
+<span class="nc" id="L173">        tableTop.row();</span>
+<span class="nc" id="L174">        tableTop.add(timerLabel).expandX();</span>
+<span class="nc" id="L175">        tableTop.add(reputationLabel).expandX();</span>
+<span class="nc" id="L176">        tableTop.add(tillBalanceLabel).expandX();</span>
+<span class="nc" id="L177">        tableTop.add(difficultyLabel).expandX();</span>
+
+<span class="nc" id="L179">        tableBottomLabel = new Table();</span>
+<span class="nc" id="L180">        tableBottomLabel.bottom();</span>
+<span class="nc" id="L181">        tableBottomLabel.setFillParent(true);</span>
+
+<span class="nc" id="L183">        Label inv = new Label(&quot;Inventory&quot;, hudLabelStyle);</span>
+<span class="nc" id="L184">        inv.setFontScale(fontScale);</span>
+<span class="nc" id="L185">        tableBottomLabel.add(inv).padBottom(60);</span>
+        // the pause screen
+<span class="nc" id="L187">        tablePause = new Table();</span>
+<span class="nc" id="L188">        tablePause.setFillParent(true);</span>
+<span class="nc" id="L189">        tablePause.setVisible(false); // not visible by default</span>
+
+<span class="nc" id="L191">        pausedNameLabel = new Label(&quot;Game paused&quot;, titleLabelStyle);</span>
+<span class="nc" id="L192">        tablePause.add(pausedNameLabel).padBottom(30);</span>
+
+<span class="nc" id="L194">        tablePause.row();</span>
+        // checks if resume button is clicked
+<span class="nc" id="L196">        TextButton resumeButton = new TextButton(&quot;Resume&quot;, skin);</span>
+<span class="nc" id="L197">        TextButton recipeBookButton = new TextButton(&quot;Recipe Book&quot;, skin);</span>
+<span class="nc" id="L198">        TextButton tutorialButton = new TextButton(&quot;Tutorial&quot;, skin);</span>
+        
+<span class="nc" id="L200">        resumeButton.addListener(new ClickListener() {</span>
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L202">                pauseToggled = true;</span>
+<span class="nc" id="L203">            }</span>
+        });
+<span class="nc" id="L205">        recipeBookButton.addListener(createListener(new Slideshow(game, Slideshow.Type.recipe, gameScreen)));</span>
+<span class="nc" id="L206">        tutorialButton.addListener(createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));</span>
+
+<span class="nc" id="L208">        tablePause.add(resumeButton).width(240).height(70).padBottom(30);</span>
+
+<span class="nc" id="L210">        tablePause.row();</span>
+
+<span class="nc" id="L212">        tablePause.add(recipeBookButton).width(240).height(70).padBottom(30);</span>
+<span class="nc" id="L213">        tablePause.row();</span>
+<span class="nc" id="L214">        tablePause.add(tutorialButton).width(240).height(70);</span>
+
+<span class="nc" id="L216">        this.tableRight = new Table();</span>
+<span class="nc" id="L217">        this.tableBottom = new Table();</span>
+<span class="nc" id="L218">        this.infoTable = new Table();</span>
+<span class="nc" id="L219">        infoTable.setFillParent(true);</span>
+<span class="nc" id="L220">        infoTable.add(infoMsgLabel);</span>
+
+<span class="nc" id="L222">        stage.addActor(tablePause);</span>
+<span class="nc" id="L223">        stage.addActor(tableTop);</span>
+<span class="nc" id="L224">        stage.addActor(tableRight);</span>
+<span class="nc" id="L225">        stage.addActor(tableBottom);</span>
+<span class="nc" id="L226">        stage.addActor(tableBottomLabel);</span>
+<span class="nc" id="L227">        stage.addActor(infoTable);</span>
+<span class="nc" id="L228">    }</span>
+
+    /**
+     * Update HUD inventory section.
+     * 
+     * @param inventory array of {@link FoodType} to display.
+     */
+    public void updateInventory(FoodType[] inventory) {
+<span class="nc" id="L236">        tableBottom.clear();</span>
+<span class="nc" id="L237">        tableBottom.bottom();</span>
+<span class="nc" id="L238">        tableBottom.setFillParent(true);</span>
+
+<span class="nc" id="L240">        tableBottom.row();</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        for (int i = 0; i &lt; inventory.length; i++) {</span>
+<span class="nc" id="L242">            TextureRegion region = EntityFactory.getFoodTexture(inventory[i]);</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">            if (region == null) {</span>
+<span class="nc" id="L244">                Gdx.app.log(&quot;Texture is null&quot;, &quot;&quot;);  // debugger can be ignored/removed idk do what you want</span>
+            } else {
+                // adds images of the items the controlled cook is holding into the inventory  
+<span class="nc" id="L247">                photo = new Image(region);</span>
+<span class="nc" id="L248">                tableBottom.add(photo).width(64).height(64).center();</span>
+            }
+        }
+<span class="nc" id="L251">    }</span>
+
+    /**
+     * Update the current orders HUD section.
+     * 
+     * @param orders array of {@link FoodType} to display.
+     */
+    public void updateOrders(FoodType[] orders, int[] orderTimes) {
+<span class="nc" id="L259">        tableRight.clear();</span>
+<span class="nc" id="L260">        tableRight.right();</span>
+<span class="nc" id="L261">        tableRight.setFillParent(true);</span>
+
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        for (int i = 0; i &lt; orders.length; i++) {</span>
+<span class="nc" id="L264">            TextureRegion region = EntityFactory.getFoodTexture(orders[i]);</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">            if (region == null) {</span>
+<span class="nc" id="L266">                Gdx.app.log(&quot;Texture is null&quot;, &quot;&quot;);</span>
+            } else {
+                // adds all the orders onto the right of the screen with a little number
+<span class="nc" id="L269">                Label orderNumberLabel = new Label(String.format(&quot;%01d&quot;, i + 1), hudLabelStyle);</span>
+<span class="nc bnc" id="L270" title="All 4 branches missed.">                Label orderDueLabel = new Label(orderTimes[i]&gt;0 ? Integer.toString(orderTimes[i]) : &quot;0&quot;,orderTimes[i]&gt;60 ? hudGreenLabelStyle : hudRedLabelStyle);</span>
+<span class="nc" id="L271">                tableRight.add(orderNumberLabel).padRight(10);</span>
+<span class="nc" id="L272">                photo = new Image(region);</span>
+<span class="nc" id="L273">                tableRight.add(photo).width(64).height(64).padRight(15);</span>
+<span class="nc" id="L274">                tableRight.add(orderDueLabel).padRight(10);</span>
+<span class="nc" id="L275">                tableRight.row().height(0);</span>
+            }
+        }
+<span class="nc" id="L278">    }</span>
+
+    /**
+     * Render the hud. If {@code triggerWin} is true when this runs, the Win screen
+     * will be shown.
+     * 
+     * @param deltaTime the time elapsed since last frame.
+     */
+    public void update(float deltaTime) {
+<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (paused) {</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">            if (pauseToggled) {</span>
+<span class="nc" id="L289">                pauseToggled = false;</span>
+<span class="nc" id="L290">                this.resume();</span>
+            }
+<span class="nc" id="L292">            stage.act();</span>
+<span class="nc" id="L293">            stage.draw();</span>
+<span class="nc" id="L294">            return;</span>
+        }
+
+<span class="nc bnc" id="L297" title="All 2 branches missed.">        if(infoTimer.tick(deltaTime)){</span>
+<span class="nc" id="L298">            infoMsgLabel.setText(&quot;&quot;);</span>
+<span class="nc" id="L299">            infoTimer.stop();</span>
+<span class="nc" id="L300">            infoTimer.reset();</span>
+        }
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        timeCounter += gameOver ? 0 : deltaTime;</span>
+        // Staggered once per second using timeCounter makes it way faster
+<span class="nc bnc" id="L304" title="All 2 branches missed.">        if (timeCounter &gt;= 1) {</span>
+<span class="nc" id="L305">            customerTimer++;</span>
+<span class="nc" id="L306">            timerLabel.setText(String.format(&quot;%03d&quot;, customerTimer));</span>
+<span class="nc" id="L307">            reputationLabel.setText(reputation[0]);</span>
+<span class="nc" id="L308">            tillBalanceLabel.setText(Float.toString(tillBalance[0]));</span>
+<span class="nc bnc" id="L309" title="All 2 branches missed.">            tillBalanceLabel.setStyle(tillBalance[0]&gt;0 ? hudGreenLabelStyle : hudRedLabelStyle);</span>
+
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            if (triggerGameOver) {</span>
+<span class="nc" id="L312">                triggerGameOver = false;</span>
+<span class="nc" id="L313">                gameOver();</span>
+            }
+<span class="nc bnc" id="L315" title="All 2 branches missed.">            if (pauseToggled) {</span>
+<span class="nc" id="L316">                pauseToggled = false;</span>
+<span class="nc" id="L317">                this.pause();</span>
+            }
+
+<span class="nc" id="L320">            timeCounter -= 1;</span>
+        }
+
+<span class="nc" id="L323">        stage.act();</span>
+<span class="nc" id="L324">        stage.draw();</span>
+
+<span class="nc" id="L326">    }</span>
+
+    @Override
+    public void pause() {
+<span class="nc" id="L330">        paused = true;</span>
+<span class="nc" id="L331">        gameScreen.pause();</span>
+
+        // Hide the normal hud
+<span class="nc" id="L334">        tableBottom.setVisible(false);</span>
+<span class="nc" id="L335">        tableRight.setVisible(false);</span>
+<span class="nc" id="L336">        tableTop.setVisible(false);</span>
+<span class="nc" id="L337">        tableBottomLabel.setVisible(false);</span>
+
+        // Show the pause hud
+<span class="nc" id="L340">        tablePause.setVisible(true);</span>
+
+        // super.pause();
+<span class="nc" id="L343">    }</span>
+
+    @Override
+    public void resume() {
+<span class="nc" id="L347">        paused = false;</span>
+<span class="nc" id="L348">        gameScreen.resume();</span>
+
+        // Show the normal hud
+<span class="nc" id="L351">        tableBottom.setVisible(true);</span>
+<span class="nc" id="L352">        tableRight.setVisible(true);</span>
+<span class="nc" id="L353">        tableTop.setVisible(true);</span>
+<span class="nc" id="L354">        tableBottomLabel.setVisible(true);</span>
+
+        // Hide the pause hud
+<span class="nc" id="L357">        tablePause.setVisible(false);</span>
+
+<span class="nc" id="L359">        super.resume();</span>
+<span class="nc" id="L360">    }</span>
+
+    public boolean gameOver;
+<span class="nc" id="L363">    public boolean triggerGameOver = false;</span>
+
+    /**
+     * Win screen Refactored into game over screen to account for both winning and losing the game.
+     */
+    private void gameOver() {
+<span class="nc" id="L369">        gameOver = true;</span>
+        // winscreen table made
+<span class="nc" id="L371">        stage.clear();</span>
+<span class="nc" id="L372">        Table centerTable = new Table();</span>
+<span class="nc" id="L373">        centerTable.setFillParent(true);</span>
+        // labels given different fonts so it looks nicer
+<span class="nc" id="L375">        Label congrats = new Label(&quot;Congratulations!&quot;, titleLabelStyle);</span>
+<span class="nc" id="L376">        Label congratsSubtitle = new Label(&quot;You won!&quot;, hudLabelStyle);</span>
+<span class="nc" id="L377">        customersServedNameLabel = new Label(&quot;Customers served&quot;,hudLabelStyle);</span>
+<span class="nc" id="L378">        customersServedLabel = new Label(customersServed[0].toString(),hudLabelStyle);</span>
+<span class="nc" id="L379">        customersServedLabel.setFontScale(fontScale + 0.1f);</span>
+<span class="nc" id="L380">        customersServedNameLabel.setFontScale(fontScale + 0.1f);</span>
+
+<span class="nc bnc" id="L382" title="All 2 branches missed.">        if(reputation[0]==0){</span>
+<span class="nc" id="L383">            congrats.setText(&quot;Game Over&quot;);</span>
+<span class="nc" id="L384">            congratsSubtitle.setText(&quot;You lost!&quot;);</span>
+        }
+
+        //colspan2 important! do some googling if you dont know what it does (scene2d)
+<span class="nc" id="L388">        centerTable.add(congrats).padBottom(40).colspan(3);</span>
+<span class="nc" id="L389">        centerTable.row();</span>
+<span class="nc" id="L390">        centerTable.add(congratsSubtitle).padBottom(30).colspan(3);</span>
+
+<span class="nc" id="L392">        centerTable.row();</span>
+
+<span class="nc" id="L394">        centerTable.add(timeNameLabel);</span>
+<span class="nc" id="L395">        centerTable.add(customersServedNameLabel);</span>
+<span class="nc" id="L396">        centerTable.add(reputationNameLabel);</span>
+
+<span class="nc" id="L398">        centerTable.row();</span>
+
+<span class="nc" id="L400">        centerTable.add(timerLabel);</span>
+<span class="nc" id="L401">        centerTable.add(customersServedLabel);</span>
+<span class="nc" id="L402">        centerTable.add(reputationLabel);</span>
+
+<span class="nc" id="L404">        centerTable.row();</span>
+
+<span class="nc" id="L406">        TextButton returnToMenuButton = new TextButton(&quot;Main menu&quot;, skin);</span>
+<span class="nc" id="L407">        centerTable.add(returnToMenuButton).width(240).height(70).padTop(50).colspan(3);</span>
+
+<span class="nc" id="L409">        returnToMenuButton.addListener(createListener(new MainMenuScreen((PiazzaPanic) game)));</span>
+
+<span class="nc" id="L411">        stage.addActor(centerTable);</span>
+<span class="nc" id="L412">    }</span>
+
+    public void displayInfoMessage(String msg){
+<span class="nc" id="L415">        infoMsgLabel.setText(msg);</span>
+<span class="nc" id="L416">        infoTimer.start();</span>
+<span class="nc" id="L417">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L421">        super.resize(width, height);</span>
+<span class="nc" id="L422">        viewport.update(width, height, true);</span>
+<span class="nc" id="L423">        viewport.apply();</span>
+<span class="nc" id="L424">    }</span>
+
+    public void dispose() {
+<span class="nc" id="L427">        stage.dispose();</span>
+<span class="nc" id="L428">    }</span>
+
+    private ClickListener createListener(final Screen screen) {
+<span class="nc" id="L431">        return new ClickListener() {</span>
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L433">                game.setScreen(screen);</span>
+<span class="nc" id="L434">            }</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

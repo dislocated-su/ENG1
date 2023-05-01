@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LightBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility.box2d</a> &gt; <span class="el_source">LightBuilder.java</span></div><h1>LightBuilder.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility.box2d;
+
+import com.badlogic.gdx.graphics.Color;
+
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
+
+/**
+ * Helper class that stores light definitions.
+ */
+<span class="nc" id="L11">public class LightBuilder {</span>
+
+    private static final int rays = 500;
+
+    /**
+     * Create a point light.
+     * @param rayHandler the rayhandler to be added to.
+     * @param x x-position in world coordinates
+     * @param y y-position in world coordinates
+     * @param c Colour of the light.
+     * @param dist distance of light, how far does it reach.
+     * @param soft Enables/disables softness on tips of this light beams
+     * @return {@link PointLight} reference.
+     */
+    public static PointLight createPointLight(RayHandler rayHandler, float x, float y, Color c, float dist,
+            boolean soft) {
+<span class="nc" id="L27">        PointLight pl = new PointLight(rayHandler, rays, c, dist, x, y);</span>
+<span class="nc" id="L28">        pl.setContactFilter(CollisionCategory.LIGHTS.getValue(), (short) 0, CollisionCategory.BOUNDARY.getValue());</span>
+<span class="nc" id="L29">        pl.setSoft(soft);</span>
+<span class="nc" id="L30">        pl.setSoftnessLength(8f);</span>
+<span class="nc" id="L31">        pl.setXray(false);</span>
+<span class="nc" id="L32">        return pl;</span>
+    }
+    /**
+     * Create a softer light to cover the whole room.
+     * @param rayHandler the rayhandler to be added to.
+     * @param x x-position in world coordinates
+     * @param y y-position in world coordinates
+     * @param c Colour of the light.
+     * @param dist distance of light, how far does it reach.
+     * @param xray If true, light will bleed trough objects
+     * @return {@link PointLight} reference.
+     */
+    public static PointLight createRoomLight(RayHandler rayHandler, float x, float y, Color c, float dist,
+            boolean xray) {
+<span class="nc" id="L46">        PointLight pl = new PointLight(rayHandler, rays, c, dist, x, y);</span>
+<span class="nc" id="L47">        pl.setContactFilter(CollisionCategory.LIGHTS.getValue(), (short) 0,</span>
+<span class="nc" id="L48">                (short) (CollisionCategory.BOUNDARY.getValue() | CollisionCategory.LIGHTS.getValue()));</span>
+<span class="nc" id="L49">        pl.setSoftnessLength(12.5f);</span>
+<span class="nc" id="L50">        pl.setXray(xray);</span>
+
+<span class="nc" id="L52">        return pl;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
