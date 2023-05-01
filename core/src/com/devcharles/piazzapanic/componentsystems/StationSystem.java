@@ -41,13 +41,13 @@ public class StationSystem extends IteratingSystem {
     WorldTilemapRenderer mapRenderer;
     Hud hud;
 
+    private GameScreen InstaCook;
     private TintComponent readyTint;
     private float tickAccumulator = 0;
     private final Float[] tillBalance;
     private GameScreen.Difficulty difficulty;
-
-
-    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, GameScreen.Difficulty difficulty) {
+    public Integer timer = 15;
+    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, GameScreen.Difficulty difficulty, GameScreen InstaACook) {
         super(Family.all(StationComponent.class).get());
         this.input = input;
         this.factory = factory;
@@ -55,6 +55,7 @@ public class StationSystem extends IteratingSystem {
         this.tillBalance=tillBalance;
         this.hud=hud;
         this.difficulty=difficulty;
+        this.InstaCook = InstaACook;
     }
 
     @Override
@@ -107,7 +108,6 @@ public class StationSystem extends IteratingSystem {
                 player.pickUp = false;
 
                 ControllableComponent controllable = Mappers.controllable.get(station.interactingCook);
-
                 switch (station.type) {
                     case ingredient:
                         controllable.currentFood.pushItem(factory.createFood(station.ingredient),
@@ -174,6 +174,12 @@ public class StationSystem extends IteratingSystem {
 
         cooking.timer.start();
 
+        // Flag the food as processed if InstaCook is active
+        if(InstaCook.InstaCook){
+            cooking.processed = true;
+
+        }
+
         station.food.get(foodIndex).add(cooking);
 
         Gdx.app.log("Food processed", String.format("%s turned into %s", food.type, result));
@@ -201,6 +207,17 @@ public class StationSystem extends IteratingSystem {
 
             // Check if it's ready without ticking the timer
             boolean ready = cooking.timer.tick(0);
+            
+            // Make the food ready if the InstaCook powerup is active
+            if(InstaCook.InstaCook){
+                ready = true;
+                return;
+            }
+
+            if(cooking.processed){
+                food.remove(TintComponent.class);
+                return;
+            }
 
             if (ready && !cooking.processed) {
                 food.remove(TintComponent.class);
@@ -296,6 +313,7 @@ public class StationSystem extends IteratingSystem {
      * @param deltaTime
      */
     private void stationTick(StationComponent station, float deltaTime) {
+        
         if (station.type == StationType.cutting_board && station.interactingCook == null) {
             return;
         }
@@ -309,6 +327,9 @@ public class StationSystem extends IteratingSystem {
             CookingComponent cooking = Mappers.cooking.get(foodEntity);
 
             boolean ready = cooking.timer.tick(deltaTime);
+            if(InstaCook.InstaCook){
+                ready = true;
+            }
 
             if (ready && cooking.processed) {
                 cooking.timer.stop();
