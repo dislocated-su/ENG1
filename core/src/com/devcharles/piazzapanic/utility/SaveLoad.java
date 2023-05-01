@@ -67,7 +67,6 @@ public class SaveLoad {
     }
 
     public void load(String saveData) {
-        // TODO
         HashMap<String, List<Entity>> data = select();
 
         int player_counter = 0;
@@ -101,13 +100,12 @@ public class SaveLoad {
                 break;
             case "Player":
                 Entity player = data.get("players").get(player_counter);
-                Vector3 position = Mappers.transform.get(player).position;
-                Body bodyC = Mappers.b2body.get(player).body;
-                //System.out.println(position);
-                position.x = Float.parseFloat(vars[1]);
-                position.y = Float.parseFloat(vars[2]);
-                position.z = Float.parseFloat(vars[3]);
-                //System.out.println(position);
+                Float x = Float.parseFloat(vars[1]);
+                Float y = Float.parseFloat(vars[2]);
+                Float angle = Float.parseFloat(vars[3]);
+
+                Body body = Mappers.b2body.get(player).body;
+                body.setTransform(x, y, angle);;
 
                 player_counter = (player_counter + 1) % 2;
                 break;
