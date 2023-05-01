@@ -23,6 +23,7 @@ import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
+import com.devcharles.piazzapanic.utility.AudioSystem;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 import com.devcharles.piazzapanic.utility.Mappers;
@@ -159,14 +160,17 @@ public class CustomerAISystem extends IteratingSystem {
             }
 
             Entity food = cook.currentFood.pop();
+            AudioSystem audio = new AudioSystem();
 
             if (Mappers.food.get(food).type == customer.order) {
                 // Fulfill order
                 Gdx.app.log("Order success", customer.order.name());
                 fulfillOrder(entity, customer, food);
+                audio.playThanks();
 
             } else {
                 getEngine().removeEntity(food);
+                audio.playSigh();
             }
 
         }
