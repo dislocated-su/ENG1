@@ -569,43 +569,43 @@ public class Hud extends ApplicationAdapter {
 
             timeCounter -= 1;
 
-            // adjust the timers for the powerups
-            if(SpeedCounter == 0){
-                SpeedActive = false;
-                speedBoostTimer.setText("");
-                SpeedCounter = 30;
+                // adjust the timers for the powerups
+            if (difficulty != Difficulty.SCENARIO) {
+                if(SpeedCounter == 0){
+                    SpeedActive = false;
+                    speedBoostTimer.setText("");
+                    SpeedCounter = 30;
+                }
+
+                if(InstaCounter == 0){
+                    InstaActive = false;
+                    InstaCookTimer.setText("");
+                    InstaCounter= 20;
+                }
+
+                if(DoubleCounter == 0){
+                    DoubleActive = false;
+                    DoublePointsTimer.setText("");
+                    DoubleCounter = 30;
+                }
+
+                if(FreezeCounter == 0){
+                    FreezeActive = false;
+                    TimeFreezeTimer.setText("");
+                    FreezeCounter = 30;
+                }
+
+                if(SpeedActive){speedBoostTimer.setText(String.format("%01d", SpeedCounter));}
+
+                if(InstaActive){InstaCookTimer.setText(String.format("%01d", InstaCounter));}
+
+                if(DoubleActive){DoublePointsTimer.setText(String.format("%01d", DoubleCounter));}
+                
+                if(FreezeActive){TimeFreezeTimer.setText(String.format("%01d", FreezeCounter));}
+                
+
+                SpeedCounter--; InstaCounter--; DoubleCounter--; FreezeCounter--;
             }
-
-            if(InstaCounter == 0){
-                InstaActive = false;
-                InstaCookTimer.setText("");
-                InstaCounter= 20;
-            }
-
-            if(DoubleCounter == 0){
-                DoubleActive = false;
-                DoublePointsTimer.setText("");
-                DoubleCounter = 30;
-            }
-
-            if(FreezeCounter == 0){
-                FreezeActive = false;
-                TimeFreezeTimer.setText("");
-                FreezeCounter = 30;
-            }
-
-            if(SpeedActive){speedBoostTimer.setText(String.format("%01d", SpeedCounter));}
-
-            if(InstaActive){InstaCookTimer.setText(String.format("%01d", InstaCounter));}
-
-            if(DoubleActive){DoublePointsTimer.setText(String.format("%01d", DoubleCounter));}
-            
-            if(FreezeActive){TimeFreezeTimer.setText(String.format("%01d", FreezeCounter));}
-            
-
-            SpeedCounter--; InstaCounter--; DoubleCounter--; FreezeCounter--;
-            
-
         }
 
         stage.act();
