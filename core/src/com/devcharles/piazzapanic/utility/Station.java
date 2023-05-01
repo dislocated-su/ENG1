@@ -43,7 +43,7 @@ public class Station {
         }
     };
 
-    public static HashMap<Set<FoodType>, FoodType> serveRecipes = new HashMap<Set<FoodType>, FoodType>() {
+    public static HashMap<Set<FoodType>, FoodType> assembleRecipes = new HashMap<Set<FoodType>, FoodType>() {
         {
             put(new HashSet<FoodType>() {
                 {
@@ -87,6 +87,14 @@ public class Station {
             }, FoodType.jacketPotato);
         }
     };
+
+    public static FoodType[] serveRecipes = {
+        FoodType.burger,
+        FoodType.salad,
+        FoodType.pizza,
+        FoodType.jacketPotato,
+    };
+
     /**
      * Maps the stationType to recipes available to that station. This avoids excessive branching.
      */

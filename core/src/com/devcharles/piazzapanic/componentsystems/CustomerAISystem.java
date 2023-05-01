@@ -15,12 +15,8 @@ import com.badlogic.gdx.ai.steer.behaviors.CollisionAvoidance;
 import com.badlogic.gdx.ai.steer.behaviors.PrioritySteering;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.devcharles.piazzapanic.components.AIAgentComponent;
-import com.devcharles.piazzapanic.components.ControllableComponent;
-import com.devcharles.piazzapanic.components.CustomerComponent;
-import com.devcharles.piazzapanic.components.ItemComponent;
-import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.components.TransformComponent;
+import com.devcharles.piazzapanic.GameScreen;
+import com.devcharles.piazzapanic.components.*;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.AudioSystem;
@@ -39,13 +35,19 @@ public class CustomerAISystem extends IteratingSystem {
     private final Map<Integer, Boolean> objectiveTaken;
 
     private final World world;
-    private final GdxTimer spawnTimer = new GdxTimer(30000, false, true);
+    private GdxTimer spawnTimer;
     private final EntityFactory factory;
     private int numOfCustomerTotal = 0;
     private final Hud hud;
+    private final GameScreen.Difficulty difficulty;
     private final Integer[] reputationPoints;
-    private final int CUSTOMER = 5;
+    private final Float[] tillBalance;
+    private final Integer[] customersServed;
+    private int CUSTOMER;
     private boolean firstSpawn = true;
+    private GameScreen gameScreen;
+    private Integer timeFrozen = 30000;
+    private  Integer DoubleRepCounter = 30000;
 
     // List of customers, on removal we move the other customers up a place (queueing).
     private final ArrayList<Entity> customers = new ArrayList<Entity>() {
@@ -76,46 +78,88 @@ public class CustomerAISystem extends IteratingSystem {
      * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
      */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer[] reputationPoints) {
+            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty, Float[] tillBalance, Integer[] customersServed, GameScreen gameScreen) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
+        this.CUSTOMER=customer;
         this.hud = hud;
         this.objectives = objectives;
         this.objectiveTaken = new HashMap<Integer, Boolean>();
         this.reputationPoints = reputationPoints;
+        this.difficulty=difficulty;
+        this.tillBalance=tillBalance;
+        this.customersServed=customersServed;
+        this.gameScreen = gameScreen;
 
         // Use a reference to the world to destroy box2d bodies when despawning
         // customers
         this.world = world;
         this.factory = factory;
 
-        spawnTimer.start();
+        this.spawnTimer = new GdxTimer(difficulty.getSpawnFrequency(),true,true);
+        //spawnTimer.start();
     }
 
     @Override
     public void update(float deltaTime) {
-        if (firstSpawn || (spawnTimer.tick(deltaTime) && numOfCustomerTotal < CUSTOMER)) {
+        if (firstSpawn || (spawnTimer.tick(deltaTime) && CUSTOMER > 0)) {
             firstSpawn = false;
-            Entity newCustomer = factory.createCustomer(objectives.get(-2).getPosition());
-            customers.add(newCustomer);
-            numOfCustomerTotal++;
-            Mappers.customer.get(newCustomer).timer.start();
+
+            // Only add a customer is there is space in the queue and there are customers still remaining.
+            // The number of customers in the queue cannot be more than the number of customers remaining.
+            // There are 5 queue spots on the map.
+            if(numOfCustomerTotal<5 && !(numOfCustomerTotal+1>CUSTOMER)){
+
+                // The first customer will arrive alone but after that there is a chance customers
+                // will arrive in groups of two or three.
+                int customersToSpawn = getRandomCustomerGroupSize();
+                if(numOfCustomerTotal+customersToSpawn>5 || firstSpawn){customersToSpawn=1;}
+                Vector2 pos = new Vector2(objectives.get(-2).getPosition());
+
+                // Each customer in group will have spawn point offset to stop entity overlap and queue blocking.
+                for (int i=0;i<customersToSpawn;i++){
+                    pos.x+=0.5;
+                    Entity newCustomer = factory.createCustomer(pos);
+                    customers.add(newCustomer);
+                    numOfCustomerTotal++;
+                    Mappers.customer.get(newCustomer).timer.start();
+                    processEntity(newCustomer,deltaTime);
+                }
+                Gdx.app.log("Info",customersToSpawn + " customer(s) have arrived.");
+            }
+
+            // If endless mode then decrease customer spawn frequency by one second every time a customer is served.
+            // Result is customers will arrive more often over time in endless mode.
+            // If the time freeze powerup has been purchased pause the spawn timer until the powerup time has passed.
+            if(firstSpawn==false && difficulty != GameScreen.Difficulty.SCENARIO){
+                if(gameScreen.TimeFreeze){
+                    if(timeFrozen <= 0){
+                        spawnTimer.start();
+                        timeFrozen = 30000;    
+                    }
+                    spawnTimer.stop();
+                    timeFrozen = timeFrozen - 25;
+                }
+                spawnTimer = new GdxTimer((difficulty.getSpawnFrequency()-((999-CUSTOMER)*1000)),true,true);
+                Gdx.app.log("Info","Spawn frequency is now " + (difficulty.getSpawnFrequency()-((999-CUSTOMER)*1000)));
+            }
         }
 
         FoodType[] orders = new FoodType[customers.size()];
+        int[] orderTimes = new int[customers.size()];
         int i = 0;
         for (Entity customer : customers) {
             orders[i] = Mappers.customer.get(customer).order;
+            orderTimes[i] = (120000-Mappers.customer.get(customer).timer.getElapsed())/1000;
             i++;
         }
 
-        if (!hud.won && customers.size() == 0 && numOfCustomerTotal == CUSTOMER) {
-            hud.triggerWin = true;
+        if ((!hud.gameOver && customers.size() == 0 && CUSTOMER==0) || reputationPoints[0]==0) {
+            hud.triggerGameOver = true;
         }
 
         super.update(deltaTime);
-
-        hud.updateOrders(orders);
+        hud.updateOrders(orders,orderTimes);
     }
 
     @Override
@@ -130,17 +174,44 @@ public class CustomerAISystem extends IteratingSystem {
         }
 
         if (aiAgent.steeringBody.getSteeringBehavior() == null) {
+            Gdx.app.log("customer","this customer is moving to objective"+(customers.size()-1));
             makeItGoThere(aiAgent, customers.size() - 1);
         }
 
         aiAgent.steeringBody.update(deltaTime);
 
-        // lower reputation points if they have waited longer than time alloted (1 min)
+        // Lower reputation points only in endless if they have waited longer than time alloted.
         if (customer.timer.tick(deltaTime)) {
             if (reputationPoints[0] > 0) {
-                reputationPoints[0]--;
+                if(difficulty!= GameScreen.Difficulty.SCENARIO){
+                    reputationPoints[0]--;
+                }
             }
             customer.timer.stop();
+        }
+
+        // Remove a customer upon activation of the BinACustomer powerup.
+        if(gameScreen.BinACustomer){
+            if(CUSTOMER == 0){
+                gameScreen.BinOff();
+            }
+            fulfillOrder(entity, customer, entity, gameScreen.BinACustomer, gameScreen.DoubleRep);
+            gameScreen.BinOff();
+        }
+
+        // Freeze the customer timers for all customers whilst the powerup is active.
+        if(gameScreen.TimeFreeze){
+            timeFreeze(customer);
+        }
+
+        // Decrease the timer for the double money powerup. 
+        if(gameScreen.DoubleRep){
+            DoubleRepCounter -= 17;
+            if(DoubleRepCounter <= 0){
+                gameScreen.DoubleOff();
+                DoubleRepCounter = 30000;
+                
+            }
         }
 
         if (customer.interactingCook != null) {
@@ -166,13 +237,25 @@ public class CustomerAISystem extends IteratingSystem {
                 // Fulfill order
                 Gdx.app.log("Order success", customer.order.name());
                 fulfillOrder(entity, customer, food);
+                fulfillOrder(entity, customer, food, gameScreen.BinACustomer, gameScreen.DoubleRep);
                 audio.playThanks();
-
             } else {
                 getEngine().removeEntity(food);
                 audio.playSigh();
             }
 
+        }
+    }
+    
+    /**
+     * 
+     * @param customer for freezeing the customers order timer whilst the powerup is active
+     */
+    private void timeFreeze(CustomerComponent customer){
+        customer.timer.stop();
+        if(timeFrozen <= 0){
+            customer.timer.start();
+            gameScreen.TimeOff();
         }
     }
 
@@ -222,26 +305,85 @@ public class CustomerAISystem extends IteratingSystem {
     /**
      * Give customer food, send them away and remove the order from the list
      */
-    private void fulfillOrder(Entity entity, CustomerComponent customer, Entity foodEntity) {
+    private void fulfillOrder(Entity entity, CustomerComponent customer, Entity foodEntity, Boolean BinACustomer, Boolean DoubleRep) {
 
+            if(BinACustomer){
+            getEngine().removeEntity(entity);
+            customer.timer.stop();
+            customer.timer.reset();
+            customer.order = null;
+            customers.remove(entity);
+            numOfCustomerTotal--;
+            CUSTOMER--;
+        
+        }
+        
         Engine engine = getEngine();
+        if(customer.order != null){
+            float customerTip = getRandomCustomerTip(customer.order.getPrice());
+            if(customerTip>0){
+                hud.displayInfoMessage("Customer has tipped $ " + Float.toString(customerTip));
+            }
 
-        customer.order = null;
+            // if double rep powerup is active double the price of the order
+            if(DoubleRep){
+                float doublePrice = customer.order.getPrice() * 2f;
+                tillBalance[0] += doublePrice + customerTip;
+            }
 
-        ItemComponent heldItem = engine.createComponent(ItemComponent.class);
-        heldItem.holderTransform = Mappers.transform.get(entity);
+            tillBalance[0]+=customer.order.getPrice() + customerTip;
+            customer.order = null;
+    
+            ItemComponent heldItem = engine.createComponent(ItemComponent.class);
+            heldItem.holderTransform = Mappers.transform.get(entity);
+    
+            foodEntity.add(heldItem);
+    
+            customer.food = foodEntity;
+    
+            AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
+            makeItGoThere(aiAgent, -1);
+    
+            customer.timer.stop();
+            customer.timer.reset();
+    
+            customers.remove(entity);
+            numOfCustomerTotal--;
+            CUSTOMER--;
+            customersServed[0]++;
+        }
 
-        foodEntity.add(heldItem);
-
-        customer.food = foodEntity;
-
-        AIAgentComponent aiAgent = Mappers.aiAgent.get(entity);
-        makeItGoThere(aiAgent, -1);
-
-        customer.timer.stop();
-        customer.timer.reset();
-
-        customers.remove(entity);
     }
 
+    /**
+     * Calculates how many customers should arrive at once.
+     * Weighted so that customers arrive alone most of the time.
+     * @return groupSize
+     */
+    private int getRandomCustomerGroupSize(){
+        if (difficulty== GameScreen.Difficulty.SCENARIO){return 1;}
+        double x = Math.random();
+        if(x<0.7){return 1;}
+        if(x>=0.7 && x < 0.9){return 2;}
+        if(x>=0.9){return 3;}
+        return 1;
+    }
+
+    /**
+     * Calculates the amount a customer will tip.
+     * Customers will tip a random amount up to the price of their dish and
+     * will do so 20% of the time.
+     * In scenario mode there are no tips.
+     * @param dishPrice The price of the customer's meal which is used to determine their tip.
+     * @return The calculated tip.
+     */
+    private int getRandomCustomerTip(float dishPrice){
+        if (difficulty== GameScreen.Difficulty.SCENARIO){return 0;}
+        double x = Math.random();
+        if(x>0.8){
+            x = (1 + Math.random());
+            return Math.round((float) dishPrice * (float) x);
+        }
+        return 0;
+    }
 }

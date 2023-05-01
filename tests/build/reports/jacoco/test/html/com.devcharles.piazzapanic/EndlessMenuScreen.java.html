@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EndlessMenuScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic</a> &gt; <span class="el_source">EndlessMenuScreen.java</span></div><h1>EndlessMenuScreen.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic;
+
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.devcharles.piazzapanic.scene2d.Slideshow;
+
+/**
+ * Endless menu screen for selecting easy, normal or hard difficulty, transitions the player to the Tutorial
+ * {@link Slideshow} on button press
+ */
+public class EndlessMenuScreen extends ApplicationAdapter implements Screen {
+
+    final PiazzaPanic game;
+    OrthographicCamera camera;
+    private Stage stage;
+    private Skin skin;
+    private Batch batch;
+    private Sprite sprite;
+    private BitmapFont gamesFont;
+    private BitmapFont subtitleFont;
+    private Label title;
+    private Label subtitle;
+    private TextButton toggleDifficulty;
+
+<span class="nc" id="L38">    public EndlessMenuScreen(final PiazzaPanic game) {</span>
+
+<span class="nc" id="L40">        this.game = game;</span>
+<span class="nc" id="L41">        camera = new OrthographicCamera();</span>
+<span class="nc" id="L42">        camera.setToOrtho(false, 1280, 720);</span>
+<span class="nc" id="L43">        batch = new SpriteBatch();</span>
+
+<span class="nc" id="L45">        sprite = new Sprite(new Texture(Gdx.files.internal(&quot;mainMenuImage.png&quot;)));</span>
+<span class="nc" id="L46">        sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());</span>
+
+<span class="nc" id="L48">        skin = new Skin(Gdx.files.internal(&quot;craftacular/skin/craftacular-ui.json&quot;));</span>
+<span class="nc" id="L49">        stage = new Stage(new ScreenViewport());</span>
+
+<span class="nc" id="L51">        Label.LabelStyle menuLabelStyle = new Label.LabelStyle();</span>
+<span class="nc" id="L52">        Label.LabelStyle subtitleLabelStyle = new Label.LabelStyle();</span>
+<span class="nc" id="L53">        gamesFont = new BitmapFont(Gdx.files.internal(&quot;craftacular/raw/font-title-export.fnt&quot;));</span>
+<span class="nc" id="L54">        subtitleFont = new BitmapFont(Gdx.files.internal(&quot;craftacular/raw/font-export.fnt&quot;));</span>
+<span class="nc" id="L55">        subtitleFont.getData().setScale((float) 1.5,(float) 1.5);</span>
+<span class="nc" id="L56">        menuLabelStyle.font = gamesFont;</span>
+<span class="nc" id="L57">        subtitleLabelStyle.font=subtitleFont;</span>
+
+<span class="nc" id="L59">        title = new Label(&quot;Piazza Panic&quot;, menuLabelStyle);</span>
+<span class="nc" id="L60">        subtitle = new Label(&quot;Endless mode - Toggle Difficulty&quot;, subtitleLabelStyle);</span>
+<span class="nc" id="L61">        Table root = new Table();</span>
+<span class="nc" id="L62">        root.setFillParent(true);</span>
+<span class="nc" id="L63">        stage.addActor(root);</span>
+<span class="nc" id="L64">        root.add(title).expandX().padBottom(120);</span>
+<span class="nc" id="L65">        root.row();</span>
+<span class="nc" id="L66">        root.add(subtitle).expandX().padBottom(50);</span>
+<span class="nc" id="L67">        root.row();</span>
+<span class="nc" id="L68">        toggleDifficulty = new TextButton(&quot;Easy&quot;, skin);</span>
+<span class="nc" id="L69">        TextButton backButton = new TextButton(&quot;Back&quot;, skin);</span>
+<span class="nc" id="L70">        TextButton startButton = new TextButton(&quot;Start&quot;, skin);</span>
+<span class="nc" id="L71">        root.add(toggleDifficulty).padBottom(50);</span>
+<span class="nc" id="L72">        root.row();</span>
+<span class="nc" id="L73">        root.add(backButton);</span>
+<span class="nc" id="L74">        root.row();</span>
+<span class="nc" id="L75">        root.add(startButton);</span>
+
+        // Checks if button is clicked and if clicked goes onto the tutorial
+<span class="nc" id="L78">        startButton.addListener(new ClickListener() {</span>
+            public void clicked(InputEvent event, float x, float y) {
+                // TODO Start endless mode with specified difficulty.
+<span class="nc" id="L81">                GameScreen.Difficulty difficulty = GameScreen.Difficulty.ENDLESS_NORMAL;</span>
+<span class="nc bnc" id="L82" title="All 4 branches missed.">                switch(toggleDifficulty.getText().toString()){</span>
+                    case &quot;Easy&quot;:
+<span class="nc" id="L84">                        difficulty=GameScreen.Difficulty.ENDLESS_EASY;</span>
+<span class="nc" id="L85">                        break;</span>
+                    case &quot;Normal&quot;:
+<span class="nc" id="L87">                        difficulty=GameScreen.Difficulty.ENDLESS_NORMAL;</span>
+<span class="nc" id="L88">                        break;</span>
+                    case &quot;Hard&quot;:
+<span class="nc" id="L90">                        difficulty=GameScreen.Difficulty.ENDLESS_HARD;</span>
+                        break;
+                }
+<span class="nc" id="L93">                game.setScreen(new GameScreen(game,999,difficulty));</span>
+<span class="nc" id="L94">            }</span>
+        });
+
+        // Toggles difficulty of endless game mode
+<span class="nc" id="L98">        toggleDifficulty.addListener(new ClickListener() {</span>
+            public void clicked(InputEvent event, float x, float y) {
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                if(toggleDifficulty.getText().toString().equals(&quot;Easy&quot;)){</span>
+<span class="nc" id="L102">                    toggleDifficulty.setText(&quot;Normal&quot;);</span>
+                }
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                else if(toggleDifficulty.getText().toString().equals(&quot;Normal&quot;)){</span>
+<span class="nc" id="L105">                    toggleDifficulty.setText(&quot;Hard&quot;);</span>
+                }
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                else if(toggleDifficulty.getText().toString().equals(&quot;Hard&quot;)) {</span>
+<span class="nc" id="L108">                    toggleDifficulty.setText(&quot;Easy&quot;);</span>
+                }
+<span class="nc" id="L110">            }</span>
+        });
+
+        // Checks if the back button is clicked and then goes back to main menu screen.
+<span class="nc" id="L114">        backButton.addListener(new ClickListener() {</span>
+            public void clicked(InputEvent event, float x, float y) {
+<span class="nc" id="L116">                game.setScreen(new MainMenuScreen(game));</span>
+<span class="nc" id="L117">                dispose();</span>
+<span class="nc" id="L118">            }</span>
+        });
+<span class="nc" id="L120">    }</span>
+
+    @Override
+    public void show() {
+<span class="nc" id="L124">        Gdx.input.setInputProcessor(stage);</span>
+<span class="nc" id="L125">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L129">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+        // draws everything (dont change this order unless you know what youre doing)
+<span class="nc" id="L131">        batch.begin();</span>
+<span class="nc" id="L132">        sprite.draw(batch);</span>
+<span class="nc" id="L133">        batch.end();</span>
+<span class="nc" id="L134">        stage.act();</span>
+<span class="nc" id="L135">        stage.draw();</span>
+<span class="nc" id="L136">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L140">        stage.getViewport().update(width, height, true);</span>
+<span class="nc" id="L141">    }</span>
+    @Override
+    public void hide() {
+
+<span class="nc" id="L145">    }</span>
+    public void dispose() {
+<span class="nc" id="L147">        skin.dispose();</span>
+<span class="nc" id="L148">        stage.dispose();</span>
+<span class="nc" id="L149">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

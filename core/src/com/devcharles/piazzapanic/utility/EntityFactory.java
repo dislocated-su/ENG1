@@ -16,17 +16,8 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.devcharles.piazzapanic.components.AIAgentComponent;
-import com.devcharles.piazzapanic.components.AnimationComponent;
-import com.devcharles.piazzapanic.components.B2dBodyComponent;
-import com.devcharles.piazzapanic.components.ControllableComponent;
-import com.devcharles.piazzapanic.components.CustomerComponent;
-import com.devcharles.piazzapanic.components.FoodComponent;
-import com.devcharles.piazzapanic.components.TextureComponent;
-import com.devcharles.piazzapanic.components.TransformComponent;
-import com.devcharles.piazzapanic.components.WalkingAnimationComponent;
+import com.devcharles.piazzapanic.components.*;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
-import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.utility.box2d.Box2dSteeringBody;
 import com.devcharles.piazzapanic.utility.box2d.CollisionCategory;
 
@@ -100,6 +91,9 @@ public class EntityFactory {
 
         WalkingAnimationComponent animation = engine.createComponent(WalkingAnimationComponent.class);
 
+        // PowerUpComponent powerUp = engine.createComponent(PowerUpComponent.class);
+
+        
         controllable.currentFood.init(engine);
 
         animation.animator = new CookAnimator();
@@ -165,7 +159,7 @@ public class EntityFactory {
 
         TransformComponent transform = engine.createComponent(TransformComponent.class);
 
-        FoodComponent food = engine.createComponent(FoodComponent.class);
+        FoodComponent food = engine.createComponent(FoodComponent.class);      
 
         // Texture
         texture.region = getFoodTexture(foodType);
@@ -195,7 +189,7 @@ public class EntityFactory {
      * @param ingredientType (optional) if this is an Ingredient station, which
      *                       ingredient should it spawn.
      */
-    public Entity createStation(Station.StationType type, Vector2 position, FoodType ingredientType) {
+    public Entity createStation(Station.StationType type, Vector2 position, FoodType ingredientType, Vector2 tileOnMap, boolean locked) {
         Entity entity = engine.createEntity();
 
         float[] size = { 1f, 1f };
@@ -207,7 +201,12 @@ public class EntityFactory {
         TransformComponent transform = engine.createComponent(TransformComponent.class);
 
         StationComponent station = engine.createComponent(StationComponent.class);
-        station.type = type;
+
+        if(type != Station.StationType.ingredient){
+            station.tileMapPosition =tileOnMap;
+        }
+        station.type=type;
+        station.locked=locked;
 
         if (type == Station.StationType.ingredient) {
             station.ingredient = ingredientType;
@@ -285,6 +284,7 @@ public class EntityFactory {
         return foodTextures.get(type);
     }
 
+
     /**
      * Create an AI customer entity. The entity will not walk until it receives a
      * {@link com.badlogic.gdx.ai.steer.SteeringBehavior}.
@@ -311,6 +311,8 @@ public class EntityFactory {
 
         walkingAnimation.animator = new CustomerAnimator();
 
+
+
         // Reuse existing body definition
         movingBodyDef.position.set(position.x, position.y);
         b2dBody.body = world.createBody(movingBodyDef);
@@ -324,11 +326,8 @@ public class EntityFactory {
         // Create a steering body with no behaviour (to be set later)
         aiAgent.steeringBody = new Box2dSteeringBody(b2dBody.body, true, 0.5f);
 
-        FoodType[] s = new FoodType[Station.serveRecipes.values().size()];
-        s = Station.serveRecipes.values().toArray(s);
-
+        FoodType[] s = Station.serveRecipes;
         int orderIndex = ThreadLocalRandom.current().nextInt(0, s.length);
-
         customer.order = FoodType.from(s[orderIndex].getValue());
 
         Gdx.app.log("Order received", customer.order.name());
@@ -344,4 +343,50 @@ public class EntityFactory {
         return entity;
     }
 
+    // public static TextureRegion getPowerUpTexture(PowerUpType type){
+    //     return powerupTextures.get(type);
+    // }
+
+        /**
+     * Cut the powerup textures, run at game initialisation.
+     * 
+     * @param path (optional) custom path for powerup textures.
+     */
+    // public static void cutPowerUp(String path) {
+    //     if (path == null) {
+    //         path = "v2/powerups.png";
+    //     }
+
+    //     Texture PowerUpSheet = new Texture(path);
+
+    //     TextureRegion[][] tmp = TextureRegion.split(PowerUpSheet, 32, 32);
+
+    //     int rows = tmp.length;
+    //     int cols = tmp[0].length;
+
+    //     // Flatten the array
+    //     TextureRegion[] frames = new TextureRegion[rows * cols];
+    //     int index = 0;
+    //     for (int i = 0; i < rows; i++) {
+    //         for (int j = 0; j < cols; j++) {
+    //             frames[index++] = tmp[i][j];
+    //         }
+    //     }
+
+    //     for (int i = 1; i < 6; i++) {
+    //         powerupTextures.put(PowerUpType.from(i), frames[i]);
+    //     }
+    // }
+
+
+    // public Entity createPowerup(PowerUpType powerUpType){
+    //     Entity entity = engine.createEntity();
+
+    //     PowerUpComponent powerUp = engine.createComponent(PowerUpComponent.class);
+
+    //     entity.add(powerUp);
+    //     engine.addEntity(entity);
+
+    //     return entity;
+    // }
 }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FoodComponent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.components</a> &gt; <span class="el_source">FoodComponent.java</span></div><h1>FoodComponent.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.components;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.badlogic.ashley.core.Component;
+
+<span class="fc" id="L8">public class FoodComponent implements Component {</span>
+    public FoodType type;
+
+<span class="fc" id="L11">    public enum FoodType {</span>
+        // These ids correspond to the order of the food in the sprite!
+        // price is the price of the dish.
+<span class="fc" id="L14">        unformedPatty(1,0),</span>
+<span class="fc" id="L15">        formedPatty(2,0),</span>
+<span class="fc" id="L16">        grilledPatty(3,0),</span>
+<span class="fc" id="L17">        buns(4,0),</span>
+<span class="fc" id="L18">        toastedBuns(5,0),</span>
+<span class="fc" id="L19">        burger(6,6),</span>
+<span class="fc" id="L20">        lettuce(7,0),</span>
+<span class="fc" id="L21">        slicedLettuce(8,0),</span>
+<span class="fc" id="L22">        tomato(9,0),</span>
+<span class="fc" id="L23">        slicedTomato(10,0),</span>
+<span class="fc" id="L24">        onion(11,0),</span>
+<span class="fc" id="L25">        slicedOnion(12,0),</span>
+<span class="fc" id="L26">        salad(13,3),</span>
+<span class="fc" id="L27">        potato(14,0),</span>
+<span class="fc" id="L28">        butterlessJacketPotato(15,0),</span>
+<span class="fc" id="L29">        jacketPotato(16,4),</span>
+<span class="fc" id="L30">        butter(17,0),</span>
+<span class="fc" id="L31">        dough(18,0),</span>
+<span class="fc" id="L32">        rolledDough(19,0),</span>
+<span class="fc" id="L33">        tomatoDough(20,0),</span>
+<span class="fc" id="L34">        tomatoCheeseDough(21,0),</span>
+<span class="fc" id="L35">        pizza(22,11),</span>
+<span class="fc" id="L36">        tomatoPaste(23,0),</span>
+<span class="fc" id="L37">        cheese(24,0),</span>
+<span class="fc" id="L38">        gratedCheese(25,0);</span>
+
+        private int value;
+        private float price;
+
+<span class="fc" id="L43">        FoodType(int id, float price) {</span>
+<span class="fc" id="L44">            this.value = id;</span>
+<span class="fc" id="L45">            this.price= price;</span>
+<span class="fc" id="L46">        }</span>
+
+        public int getValue() {
+<span class="fc" id="L49">            return value;</span>
+        }
+<span class="nc" id="L51">        public float getPrice(){return price;}</span>
+<span class="fc" id="L52">        private static final Map&lt;Integer, FoodType&gt; _map = new HashMap&lt;Integer, FoodType&gt;();</span>
+        static {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            for (FoodType stationType : FoodType.values()) {</span>
+<span class="fc" id="L55">                _map.put(stationType.value, stationType);</span>
+            }
+<span class="fc" id="L57">        }</span>
+
+        /**
+         * Get type from id
+         * 
+         * @param value id value
+         * @return Enum type
+         */
+        public static FoodType from(int value) {
+<span class="fc" id="L66">            return _map.get(value);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

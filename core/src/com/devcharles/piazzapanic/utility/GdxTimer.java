@@ -45,6 +45,8 @@ public class GdxTimer {
         return false;
     }
 
+    public int getElapsed(){return this.elapsed;}
+
     public void start() {
         this.running = true;
     }

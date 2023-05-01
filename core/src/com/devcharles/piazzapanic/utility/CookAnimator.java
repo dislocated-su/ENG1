@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class CookAnimator extends WalkAnimator {
 
-    CookAnimator() {
+    public CookAnimator() {
         int randomNum = ThreadLocalRandom.current().nextInt(1, 3);
 
         // Load the sprite sheet as a Texture

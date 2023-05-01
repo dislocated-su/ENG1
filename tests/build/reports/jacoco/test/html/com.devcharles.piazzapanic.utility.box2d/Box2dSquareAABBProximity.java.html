@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Box2dSquareAABBProximity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility.box2d</a> &gt; <span class="el_source">Box2dSquareAABBProximity.java</span></div><h1>Box2dSquareAABBProximity.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Copyright 2014 davebaol https://github.com/davebaol
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+ /*
+  * The reportFixture() method was modified from the original to check for a null in the input.
+  */
+
+ package com.devcharles.piazzapanic.utility.box2d;
+
+ import com.badlogic.gdx.ai.steer.Proximity;
+ import com.badlogic.gdx.ai.steer.Steerable;
+ import com.badlogic.gdx.math.Vector2;
+ import com.badlogic.gdx.physics.box2d.Fixture;
+ import com.badlogic.gdx.physics.box2d.QueryCallback;
+ import com.badlogic.gdx.physics.box2d.World;
+ 
+ /** A {@code Box2dSquareAABBProximity} is a {@link Proximity} that queries the world for all fixtures that potentially overlap the
+  * square AABB built around the circle having the specified detection radius and whose center is the owner position.
+  * 
+  * @author davebaol */
+ public class Box2dSquareAABBProximity implements Proximity&lt;Vector2&gt;, QueryCallback {
+ 
+     protected Steerable&lt;Vector2&gt; owner;
+     protected World world;
+     protected ProximityCallback&lt;Vector2&gt; behaviorCallback;
+     protected float detectionRadius;
+ 
+     private int neighborCount;
+ 
+<span class="nc" id="L43">     private static final AABB aabb = new AABB();</span>
+ 
+<span class="nc" id="L45">     public Box2dSquareAABBProximity (Steerable&lt;Vector2&gt; owner, World world, float detectionRadius) {</span>
+<span class="nc" id="L46">         this.owner = owner;</span>
+<span class="nc" id="L47">         this.world = world;</span>
+<span class="nc" id="L48">         this.detectionRadius = detectionRadius;</span>
+<span class="nc" id="L49">         this.behaviorCallback = null;</span>
+<span class="nc" id="L50">         this.neighborCount = 0;</span>
+<span class="nc" id="L51">     }</span>
+ 
+     @Override
+     public Steerable&lt;Vector2&gt; getOwner () {
+<span class="nc" id="L55">         return owner;</span>
+     }
+ 
+     @Override
+     public void setOwner (Steerable&lt;Vector2&gt; owner) {
+<span class="nc" id="L60">         this.owner = owner;</span>
+<span class="nc" id="L61">     }</span>
+ 
+     /** Returns the box2d world. */
+     public World getWorld () {
+<span class="nc" id="L65">         return world;</span>
+     }
+ 
+     /** Sets the box2d world. */
+     public void setWorld (World world) {
+<span class="nc" id="L70">         this.world = world;</span>
+<span class="nc" id="L71">     }</span>
+ 
+     /** Returns the detection radius that is half the side of the square AABB. */
+     public float getDetectionRadius () {
+<span class="nc" id="L75">         return detectionRadius;</span>
+     }
+ 
+     /** Sets the detection radius that is half the side of the square AABB. */
+     public void setDetectionRadius (float detectionRadius) {
+<span class="nc" id="L80">         this.detectionRadius = detectionRadius;</span>
+<span class="nc" id="L81">     }</span>
+ 
+     @Override
+     public int findNeighbors (ProximityCallback&lt;Vector2&gt; behaviorCallback) {
+<span class="nc" id="L85">         this.behaviorCallback = behaviorCallback;</span>
+<span class="nc" id="L86">         neighborCount = 0;</span>
+<span class="nc" id="L87">         prepareAABB(aabb);</span>
+<span class="nc" id="L88">         world.QueryAABB(this, aabb.lowerX, aabb.lowerY, aabb.upperX, aabb.upperY);</span>
+<span class="nc" id="L89">         this.behaviorCallback = null;</span>
+<span class="nc" id="L90">         return neighborCount;</span>
+     }
+ 
+     protected void prepareAABB (AABB aabb) {
+<span class="nc" id="L94">         Vector2 position = owner.getPosition();</span>
+<span class="nc" id="L95">         aabb.lowerX = position.x - detectionRadius;</span>
+<span class="nc" id="L96">         aabb.lowerY = position.y - detectionRadius;</span>
+<span class="nc" id="L97">         aabb.upperX = position.x + detectionRadius;</span>
+<span class="nc" id="L98">         aabb.upperY = position.y + detectionRadius;</span>
+<span class="nc" id="L99">     }</span>
+ 
+     @SuppressWarnings(&quot;unchecked&quot;)
+     protected Steerable&lt;Vector2&gt; getSteerable (Fixture fixture) {
+<span class="nc" id="L103">         return (Steerable&lt;Vector2&gt;)fixture.getBody().getUserData();</span>
+     }
+ 
+     protected boolean accept (Steerable&lt;Vector2&gt; steerable) {
+<span class="nc" id="L107">         return true;</span>
+     }
+ 
+     @Override
+     public boolean reportFixture (Fixture fixture) {
+<span class="nc" id="L112">         Steerable&lt;Vector2&gt; steerable = getSteerable(fixture);</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">         if (steerable == null) {</span>
+<span class="nc" id="L114">            return false;</span>
+         }
+<span class="nc bnc" id="L116" title="All 4 branches missed.">         if (steerable != owner &amp;&amp; accept(steerable)) {</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">             if (behaviorCallback.reportNeighbor(steerable)) neighborCount++;</span>
+         }
+<span class="nc" id="L119">         return true;</span>
+     }
+ 
+<span class="nc" id="L122">     public static class AABB {</span>
+         float lowerX;
+         float lowerY;
+         float upperX;
+         float upperY;
+     }
+ }
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
