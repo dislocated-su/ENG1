@@ -236,7 +236,6 @@ public class CustomerAISystem extends IteratingSystem {
             if (Mappers.food.get(food).type == customer.order) {
                 // Fulfill order
                 Gdx.app.log("Order success", customer.order.name());
-                fulfillOrder(entity, customer, food);
                 fulfillOrder(entity, customer, food, gameScreen.BinACustomer, gameScreen.DoubleRep);
                 audio.playThanks();
             } else {
