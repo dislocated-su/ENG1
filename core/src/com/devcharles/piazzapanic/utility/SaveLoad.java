@@ -43,7 +43,6 @@ public class SaveLoad {
     }
 
     public void save() {
-        // TODO
         HashMap<String, List<Entity>> data = select();
         System.out.println(Arrays.asList(data));
 
@@ -51,20 +50,7 @@ public class SaveLoad {
         List<Entity> players = data.get("chefs");
         for (Entity player : players) {
             Vector3 position = Mappers.transform.get(player).position;
-            //save("player", position.x, position.y, position.z)
         }
-
-        //List<Entity> customers = new ArrayList<>();
-        //List<Entity> cuttingBoards = new ArrayList();
-        //List<Entity> ovens = new ArrayList();
-        //List<Entity> grills = new ArrayList();
-
-
-        //inventories = players.inventory
-        //time = customers.time
-        //reputation = this.reputation
-        //balance = this.balance
-        //difficulty = this.difficulty
     }
 
     public void load(String saveData) {
@@ -124,13 +110,15 @@ public class SaveLoad {
                 inventory_counter = (inventory_counter + 1) % 2;
                 break;
             case "Order":
+                /*
                 FoodType dish = FoodComponent.getFood(vars[1]);
                 int time = Integer.parseInt(vars[2]);
 
-                //Entity customer = factory.createCustomer(new Vector2(100 - customer_count*10, 25));
-                //CustomerComponent component = Mappers.customer.get(customer);
-                //component.order = dish;
-                //component.setTimer(time);
+                Entity customer = factory.createCustomer(new Vector2(100 - customer_count*10, 25));
+                CustomerComponent component = Mappers.customer.get(customer);
+                component.order = dish;
+                component.setTimer(time);
+                */
 
                 customer_count++;
                 break;
@@ -143,24 +131,17 @@ public class SaveLoad {
             default:
                 break;
           }
-          // process the line
         }
         scanner.close();
-        
-        //inventories = players.inventory
-        //time = customers.time
-        //reputation = this.reputation
-        //balance = this.balance
-        //difficulty = this.difficulty
     }
     
     private HashMap<String, List<Entity>> select() {
         List<Entity> players = new ArrayList<>();
         List<Entity> inventory = new ArrayList<>();
         List<Entity> customers = new ArrayList<>();
-        List<Entity> cuttingBoards = new ArrayList();
-        List<Entity> ovens = new ArrayList();
-        List<Entity> grills = new ArrayList();
+        List<Entity> cuttingBoards = new ArrayList<>();
+        List<Entity> ovens = new ArrayList<>();
+        List<Entity> grills = new ArrayList<>();
 
         // Select players
         ImmutableArray<Entity> playersList = this.engine.getEntitiesFor(Family.all(ControllableComponent.class).get());
@@ -176,9 +157,6 @@ public class SaveLoad {
         ImmutableArray<Entity> customersList = this.engine.getEntitiesFor(Family.all(CustomerComponent.class).get());
         for (Entity customer : customersList) {
             customers.add(customer);
-            //CustomerComponent customerComponent = Mappers.customer.get(customer);
-            //FoodType order = customerComponent.order;
-            //int time = customerComponent.timer.getElapsed();
         }
 
         // Select stations
