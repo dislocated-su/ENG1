@@ -597,7 +597,10 @@ public class Hud extends ApplicationAdapter {
         tableRight.setVisible(false);
         tableTop.setVisible(false);
         tableBottomLabel.setVisible(false);
-        tableLeft.setVisible(false);
+        if(difficulty != Difficulty.SCENARIO){
+            tableLeft.setVisible(false);
+        }
+        
 
         // Show the pause hud
         tablePause.setVisible(true);
@@ -615,7 +618,9 @@ public class Hud extends ApplicationAdapter {
         tableRight.setVisible(true);
         tableTop.setVisible(true);
         tableBottomLabel.setVisible(true);
-        tableLeft.setVisible(true);
+        if(difficulty != Difficulty.SCENARIO){
+            tableLeft.setVisible(true);
+        }
 
         // Hide the pause hud
         tablePause.setVisible(false);
