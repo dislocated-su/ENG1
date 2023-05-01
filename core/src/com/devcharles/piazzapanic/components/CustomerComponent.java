@@ -20,4 +20,8 @@ public class CustomerComponent implements Component, Poolable {
         timer.stop();
         timer.reset();
     }
+
+    public void setTimer(int timeRemaining) {
+        timer = new GdxTimer(timeRemaining, false, false);
+    }
 }
