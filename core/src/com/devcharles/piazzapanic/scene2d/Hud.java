@@ -168,7 +168,6 @@ public class Hud extends ApplicationAdapter {
 
     public void addSaveLoad(SaveLoad saveLoad) {
         this.saveLoad = saveLoad;
-        System.out.println("this is an important function which makes saveLoad not null!");
     }
 
     private void createTables() {

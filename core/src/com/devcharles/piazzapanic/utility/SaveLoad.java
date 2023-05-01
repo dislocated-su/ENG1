@@ -3,7 +3,6 @@ package com.devcharles.piazzapanic.utility;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -72,10 +71,10 @@ public class SaveLoad {
 
             // Save players
             List<Entity> players = data.get("players");
+            System.out.println("IMPORTANT: " + players.size());
             for (Entity player : players) {
                 // Saving player position
                 TransformComponent transform = Mappers.transform.get(player);
-                writer.println(String.join(",", "Player", Float.toString(transform.position.x), Float.toString(transform.position.y)));
                 writer.println(String.join(",", "Player", Float.toString(transform.position.x), Float.toString(transform.position.y)));
 
                 // Saving player inventory
