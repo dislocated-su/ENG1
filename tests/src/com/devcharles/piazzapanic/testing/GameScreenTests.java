@@ -10,7 +10,7 @@ import org.junit.runners.MethodSorters;
 
 import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
-import com.devcharles.piazzapanic.GameScreen.Difficulty;
+import com.devcharles.piazzapanic.utility.Difficulty;
 
 @RunWith(GdxTestRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -30,7 +30,7 @@ public class GameScreenTests implements BasicTest {
     @Test
     public void constructorTest() throws Exception {
         // gamescreen completes all non-graphical initialization
-        this.gameScreen = new GameScreen(game, 1, GameScreen.Difficulty.SCENARIO);
+        this.gameScreen = new GameScreen(game, 1, Difficulty.SCENARIO, false);
 
         assertTrue("Check a GameScreen is created", gameScreen instanceof GameScreen);
     }
