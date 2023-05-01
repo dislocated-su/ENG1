@@ -100,7 +100,7 @@ public class GameScreen implements Screen {
         EntityFactory.cutFood(null);
 
         if (!this.game.TESTMODE) {
-            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed,this, factory);
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, this, factory);
         }
       
         mapLoader = new MapLoader(null, null, factory);
