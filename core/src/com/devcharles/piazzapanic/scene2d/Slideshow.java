@@ -66,7 +66,7 @@ public class Slideshow extends ApplicationAdapter implements Screen {
         if (type == Type.recipe) {
             fileCount = 4;
         } else if (type == Type.tutorial) {
-            fileCount = 11;
+            fileCount = 16;
         }
 
         textures = new Texture[fileCount];
