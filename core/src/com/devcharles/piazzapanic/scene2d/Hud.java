@@ -204,12 +204,25 @@ public class Hud extends ApplicationAdapter {
         tutorialButton.addListener(createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
 
         tablePause.add(resumeButton).width(240).height(70).padBottom(30);
-
         tablePause.row();
-
         tablePause.add(recipeBookButton).width(240).height(70).padBottom(30);
         tablePause.row();
-        tablePause.add(tutorialButton).width(240).height(70);
+        tablePause.add(tutorialButton).width(240).height(70).padBottom(30);
+        tablePause.row();
+
+        if (difficulty != Difficulty.SCENARIO) {
+            TextButton saveButton = new TextButton("Save Game", skin);
+
+            saveButton.addListener(new ClickListener() {
+                public void clicked(InputEvent event, float x, float y) {
+                    // save()
+                }
+            });
+
+            tablePause.add(saveButton).width(240).height(70);
+            tablePause.row();
+        }
+
 
         this.tableRight = new Table();
         this.tableBottom = new Table();
