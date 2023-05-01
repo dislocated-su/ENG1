@@ -45,7 +45,7 @@ public class Hud extends ApplicationAdapter {
     private Float[] tillBalance;
     private Integer[] customersServed;
     private Skin skin;
-    private SaveLoad saveLoad = null;
+    private SaveLoad saveLoad;
 
     private final float fontScale = 0.6f;
 
@@ -109,7 +109,7 @@ public class Hud extends ApplicationAdapter {
      * @param game {@link PiazzaPanic} instance for switching screens.
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, Difficulty difficulty, Float[] tillBalance, Integer[] customersServed, Integer[] customerTimer, EntityFactory factory) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, Difficulty difficulty, Float[] tillBalance, Integer[] customersServed, Integer[] customerTimer, SaveLoad saveLoad, EntityFactory factory) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;
@@ -118,6 +118,7 @@ public class Hud extends ApplicationAdapter {
         this.customerTimer = customerTimer;
         this.customersServed = customersServed;
         this.powerUps = savedGame;
+        this.saveLoad = saveLoad;
         this.factory = factory;
 
         // Setup the viewport
@@ -164,10 +165,6 @@ public class Hud extends ApplicationAdapter {
         // Create the UI layout.
         createTables();
 
-    }
-
-    public void addSaveLoad(SaveLoad saveLoad) {
-        this.saveLoad = saveLoad;
     }
 
     private void createTables() {
@@ -437,12 +434,10 @@ public class Hud extends ApplicationAdapter {
 
             saveButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
-                    if (saveLoad != null) {
-                        saveLoad.save();
-                        System.out.println("Saved game data");
+                    saveLoad.save();
+                    System.out.println("Saved game data");
 
-                        pauseToggled = true;
-                    }
+                    pauseToggled = true;
                 }
             });
 

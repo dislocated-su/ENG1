@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
-import com.devcharles.piazzapanic.GameScreen.Difficulty;
+import com.devcharles.piazzapanic.utility.Difficulty;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.testing.BasicTest;
 import com.devcharles.piazzapanic.testing.GdxTestRunner;

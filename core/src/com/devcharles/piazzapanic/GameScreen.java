@@ -87,8 +87,9 @@ public class GameScreen implements Screen {
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
+        SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
         if (!this.game.TESTMODE) {
-            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, timer, factory);
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, timer, saveLoad, factory);
         }
       
         mapLoader = new MapLoader(null, null, factory);
@@ -122,8 +123,6 @@ public class GameScreen implements Screen {
             multiplexer.addProcessor(hud.stage);
         }
 
-        SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
-        hud.addSaveLoad(saveLoad);
 
         // Attempt to load save data if it exists
         if (loadSave) {
