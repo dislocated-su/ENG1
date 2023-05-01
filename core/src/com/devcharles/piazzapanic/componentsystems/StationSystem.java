@@ -18,6 +18,7 @@ import com.devcharles.piazzapanic.components.TintComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.utility.AudioSystem;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Station;
@@ -288,6 +289,27 @@ public class StationSystem extends IteratingSystem {
             if (ready && cooking.processed) {
                 cooking.timer.stop();
                 cooking.timer.reset();
+
+                AudioSystem audio = new AudioSystem();
+                switch (station.type) {
+                    case cutting_board:
+                        audio.playChop();
+                        break;
+                    case grill:
+                        audio.playSizzle();
+                        break;
+                    case oven:
+                        audio.playDing();
+                        break;
+                    case ingredient:
+                        audio.playTap();
+                        break;
+                    case serve:
+                        audio.playTap();
+                        break;
+                    default:
+                        break;
+                }
 
                 FoodComponent food = Mappers.food.get(foodEntity);
                 // Process the food into its next form
