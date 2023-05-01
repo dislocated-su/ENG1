@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FoodStackTests.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic</a> &gt; <span class="el_source">FoodStackTests.java</span></div><h1>FoodStackTests.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
+import java.util.NoSuchElementException;
+
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+
+import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.ashley.core.Entity;
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.FoodStack;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.math.Vector2;
+
+@RunWith(GdxTestRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+<span class="fc" id="L24">public class FoodStackTests implements BasicTest {</span>
+
+    /*
+     * Tests for FoodStack's methods
+     */
+
+    private FoodStack stack;
+    private Entity cook;
+    private PooledEngine engine;
+    private EntityFactory entityFactory;
+    private World world;
+    private Entity burger;
+
+    @Override
+    @Before
+    public void initialize() throws Exception {
+<span class="fc" id="L40">        stack = new FoodStack();</span>
+<span class="fc" id="L41">        engine = new PooledEngine();</span>
+<span class="fc" id="L42">        world = new World(new Vector2(0, 0), true);</span>
+<span class="fc" id="L43">        entityFactory = new EntityFactory(engine, world);</span>
+<span class="fc" id="L44">        cook = entityFactory.createCook(0, 0);</span>
+<span class="fc" id="L45">        burger = entityFactory.createFood(FoodType.burger);</span>
+<span class="fc" id="L46">        stack.init(engine);</span>
+<span class="fc" id="L47">    }</span>
+
+    @Override
+    @Test
+    public void constructorTest() throws Exception {
+<span class="fc" id="L52">        FoodStack s = new FoodStack();</span>
+<span class="fc" id="L53">    }</span>
+
+    @Test
+    public void pushItemEmptyStackTest() throws Exception {
+<span class="fc" id="L57">        stack.clear();</span>
+<span class="fc" id="L58">        assertTrue(&quot;check pushItem method returns true&quot;, stack.pushItem(burger, cook));</span>
+<span class="fc" id="L59">        assertTrue(&quot;check burger entity is pushed on to the stack&quot;, stack.contains(burger));</span>
+<span class="fc" id="L60">    }</span>
+
+    @Test
+    public void pushItemFullStackTest() throws Exception {
+<span class="fc" id="L64">        stack.clear();</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (int i = 0; i &lt; stack.capacity; i++) {</span>
+<span class="fc" id="L66">            stack.pushItem(burger, cook);</span>
+        }
+<span class="fc" id="L68">        assertFalse(&quot;check pushItem method returns false&quot;, stack.pushItem(burger, cook));</span>
+<span class="fc" id="L69">    }</span>
+
+    @Test
+    public void popItemStackTest() throws Exception {
+<span class="fc" id="L73">        stack.clear();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for (int i = 0; i &lt; stack.capacity; i++) {</span>
+<span class="fc" id="L75">            stack.pushItem(burger, cook);</span>
+        }
+<span class="fc" id="L77">        assertTrue(&quot;check popped entity is returned&quot;, stack.pop() instanceof Entity);</span>
+<span class="fc" id="L78">    }</span>
+
+    @Test(expected = NoSuchElementException.class)
+    public void popItemEmptyStackTest() throws Exception {
+<span class="fc" id="L82">        stack.clear();</span>
+<span class="nc" id="L83">        stack.pop();</span>
+<span class="nc" id="L84">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

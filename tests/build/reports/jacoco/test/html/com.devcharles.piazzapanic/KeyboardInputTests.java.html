@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KeyboardInputTests.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic</a> &gt; <span class="el_source">KeyboardInputTests.java</span></div><h1>KeyboardInputTests.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import com.badlogic.gdx.Input.Keys;
+import com.devcharles.piazzapanic.input.KeyboardInput;
+
+@RunWith(GdxTestRunner.class)
+<span class="fc" id="L14">public class KeyboardInputTests implements BasicTest {</span>
+
+    private KeyboardInput keyboardInput;
+
+    @Override
+    @Before
+    public void initialize() throws Exception {
+<span class="fc" id="L21">        keyboardInput = new KeyboardInput();</span>
+<span class="fc" id="L22">    }</span>
+
+    @Override
+    @Test
+    public void constructorTest() throws Exception {
+<span class="fc" id="L27">        KeyboardInput keyIn = new KeyboardInput();</span>
+<span class="fc" id="L28">    }</span>
+
+    @Test
+    public void clearInputsTest() throws Exception {
+<span class="fc" id="L32">        keyboardInput.clearInputs();</span>
+
+<span class="pc bpc" id="L34" title="9 of 18 branches missed.">        assertFalse(&quot;Check all booleans are false when inputs are cleared&quot;,</span>
+                keyboardInput.left ||
+                        keyboardInput.right ||
+                        keyboardInput.up ||
+                        keyboardInput.down ||
+                        keyboardInput.changeCooks ||
+                        keyboardInput.putDown ||
+                        keyboardInput.pickUp ||
+                        keyboardInput.interact ||
+                        keyboardInput.disableHud);
+<span class="fc" id="L44">    }</span>
+
+    @Test
+    public void expectedKeyTest() throws Exception {
+<span class="fc" id="L48">        keyboardInput.clearInputs();</span>
+
+        // testing using an expected key (Keys.S)
+
+        // keyDown method
+<span class="fc" id="L53">        assertFalse(&quot;Check the boolean associated with (Keys.S) is false&quot;, keyboardInput.down);</span>
+<span class="fc" id="L54">        assertTrue(&quot;Check the Key (Keys.S) is processed&quot;, keyboardInput.keyDown(Keys.S));</span>
+<span class="fc" id="L55">        assertTrue(&quot;Check the boolean associated with (Keys.S) is true&quot;, keyboardInput.down);</span>
+
+        // keyUp method
+<span class="fc" id="L58">        assertTrue(&quot;Check the Key (Keys.S) is processed&quot;, keyboardInput.keyUp(Keys.S));</span>
+<span class="fc" id="L59">        assertFalse(&quot;Check the boolean associated with (Keys.S) is false &quot;, keyboardInput.down);</span>
+<span class="fc" id="L60">    }</span>
+
+    @Test
+    public void unexpectedKeyTest() throws Exception {
+<span class="fc" id="L64">        keyboardInput.clearInputs();</span>
+
+        // testing using an unexpected key (Keys.APOSTROPHE)
+        // keyDown method
+<span class="fc" id="L68">        assertFalse(&quot;Check the Key (Keys.APOSTROPHE) isn't processed&quot;, keyboardInput.keyDown(Keys.APOSTROPHE));</span>
+<span class="pc bpc" id="L69" title="9 of 18 branches missed.">        assertFalse(&quot;Check all booleans aren't changed from cleared state&quot;,</span>
+                keyboardInput.left ||
+                        keyboardInput.right ||
+                        keyboardInput.up ||
+                        keyboardInput.down ||
+                        keyboardInput.changeCooks ||
+                        keyboardInput.putDown ||
+                        keyboardInput.pickUp ||
+                        keyboardInput.interact ||
+                        keyboardInput.disableHud);
+
+        // keyUp method
+<span class="fc" id="L81">        assertFalse(&quot;Check the Key (Keys.APOSTROPHE) isn't processed&quot;, keyboardInput.keyUp(Keys.APOSTROPHE));</span>
+<span class="pc bpc" id="L82" title="9 of 18 branches missed.">        assertFalse(&quot;Check all booleans aren't changed from cleared state&quot;,</span>
+                keyboardInput.left ||
+                        keyboardInput.right ||
+                        keyboardInput.up ||
+                        keyboardInput.down ||
+                        keyboardInput.changeCooks ||
+                        keyboardInput.putDown ||
+                        keyboardInput.pickUp ||
+                        keyboardInput.interact ||
+                        keyboardInput.disableHud);
+<span class="fc" id="L92">    }</span>
+
+    @Test
+    public void keyTypedTest() throws Exception {
+<span class="fc" id="L96">        keyboardInput.clearInputs();</span>
+
+<span class="fc" id="L98">        char[] keyString = { 'a', 'b', 'c', 'd', 'e', 'f' };</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (char c : keyString) {</span>
+<span class="fc" id="L100">            assertFalse(&quot;Check char c isn't processed&quot;, keyboardInput.keyDown(c));</span>
+<span class="pc bpc" id="L101" title="9 of 18 branches missed.">            assertFalse(&quot;Check all booleans aren't changed from cleared state&quot;,</span>
+                    keyboardInput.left ||
+                            keyboardInput.right ||
+                            keyboardInput.up ||
+                            keyboardInput.down ||
+                            keyboardInput.changeCooks ||
+                            keyboardInput.putDown ||
+                            keyboardInput.pickUp ||
+                            keyboardInput.interact ||
+                            keyboardInput.disableHud);
+        }
+<span class="fc" id="L112">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

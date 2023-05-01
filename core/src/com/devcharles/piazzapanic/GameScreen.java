@@ -19,6 +19,7 @@ import com.devcharles.piazzapanic.componentsystems.InventoryUpdateSystem;
 import com.devcharles.piazzapanic.componentsystems.LightingSystem;
 import com.devcharles.piazzapanic.componentsystems.PhysicsSystem;
 import com.devcharles.piazzapanic.componentsystems.PlayerControlSystem;
+import com.devcharles.piazzapanic.componentsystems.PowerUpSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
@@ -57,9 +58,14 @@ public class GameScreen implements Screen {
 
     private Integer[] customersServed = { 0 };
 
+    public Boolean SpeedBoost = false;
+    public Boolean InstaCook = false;
+    public Boolean BinACustomer = false;
+    public Boolean TimeFreeze = false;
+    public Boolean DoubleRep = false;
+
     public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty, boolean loadSave) {
         this.game = game;
-
         kbInput = new KeyboardInput();
 
         // Create a world with no gravity.
@@ -79,7 +85,7 @@ public class GameScreen implements Screen {
         EntityFactory.cutFood(null);
 
         if (!this.game.TESTMODE) {
-            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, timer);
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, timer, factory);
         }
       
         mapLoader = new MapLoader(null, null, factory);
@@ -96,10 +102,11 @@ public class GameScreen implements Screen {
         // This can be commented in during debugging.
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance,customersServed));
-        engine.addSystem(new StationSystem(kbInput, factory,mapRenderer,tillBalance,hud,difficulty));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance,customersServed, this));
+        engine.addSystem(new StationSystem(kbInput, factory,mapRenderer,tillBalance,hud,difficulty,this));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
+        engine.addSystem(new PowerUpSystem(engine, this));
 
         world.setContactListener(new WorldContactListener());
 
@@ -176,4 +183,44 @@ public class GameScreen implements Screen {
         world.dispose();
     }
 
+    public void SpeedActive(){
+        SpeedBoost = true;
+    }
+
+    public void InstaActive(){
+        InstaCook = true;
+    }
+
+    public void BinActive(){
+        BinACustomer = true;
+    }
+
+    public void TimeActive(){
+        TimeFreeze = true;
+    }
+
+    public void DoubleActive(){
+        DoubleRep = true;
+    }
+
+    public void SpeedOff(){
+        SpeedBoost = false;
+    }
+
+    public void InstaOff(){
+        InstaCook = false;
+    }
+
+    public void BinOff(){
+        BinACustomer = false;
+        System.out.println("BinACustomer is off");
+    }
+
+    public void TimeOff(){
+        TimeFreeze = false;
+    }
+
+    public void DoubleOff(){
+        DoubleRep = false;
+    }
 }

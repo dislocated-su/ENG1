@@ -8,6 +8,7 @@ import com.devcharles.piazzapanic.components.PlayerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.Mappers;
+
 /**
  * Links up the cook's inventory to the hud.
  */

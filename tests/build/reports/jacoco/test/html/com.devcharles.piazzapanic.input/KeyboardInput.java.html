@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KeyboardInput.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.input</a> &gt; <span class="el_source">KeyboardInput.java</span></div><h1>KeyboardInput.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.input;
+
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Input.Keys;
+
+<span class="fc" id="L6">public class KeyboardInput implements InputProcessor {</span>
+
+    public boolean left, right, up, down;
+
+    public boolean changeCooks;
+
+    public boolean putDown;
+
+    public boolean pickUp;
+
+    public boolean interact;
+
+    public boolean disableHud;
+    
+    public void clearInputs() {
+<span class="fc" id="L21">        left = false;</span>
+<span class="fc" id="L22">        right = false;</span>
+<span class="fc" id="L23">        up = false;</span>
+<span class="fc" id="L24">        down = false;</span>
+<span class="fc" id="L25">        changeCooks = false;</span>
+<span class="fc" id="L26">        putDown = false;</span>
+<span class="fc" id="L27">        pickUp = false;</span>
+<span class="fc" id="L28">        interact = false;</span>
+<span class="fc" id="L29">        disableHud = false;</span>
+<span class="fc" id="L30">    }</span>
+
+    @Override
+    public boolean keyDown(int keycode) {
+<span class="fc" id="L34">        boolean processed = true;</span>
+<span class="fc bfc" id="L35" title="All 10 branches covered.">        switch (keycode) {</span>
+            case Keys.LEFT:
+            case Keys.A:
+<span class="fc" id="L38">                left = true;</span>
+<span class="fc" id="L39">                break;</span>
+            case Keys.RIGHT:
+            case Keys.D:
+<span class="fc" id="L42">                right = true;</span>
+<span class="fc" id="L43">                break;</span>
+            case Keys.UP:
+            case Keys.W:
+<span class="fc" id="L46">                up = true;</span>
+<span class="fc" id="L47">                break;</span>
+            case Keys.DOWN:
+            case Keys.S:
+<span class="fc" id="L50">                down = true;</span>
+<span class="fc" id="L51">                break;</span>
+            case Keys.F:
+<span class="fc" id="L53">                putDown = true;</span>
+<span class="fc" id="L54">                break;</span>
+            case Keys.E:
+<span class="fc" id="L56">                changeCooks = true;</span>
+<span class="fc" id="L57">                break;</span>
+            case Keys.R:
+<span class="fc" id="L59">                pickUp = true;</span>
+<span class="fc" id="L60">                break;</span>
+            case Keys.Q:
+<span class="fc" id="L62">                interact = true;</span>
+<span class="fc" id="L63">                break;</span>
+            case Keys.H:
+<span class="fc" id="L65">                disableHud = true;</span>
+            default:
+<span class="fc" id="L67">                processed = false;</span>
+        }
+<span class="fc" id="L69">        return processed;</span>
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+<span class="fc" id="L74">        boolean processed = true;</span>
+<span class="fc bfc" id="L75" title="All 10 branches covered.">        switch (keycode) {</span>
+            case Keys.LEFT:
+            case Keys.A:
+<span class="fc" id="L78">                left = false;</span>
+<span class="fc" id="L79">                break;</span>
+            case Keys.RIGHT:
+            case Keys.D:
+<span class="fc" id="L82">                right = false;</span>
+<span class="fc" id="L83">                break;</span>
+            case Keys.UP:
+            case Keys.W:
+<span class="fc" id="L86">                up = false;</span>
+<span class="fc" id="L87">                break;</span>
+            case Keys.DOWN:
+            case Keys.S:
+<span class="fc" id="L90">                down = false;</span>
+<span class="fc" id="L91">                break;</span>
+            case Keys.E:
+<span class="fc" id="L93">                changeCooks = false;</span>
+            case Keys.F:
+<span class="fc" id="L95">                putDown = false;</span>
+<span class="fc" id="L96">                break;</span>
+            case Keys.R:
+<span class="fc" id="L98">                pickUp = false;</span>
+<span class="fc" id="L99">                break;</span>
+            case Keys.Q:
+<span class="fc" id="L101">                interact = false;</span>
+<span class="fc" id="L102">                break;</span>
+            case Keys.H:
+<span class="fc" id="L104">                disableHud = false;</span>
+            default:
+<span class="fc" id="L106">                processed = false;</span>
+        }
+<span class="fc" id="L108">        return processed;</span>
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+<span class="fc" id="L113">        boolean processed = true;</span>
+<span class="fc" id="L114">        switch (character) {</span>
+            default:
+<span class="fc" id="L116">                processed = false;</span>
+        }
+<span class="fc" id="L118">        return processed;</span>
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+<span class="fc" id="L123">        return false;</span>
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+<span class="fc" id="L128">        return false;</span>
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+<span class="fc" id="L133">        return false;</span>
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+<span class="fc" id="L138">        return false;</span>
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+<span class="fc" id="L143">        return false;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

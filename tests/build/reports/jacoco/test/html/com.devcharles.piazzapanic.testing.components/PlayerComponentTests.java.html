@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerComponentTests.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.testing.components</a> &gt; <span class="el_source">PlayerComponentTests.java</span></div><h1>PlayerComponentTests.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.testing.components;
+
+import static org.junit.Assert.assertFalse;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import com.devcharles.piazzapanic.components.PlayerComponent;
+import com.devcharles.piazzapanic.testing.BasicTest;
+import com.devcharles.piazzapanic.testing.GdxTestRunner;
+
+@RunWith(GdxTestRunner.class)
+<span class="fc" id="L14">public class PlayerComponentTests implements BasicTest {</span>
+
+    @Override
+    @Before
+    public void initialize() throws Exception {
+        // TODO Auto-generated method stub
+
+<span class="fc" id="L21">    }</span>
+
+    @Override
+    @Test
+    public void constructorTest() throws Exception {
+<span class="fc" id="L26">        PlayerComponent c = new PlayerComponent();</span>
+<span class="fc" id="L27">    }</span>
+
+    @Test
+    public void initialStateTest() throws Exception {
+<span class="fc" id="L31">        PlayerComponent c = new PlayerComponent();</span>
+<span class="fc" id="L32">        assertFalse(c.interact);</span>
+<span class="fc" id="L33">        assertFalse(c.pickUp);</span>
+<span class="fc" id="L34">        assertFalse(c.putDown);</span>
+<span class="fc" id="L35">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

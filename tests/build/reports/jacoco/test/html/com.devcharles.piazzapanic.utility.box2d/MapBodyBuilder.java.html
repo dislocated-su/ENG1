@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapBodyBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility.box2d</a> &gt; <span class="el_source">MapBodyBuilder.java</span></div><h1>MapBodyBuilder.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility.box2d;
+
+import com.badlogic.gdx.maps.Map;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.CircleMapObject;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.maps.objects.PolylineMapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.objects.TextureMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+
+/**
+ * Populates the world with bodies created from the obstacle layer. Used for
+ * creating collisions.
+ */
+<span class="fc" id="L30">public class MapBodyBuilder {</span>
+
+    // The pixels per tile. If your tiles are 16x16, this is set to 16f
+<span class="fc" id="L33">    private static float ppt = 16;</span>
+
+    /**
+     * Create collision boxes from the MapObjects on the Obstacle object layer.
+     * @param map {@link TiledMap} to create bodies from.
+     * @param pixels Pixels per tile (default 16).
+     * @param world Box2D {@link World} to create objects in.
+     * @return
+     */
+    public static Array&lt;Body&gt; buildShapes(Map map, float pixels, World world) {
+<span class="fc" id="L43">        ppt = pixels;</span>
+<span class="fc" id="L44">        MapObjects shadowedObjects = map.getLayers().get(&quot;Obstacles&quot;).getObjects();</span>
+
+<span class="fc" id="L46">        Array&lt;Body&gt; bodies = new Array&lt;Body&gt;();</span>
+
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        for (MapObject object : shadowedObjects) {</span>
+
+<span class="fc" id="L50">            Shape shape = decideShape(object);</span>
+
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">            if (shape == null) {</span>
+<span class="nc" id="L53">                continue;</span>
+            }
+
+<span class="fc" id="L56">            BodyDef bd = new BodyDef();</span>
+<span class="fc" id="L57">            bd.type = BodyType.StaticBody;</span>
+<span class="fc" id="L58">            Body body = world.createBody(bd);</span>
+<span class="fc" id="L59">            body.createFixture(shape, 1);</span>
+
+<span class="fc" id="L61">            bodies.add(body);</span>
+
+<span class="fc" id="L63">            shape.dispose();</span>
+<span class="fc" id="L64">        }</span>
+
+<span class="fc" id="L66">        MapObjects objects = map.getLayers().get(&quot;Obstacles_NoShadow&quot;).getObjects();</span>
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (MapObject object : objects) {</span>
+<span class="fc" id="L69">            Shape shape = decideShape(object);</span>
+
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            if (shape == null) {</span>
+<span class="nc" id="L72">                continue;</span>
+            }
+
+<span class="fc" id="L75">            BodyDef bd = new BodyDef();</span>
+<span class="fc" id="L76">            bd.type = BodyType.StaticBody;</span>
+<span class="fc" id="L77">            Body body = world.createBody(bd);</span>
+<span class="fc" id="L78">            Filter collisionFilter = new Filter();</span>
+<span class="fc" id="L79">            collisionFilter.categoryBits = CollisionCategory.NO_SHADOWBOUNDARY.getValue();</span>
+<span class="fc" id="L80">            collisionFilter.maskBits = CollisionCategory.ENTITY.getValue();</span>
+<span class="fc" id="L81">            body.createFixture(shape, 1).setFilterData(collisionFilter);</span>
+
+<span class="fc" id="L83">            bodies.add(body);</span>
+
+<span class="fc" id="L85">            shape.dispose();</span>
+<span class="fc" id="L86">        }</span>
+<span class="fc" id="L87">        return bodies;</span>
+    }
+
+    private static Shape decideShape(MapObject object) {
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        if (object instanceof TextureMapObject) {</span>
+<span class="nc" id="L92">            return null;</span>
+        }
+
+        Shape shape;
+
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (object instanceof RectangleMapObject) {</span>
+<span class="fc" id="L98">            shape = getRectangle((RectangleMapObject) object);</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        } else if (object instanceof PolygonMapObject) {</span>
+<span class="nc" id="L100">            shape = getPolygon((PolygonMapObject) object);</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        } else if (object instanceof PolylineMapObject) {</span>
+<span class="fc" id="L102">            shape = getPolyline((PolylineMapObject) object);</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        } else if (object instanceof CircleMapObject) {</span>
+<span class="nc" id="L104">            shape = getCircle((CircleMapObject) object);</span>
+        } else {
+<span class="nc" id="L106">            return null;</span>
+        }
+
+<span class="fc" id="L109">        return shape;</span>
+    }
+
+    private static PolygonShape getRectangle(RectangleMapObject rectangleObject) {
+<span class="fc" id="L113">        Rectangle rectangle = rectangleObject.getRectangle();</span>
+<span class="fc" id="L114">        PolygonShape polygon = new PolygonShape();</span>
+<span class="fc" id="L115">        Vector2 size = new Vector2((rectangle.x + rectangle.width * 0.5f) / ppt,</span>
+                (rectangle.y + rectangle.height * 0.5f) / ppt);
+<span class="fc" id="L117">        polygon.setAsBox(rectangle.width * 0.5f / ppt,</span>
+                rectangle.height * 0.5f / ppt,
+                size,
+                0.0f);
+<span class="fc" id="L121">        return polygon;</span>
+    }
+
+    private static CircleShape getCircle(CircleMapObject circleObject) {
+<span class="nc" id="L125">        Circle circle = circleObject.getCircle();</span>
+<span class="nc" id="L126">        CircleShape circleShape = new CircleShape();</span>
+<span class="nc" id="L127">        circleShape.setRadius(circle.radius / ppt);</span>
+<span class="nc" id="L128">        circleShape.setPosition(new Vector2(circle.x / ppt, circle.y / ppt));</span>
+<span class="nc" id="L129">        return circleShape;</span>
+    }
+
+    private static PolygonShape getPolygon(PolygonMapObject polygonObject) {
+<span class="nc" id="L133">        PolygonShape polygon = new PolygonShape();</span>
+<span class="nc" id="L134">        float[] vertices = polygonObject.getPolygon().getTransformedVertices();</span>
+
+<span class="nc" id="L136">        float[] worldVertices = new float[vertices.length];</span>
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        for (int i = 0; i &lt; vertices.length; ++i) {</span>
+<span class="nc" id="L139">            System.out.println(vertices[i]);</span>
+<span class="nc" id="L140">            worldVertices[i] = vertices[i] / ppt;</span>
+        }
+
+<span class="nc" id="L143">        polygon.set(worldVertices);</span>
+<span class="nc" id="L144">        return polygon;</span>
+    }
+
+    private static ChainShape getPolyline(PolylineMapObject polylineObject) {
+<span class="fc" id="L148">        float[] vertices = polylineObject.getPolyline().getTransformedVertices();</span>
+<span class="fc" id="L149">        Vector2[] worldVertices = new Vector2[vertices.length / 2];</span>
+
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        for (int i = 0; i &lt; vertices.length / 2; ++i) {</span>
+<span class="fc" id="L152">            worldVertices[i] = new Vector2();</span>
+<span class="fc" id="L153">            worldVertices[i].x = vertices[i * 2] / ppt;</span>
+<span class="fc" id="L154">            worldVertices[i].y = vertices[i * 2 + 1] / ppt;</span>
+        }
+
+<span class="fc" id="L157">        ChainShape chain = new ChainShape();</span>
+<span class="fc" id="L158">        chain.createChain(worldVertices);</span>
+<span class="fc" id="L159">        return chain;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

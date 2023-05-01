@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WalkAnimator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility</a> &gt; <span class="el_source">WalkAnimator.java</span></div><h1>WalkAnimator.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+/**
+ * Abstract class that helps with setting up animations for characters in the
+ * game.
+ * To use, initialise  each directional animation.
+ */
+<span class="fc" id="L16">public abstract class WalkAnimator {</span>
+
+<span class="fc" id="L18">    protected ArrayList&lt;Animation&lt;TextureRegion&gt;&gt; walkRight = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L19">    protected ArrayList&lt;Animation&lt;TextureRegion&gt;&gt; walkLeft = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L20">    protected ArrayList&lt;Animation&lt;TextureRegion&gt;&gt; walkUp = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L21">    protected ArrayList&lt;Animation&lt;TextureRegion&gt;&gt; walkDown = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * All directions that the animations support.
+     */
+<span class="fc" id="L26">    public enum Direction {</span>
+<span class="fc" id="L27">        left,</span>
+<span class="fc" id="L28">        right,</span>
+<span class="fc" id="L29">        up,</span>
+<span class="fc" id="L30">        down</span>
+    }
+
+    /**
+     * Tuple Representing the dimensions of the spritesheet to be used.
+     * The values represent columns and rows, respectively.
+     */
+<span class="fc" id="L37">    private static final Pair&lt;Integer, Integer&gt; dimensions = new Pair&lt;Integer, Integer&gt;(10, 1);</span>
+
+    /**
+     * @param rotation  box2d body rotation
+     * @param isMoving  whether the entity is moving or not
+     * @param frameTime elapsed time for the animation
+     * @param holding   how many items the character is holding
+     * @return A texture region to draw, and a rotation used for rendering the
+     *         region.
+     */
+    public abstract TextureRegion getFrame(float rotation, boolean isMoving, float frameTime, int holding);
+
+<span class="fc" id="L49">    private static HashMap&lt;Integer, Direction&gt; directionMap = new HashMap&lt;Integer, Direction&gt;() {</span>
+        {
+<span class="fc" id="L51">            put(0, Direction.right);</span>
+<span class="fc" id="L52">            put(45, Direction.up);</span>
+<span class="fc" id="L53">            put(-45, Direction.down);</span>
+<span class="fc" id="L54">            put(90, Direction.up);</span>
+<span class="fc" id="L55">            put(-90, Direction.down);</span>
+<span class="fc" id="L56">            put(135, Direction.up);</span>
+<span class="fc" id="L57">            put(-135, Direction.down);</span>
+<span class="fc" id="L58">            put(180, Direction.left);</span>
+<span class="fc" id="L59">        }</span>
+    };
+
+<span class="fc" id="L62">    private static int[] directions = { -135, -90, -45, 0, 45, 90, 135, 180 };</span>
+
+    /**
+     * Approximate the Box2D rotation to the nearest mapped value.
+     * 
+     * @param rotation body rotation in degrees.
+     * @return {@link Direction} the character should be facing in.
+     */
+    public static Direction rotationToDirection(float rotation) {
+
+<span class="fc" id="L72">        int orientation = Math.round(rotation);</span>
+
+        // Find closest mapped integer value in directions
+<span class="fc" id="L75">        int minDistance = Math.abs(directions[0] - orientation);</span>
+
+<span class="fc" id="L77">        int index = 0;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        for (int i = 0; i &lt; directions.length; i++) {</span>
+<span class="fc" id="L79">            int currentDistance = Math.abs(directions[i] - orientation);</span>
+
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            if (currentDistance &lt; minDistance) {</span>
+<span class="fc" id="L82">                index = i;</span>
+<span class="fc" id="L83">                minDistance = currentDistance;</span>
+            }
+        }
+
+<span class="fc" id="L87">        rotation = directions[index];</span>
+
+<span class="fc" id="L89">        Direction dir = directionMap.get((int) Math.round(rotation));</span>
+
+<span class="fc" id="L91">        return dir;</span>
+    }
+
+    /**
+     * Generate Animations from a {@link Texture}, override this if you want to
+     * parse the texture spritesheet differently.
+     * 
+     * @param currentSheet The {@link Texture} containing all the frames of the
+     *                     animation.
+     * @param value        Variant of the spritesheet (0 -&gt; walk, 1 -&gt; hold one
+     *                     item, 2 -&gt; hold crate)
+     */
+    protected void addTextures(Texture currentSheet, int value) {
+        // Split the spritesheet into separate textureregions
+<span class="fc" id="L105">        TextureRegion[][] tmp = TextureRegion.split(currentSheet, 32, 32);</span>
+
+        // Flatten the array
+<span class="fc" id="L108">        TextureRegion[] frames = new TextureRegion[dimensions.first * dimensions.second];</span>
+<span class="fc" id="L109">        int index = 0;</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        for (int i = 0; i &lt; dimensions.second; i++) {</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            for (int j = 0; j &lt; dimensions.first; j++) {</span>
+<span class="fc" id="L112">                frames[index++] = tmp[i][j];</span>
+            }
+        }
+
+<span class="fc" id="L116">        walkDown.add(new Animation&lt;TextureRegion&gt;(0.1f, Arrays.copyOfRange(frames, 0, 3)));</span>
+<span class="fc" id="L117">        walkUp.add(new Animation&lt;TextureRegion&gt;(0.1f, Arrays.copyOfRange(frames, 3, 6)));</span>
+<span class="fc" id="L118">        walkRight.add(new Animation&lt;TextureRegion&gt;(0.1f, Arrays.copyOfRange(frames, 6, 10)));</span>
+
+        // Create the left animation by copying and flipping textures.
+<span class="fc" id="L121">        TextureRegion[] toCopy = walkRight.get(value).getKeyFrames();</span>
+<span class="fc" id="L122">        TextureRegion[] flippedRegions = new TextureRegion[toCopy.length];</span>
+
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        for (int i = 0; i &lt; flippedRegions.length; i++) {</span>
+<span class="fc" id="L125">            flippedRegions[i] = new TextureRegion(toCopy[i]);</span>
+<span class="fc" id="L126">            flippedRegions[i].flip(true, false);</span>
+        }
+
+<span class="fc" id="L129">        walkLeft.add(new Animation&lt;TextureRegion&gt;(0.1f, flippedRegions));</span>
+<span class="fc" id="L130">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

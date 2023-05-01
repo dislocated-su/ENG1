@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Station.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.utility</a> &gt; <span class="el_source">Station.java</span></div><h1>Station.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.utility;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+
+/**
+ * Helper class for storing station recipes and {@link StationType} of the
+ * current station.
+ */
+<span class="nc" id="L14">public class Station {</span>
+
+    public StationType type;
+
+<span class="fc" id="L18">    public static HashMap&lt;FoodType, FoodType&gt; ovenRecipes = new HashMap&lt;FoodType, FoodType&gt;() {</span>
+        {
+<span class="fc" id="L20">            put(FoodType.potato, FoodType.butterlessJacketPotato);</span>
+<span class="fc" id="L21">            put(FoodType.tomatoCheeseDough, FoodType.pizza);</span>
+<span class="fc" id="L22">        }</span>
+    };
+
+<span class="fc" id="L25">    public static HashMap&lt;FoodType, FoodType&gt; grillRecipes = new HashMap&lt;FoodType, FoodType&gt;() {</span>
+        {
+<span class="fc" id="L27">            put(FoodType.formedPatty, FoodType.grilledPatty);</span>
+<span class="fc" id="L28">            put(FoodType.buns, FoodType.toastedBuns);</span>
+<span class="fc" id="L29">        }</span>
+    };
+
+<span class="fc" id="L32">    public static HashMap&lt;FoodType, FoodType&gt; cuttingBoardRecipes = new HashMap&lt;FoodType, FoodType&gt;() {</span>
+        {
+<span class="fc" id="L34">            put(FoodType.tomato, FoodType.slicedTomato);</span>
+<span class="fc" id="L35">            put(FoodType.lettuce, FoodType.slicedLettuce);</span>
+<span class="fc" id="L36">            put(FoodType.unformedPatty, FoodType.formedPatty);</span>
+<span class="fc" id="L37">            put(FoodType.onion, FoodType.slicedOnion);</span>
+<span class="fc" id="L38">            put(FoodType.cheese, FoodType.gratedCheese);</span>
+
+            // new
+<span class="fc" id="L41">            put(FoodType.dough, FoodType.rolledDough);</span>
+<span class="fc" id="L42">            put(FoodType.slicedTomato, FoodType.tomatoPaste);</span>
+<span class="fc" id="L43">        }</span>
+    };
+
+<span class="fc" id="L46">    public static HashMap&lt;Set&lt;FoodType&gt;, FoodType&gt; assembleRecipes = new HashMap&lt;Set&lt;FoodType&gt;, FoodType&gt;() {</span>
+        {
+<span class="fc" id="L48">            put(new HashSet&lt;FoodType&gt;() {</span>
+                {
+<span class="fc" id="L50">                    add(FoodType.toastedBuns);</span>
+<span class="fc" id="L51">                    add(FoodType.grilledPatty);</span>
+<span class="fc" id="L52">                }</span>
+            }, FoodType.burger);
+<span class="fc" id="L54">            put(new HashSet&lt;FoodType&gt;() {</span>
+                {
+<span class="fc" id="L56">                    add(FoodType.slicedLettuce);</span>
+<span class="fc" id="L57">                    add(FoodType.slicedOnion);</span>
+<span class="fc" id="L58">                    add(FoodType.slicedTomato);</span>
+<span class="fc" id="L59">                }</span>
+            }, FoodType.salad);
+
+            // new
+<span class="fc" id="L63">            put(new HashSet&lt;FoodType&gt;() {</span>
+                {
+<span class="fc" id="L65">                    add(FoodType.rolledDough);</span>
+<span class="fc" id="L66">                    add(FoodType.tomatoPaste);</span>
+<span class="fc" id="L67">                }</span>
+            }, FoodType.tomatoDough);
+<span class="fc" id="L69">            put(new HashSet&lt;FoodType&gt;() {</span>
+                {
+<span class="fc" id="L71">                    add(FoodType.tomatoDough);</span>
+<span class="fc" id="L72">                    add(FoodType.gratedCheese);</span>
+<span class="fc" id="L73">                }</span>
+            }, FoodType.tomatoCheeseDough);
+<span class="fc" id="L75">            put(new HashSet&lt;FoodType&gt;() {</span>
+                {
+<span class="fc" id="L77">                    add(FoodType.rolledDough);</span>
+<span class="fc" id="L78">                    add(FoodType.tomatoPaste);</span>
+<span class="fc" id="L79">                    add(FoodType.gratedCheese);</span>
+<span class="fc" id="L80">                }</span>
+            }, FoodType.tomatoCheeseDough);
+<span class="fc" id="L82">            put(new HashSet&lt;FoodType&gt;() {</span>
+                {
+<span class="fc" id="L84">                    add(FoodType.butterlessJacketPotato);</span>
+<span class="fc" id="L85">                    add(FoodType.butter);</span>
+<span class="fc" id="L86">                }</span>
+            }, FoodType.jacketPotato);
+<span class="fc" id="L88">        }</span>
+    };
+
+<span class="fc" id="L91">    public static FoodType[] serveRecipes = {</span>
+        FoodType.burger,
+        FoodType.salad,
+        FoodType.pizza,
+        FoodType.jacketPotato,
+    };
+
+    /**
+     * Maps the stationType to recipes available to that station. This avoids excessive branching.
+     */
+<span class="fc" id="L101">    public static Map&lt;StationType, HashMap&lt;FoodType, FoodType&gt;&gt; recipeMap = new HashMap&lt;StationType, HashMap&lt;FoodType, FoodType&gt;&gt;() {</span>
+        {
+<span class="fc" id="L103">            put(StationType.oven, ovenRecipes);</span>
+<span class="fc" id="L104">            put(StationType.grill, grillRecipes);</span>
+<span class="fc" id="L105">            put(StationType.cutting_board, cuttingBoardRecipes);</span>
+<span class="fc" id="L106">        }</span>
+    };
+
+    /**
+     * Named enumeration of the station types.
+     * The ids correspond to stationId in the TileMap object.
+     */
+<span class="fc" id="L113">    public enum StationType {</span>
+<span class="fc" id="L114">        oven(1),</span>
+<span class="fc" id="L115">        grill(2),</span>
+<span class="fc" id="L116">        cutting_board(3),</span>
+<span class="fc" id="L117">        sink(4),</span>
+<span class="fc" id="L118">        bin(5),</span>
+<span class="fc" id="L119">        ingredient(6),</span>
+<span class="fc" id="L120">        serve(7);</span>
+
+        private int value;
+
+<span class="fc" id="L124">        StationType(int id) {</span>
+<span class="fc" id="L125">            this.value = id;</span>
+<span class="fc" id="L126">        }</span>
+
+        /**
+         * Get the id of this station type.
+         * 
+         * @return integer id.
+         */
+        public int getValue() {
+<span class="nc" id="L134">            return value;</span>
+        }
+
+<span class="fc" id="L137">        private static final Map&lt;Integer, StationType&gt; _map = new HashMap&lt;Integer, StationType&gt;();</span>
+        static {
+<span class="fc bfc" id="L139" title="All 2 branches covered.">            for (StationType stationType : StationType.values()) {</span>
+<span class="fc" id="L140">                _map.put(stationType.value, stationType);</span>
+            }
+<span class="fc" id="L142">        }</span>
+
+        /**
+         * Get type from id
+         * 
+         * @param value id value
+         * @return Enum type
+         */
+        public static StationType from(int value) {
+<span class="fc" id="L151">            return _map.get(value);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

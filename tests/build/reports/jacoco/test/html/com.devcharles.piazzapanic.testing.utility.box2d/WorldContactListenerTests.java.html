@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorldContactListenerTests.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tests</a> &gt; <a href="index.source.html" class="el_package">com.devcharles.piazzapanic.testing.utility.box2d</a> &gt; <span class="el_source">WorldContactListenerTests.java</span></div><h1>WorldContactListenerTests.java</h1><pre class="source lang-java linenums">package com.devcharles.piazzapanic.testing.utility.box2d;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.World;
+import com.devcharles.piazzapanic.testing.BasicTest;
+import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
+
+<span class="fc" id="L12">public class WorldContactListenerTests implements BasicTest {</span>
+
+    private WorldContactListener worldContactListener;
+    private Contact contact;
+    private World world;
+
+    @Override
+    @Before
+    public void initialize() throws Exception {
+<span class="fc" id="L21">        worldContactListener = new WorldContactListener();</span>
+<span class="fc" id="L22">        world = new World(new Vector2(0, 0), false);</span>
+<span class="fc" id="L23">    }</span>
+
+    @Override
+    @Test
+    public void constructorTest() throws Exception {
+<span class="fc" id="L28">        WorldContactListener worldContactListener = new WorldContactListener();</span>
+<span class="fc" id="L29">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

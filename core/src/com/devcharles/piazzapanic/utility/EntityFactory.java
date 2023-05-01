@@ -91,6 +91,9 @@ public class EntityFactory {
 
         WalkingAnimationComponent animation = engine.createComponent(WalkingAnimationComponent.class);
 
+        // PowerUpComponent powerUp = engine.createComponent(PowerUpComponent.class);
+
+        
         controllable.currentFood.init(engine);
 
         animation.animator = new CookAnimator();
@@ -156,7 +159,7 @@ public class EntityFactory {
 
         TransformComponent transform = engine.createComponent(TransformComponent.class);
 
-        FoodComponent food = engine.createComponent(FoodComponent.class);
+        FoodComponent food = engine.createComponent(FoodComponent.class);      
 
         // Texture
         texture.region = getFoodTexture(foodType);
@@ -281,6 +284,7 @@ public class EntityFactory {
         return foodTextures.get(type);
     }
 
+
     /**
      * Create an AI customer entity. The entity will not walk until it receives a
      * {@link com.badlogic.gdx.ai.steer.SteeringBehavior}.
@@ -307,6 +311,8 @@ public class EntityFactory {
 
         walkingAnimation.animator = new CustomerAnimator();
 
+
+
         // Reuse existing body definition
         movingBodyDef.position.set(position.x, position.y);
         b2dBody.body = world.createBody(movingBodyDef);
@@ -322,7 +328,6 @@ public class EntityFactory {
 
         FoodType[] s = Station.serveRecipes;
         int orderIndex = ThreadLocalRandom.current().nextInt(0, s.length);
-
         customer.order = FoodType.from(s[orderIndex].getValue());
 
         Gdx.app.log("Order received", customer.order.name());
@@ -338,4 +343,50 @@ public class EntityFactory {
         return entity;
     }
 
+    // public static TextureRegion getPowerUpTexture(PowerUpType type){
+    //     return powerupTextures.get(type);
+    // }
+
+        /**
+     * Cut the powerup textures, run at game initialisation.
+     * 
+     * @param path (optional) custom path for powerup textures.
+     */
+    // public static void cutPowerUp(String path) {
+    //     if (path == null) {
+    //         path = "v2/powerups.png";
+    //     }
+
+    //     Texture PowerUpSheet = new Texture(path);
+
+    //     TextureRegion[][] tmp = TextureRegion.split(PowerUpSheet, 32, 32);
+
+    //     int rows = tmp.length;
+    //     int cols = tmp[0].length;
+
+    //     // Flatten the array
+    //     TextureRegion[] frames = new TextureRegion[rows * cols];
+    //     int index = 0;
+    //     for (int i = 0; i < rows; i++) {
+    //         for (int j = 0; j < cols; j++) {
+    //             frames[index++] = tmp[i][j];
+    //         }
+    //     }
+
+    //     for (int i = 1; i < 6; i++) {
+    //         powerupTextures.put(PowerUpType.from(i), frames[i]);
+    //     }
+    // }
+
+
+    // public Entity createPowerup(PowerUpType powerUpType){
+    //     Entity entity = engine.createEntity();
+
+    //     PowerUpComponent powerUp = engine.createComponent(PowerUpComponent.class);
+
+    //     entity.add(powerUp);
+    //     engine.addEntity(entity);
+
+    //     return entity;
+    // }
 }
