@@ -10,7 +10,6 @@ import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.ItemComponent;
 import com.devcharles.piazzapanic.components.PlayerComponent;
-import com.devcharles.piazzapanic.components.PowerUpComponent;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TextureComponent;
 import com.devcharles.piazzapanic.components.TintComponent;
@@ -41,5 +40,4 @@ public class Mappers {
         public static final ComponentMapper<AIAgentComponent> aiAgent = ComponentMapper.getFor(AIAgentComponent.class);
         public static final ComponentMapper<CustomerComponent> customer = ComponentMapper
                         .getFor(CustomerComponent.class);
-        public static final ComponentMapper<PowerUpComponent> powerup = ComponentMapper.getFor(PowerUpComponent.class);
 }
