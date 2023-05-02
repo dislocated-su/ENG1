@@ -1,5 +1,7 @@
 package com.devcharles.piazzapanic;
 
+import java.io.File;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -69,11 +71,11 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
         root.add(subtitle).expandX().padBottom(50);
         root.row();
         TextButton startScenarioButton = new TextButton("Scenario", skin);
-        TextButton loadGameButton = new TextButton("Load game", skin);
         TextButton startEndlessButton = new TextButton("Endless", skin);
         TextButton tutorialButton = new TextButton("Tutorial", skin);
+        TextButton loadGameButton = new TextButton("Load game", skin);
+        loadGameButton.setDisabled(true);
 
-        //loadGameButton.setDisabled(true);
         root.add(startScenarioButton);
         root.row();
         root.add(startEndlessButton);
@@ -104,12 +106,19 @@ public class MainMenuScreen extends ApplicationAdapter implements Screen {
             }
         });
 
-        loadGameButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game, 999, Difficulty.ENDLESS_EASY, true));
-                dispose();
-            }
-        });
+        // Enable 'load game' button if a save file is present
+        File f = new File("./save.csv");
+        if(f.exists() && !f.isDirectory()) { 
+            loadGameButton.setDisabled(false);
+
+            loadGameButton.addListener(new ClickListener() {
+                public void clicked(InputEvent event, float x, float y) {
+                    game.setScreen(new GameScreen(game, 999, Difficulty.ENDLESS_EASY, true));
+                    dispose();
+                }
+            });
+        }
+
     }
 
     @Override
