@@ -19,7 +19,6 @@ import com.devcharles.piazzapanic.components.TintComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.input.KeyboardInput;
-import com.devcharles.piazzapanic.utility.AudioSystem;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.Difficulty;
@@ -50,14 +49,15 @@ public class StationSystem extends IteratingSystem {
     private Difficulty difficulty;
     public Integer timer = 15;
 
-    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, Difficulty difficulty, GameScreen gameScreen) {
+    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer,
+            Float[] tillBalance, Hud hud, Difficulty difficulty, GameScreen gameScreen) {
         super(Family.all(StationComponent.class).get());
         this.input = input;
         this.factory = factory;
-        this.mapRenderer=mapRenderer;
-        this.tillBalance=tillBalance;
-        this.hud=hud;
-        this.difficulty=difficulty;
+        this.mapRenderer = mapRenderer;
+        this.tillBalance = tillBalance;
+        this.hud = hud;
+        this.difficulty = difficulty;
         this.gameScreen = gameScreen;
     }
 
@@ -135,7 +135,7 @@ public class StationSystem extends IteratingSystem {
      */
     private void processStation(ControllableComponent controllable, StationComponent station) {
 
-        if(station.locked){
+        if (station.locked) {
             tryBuy(station);
             return;
         }
@@ -178,7 +178,7 @@ public class StationSystem extends IteratingSystem {
         cooking.timer.start();
 
         // Flag the food as processed if InstaCook is active
-        if(gameScreen.InstaCook){
+        if (gameScreen.InstaCook) {
             cooking.processed = true;
 
         }
@@ -188,10 +188,9 @@ public class StationSystem extends IteratingSystem {
         Gdx.app.log("Food processed", String.format("%s turned into %s", food.type, result));
 
         // If the station is an oven start the cooking animation.
-        if(station.type==oven){
+        if (station.type == oven) {
             mapRenderer.animateOven(station.tileMapPosition);
         }
-
 
     }
 
@@ -210,14 +209,14 @@ public class StationSystem extends IteratingSystem {
 
             // Check if it's ready without ticking the timer
             boolean ready = cooking.timer.tick(0);
-            
+
             // Make the food ready if the InstaCook powerup is active
-            if(gameScreen.InstaCook){
+            if (gameScreen.InstaCook) {
                 ready = true;
                 return;
             }
 
-            if(cooking.processed){
+            if (cooking.processed) {
                 food.remove(TintComponent.class);
                 return;
             }
@@ -265,6 +264,7 @@ public class StationSystem extends IteratingSystem {
 
     /**
      * Attempt to create a food.
+     * 
      * @param count number of ingredients to combine
      */
     private FoodType tryAssemble(ControllableComponent controllable, int count) {
@@ -311,12 +311,14 @@ public class StationSystem extends IteratingSystem {
     }
 
     /**
-     * Cook the food in the station. This progresses the timer in the food being cooked in the station.
+     * Cook the food in the station. This progresses the timer in the food being
+     * cooked in the station.
+     * 
      * @param station
      * @param deltaTime
      */
     private void stationTick(StationComponent station, float deltaTime) {
-        
+
         if (station.type == StationType.cutting_board && station.interactingCook == null) {
             return;
         }
@@ -330,7 +332,7 @@ public class StationSystem extends IteratingSystem {
             CookingComponent cooking = Mappers.cooking.get(foodEntity);
 
             boolean ready = cooking.timer.tick(deltaTime);
-            if(gameScreen.InstaCook){
+            if (gameScreen.InstaCook) {
                 ready = true;
             }
 
@@ -366,7 +368,7 @@ public class StationSystem extends IteratingSystem {
                 Gdx.app.log("Food ready", food.type.name());
 
                 // If the station is an oven turn off the animation.
-                if(station.type==oven){
+                if (station.type == oven) {
                     mapRenderer.removeOvenAnimation(station.tileMapPosition);
                 }
             } else if (ready) {
@@ -385,26 +387,27 @@ public class StationSystem extends IteratingSystem {
         }
     }
 
-
     /**
-     * Unlocks the current station if the player is in endless mode and has enough money.
-     * @param station The current station component with details about the current station.
+     * Unlocks the current station if the player is in endless mode and has enough
+     * money.
+     * 
+     * @param station The current station component with details about the current
+     *                station.
      */
-    public void tryBuy(StationComponent station){
+    public void tryBuy(StationComponent station) {
         // TODO sound effect for success or failure.
         // TODO set price for new stations.
-        if(difficulty == Difficulty.SCENARIO){
+        if (difficulty == Difficulty.SCENARIO) {
             hud.displayInfoMessage("You can only unlock new stations in endless mode");
             return;
         }
         float priceOfNewStation = 5;
-        if(tillBalance[0]-priceOfNewStation<0){
-            hud.displayInfoMessage("Insufficient funds - Each station costs $"+priceOfNewStation);
-        }
-        else{
-            mapRenderer.unlockStation(station.tileMapPosition,station.type.getValue());
-            tillBalance[0]-=priceOfNewStation;
-            station.locked=false;
+        if (tillBalance[0] - priceOfNewStation < 0) {
+            hud.displayInfoMessage("Insufficient funds - Each station costs $" + priceOfNewStation);
+        } else {
+            mapRenderer.unlockStation(station.tileMapPosition, station.type.getValue());
+            tillBalance[0] -= priceOfNewStation;
+            station.locked = false;
             hud.displayInfoMessage("New station unlocked!");
         }
     }

@@ -1,4 +1,4 @@
-package com.devcharles.piazzapanic.utility;
+package com.devcharles.piazzapanic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +17,10 @@ import com.devcharles.piazzapanic.components.ControllableComponent;
 import com.devcharles.piazzapanic.components.CustomerComponent;
 import com.devcharles.piazzapanic.components.FoodComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
+import com.devcharles.piazzapanic.utility.Difficulty;
+import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.FoodStack;
+import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.components.StationComponent;
 import com.devcharles.piazzapanic.components.TransformComponent;
 
@@ -29,7 +33,8 @@ public class SaveLoad {
     private Difficulty difficulty;
     private Integer[] timer;
 
-    public SaveLoad(PooledEngine engine, World world, Float[] tillBalance, Integer[] reputation, Difficulty difficulty, Integer[] timer) {
+    public SaveLoad(PooledEngine engine, World world, Float[] tillBalance, Integer[] reputation, Difficulty difficulty,
+            Integer[] timer) {
         this.engine = engine;
         this.factory = new EntityFactory(engine, world);
 
@@ -75,7 +80,8 @@ public class SaveLoad {
             for (Entity player : players) {
                 // Saving player position
                 TransformComponent transform = Mappers.transform.get(player);
-                writer.println(String.join(",", "Player", Float.toString(transform.position.x), Float.toString(transform.position.y)));
+                writer.println(String.join(",", "Player", Float.toString(transform.position.x),
+                        Float.toString(transform.position.y)));
 
                 // Saving player inventory
                 FoodStack inventory = Mappers.controllable.get(player).currentFood;
@@ -90,7 +96,8 @@ public class SaveLoad {
             }
 
             writer.close();
-        } catch (IOException e) { }
+        } catch (IOException e) {
+        }
     }
 
     public void load(String saveData) {
@@ -99,85 +106,87 @@ public class SaveLoad {
         int player_counter = 0;
         int inventory_counter = 0;
         int customer_count = 0;
-        
+
         Scanner scanner = new Scanner(saveData);
         while (scanner.hasNextLine()) {
-          String[] vars = scanner.nextLine().split(",");
+            String[] vars = scanner.nextLine().split(",");
 
-          switch (vars[0]) {
-            case "Reputation":
-                this.reputation[0] = Integer.parseInt(vars[1]);
-                break;
-            case "Balance":
-                this.balance[0] = Float.parseFloat(vars[1]);
-                break;
-            case "Time":
-                this.timer[0] = Integer.parseInt(vars[1]);
-                break;
-            case "Difficulty":
-                switch (vars[1]) {
-                    case "Easy":
-                        this.difficulty = Difficulty.ENDLESS_EASY;
-                    case "Normal":
-                        this.difficulty = Difficulty.ENDLESS_NORMAL;
-                        break;
-                    case "Hard":
-                        this.difficulty = Difficulty.ENDLESS_HARD;
-                        break;
-                }
-                break;
-            case "Player":
-                Float x = Float.parseFloat(vars[1]);
-                Float y = Float.parseFloat(vars[2]);
+            switch (vars[0]) {
+                case "Reputation":
+                    this.reputation[0] = Integer.parseInt(vars[1]);
+                    break;
+                case "Balance":
+                    this.balance[0] = Float.parseFloat(vars[1]);
+                    break;
+                case "Time":
+                    this.timer[0] = Integer.parseInt(vars[1]);
+                    break;
+                case "Difficulty":
+                    switch (vars[1]) {
+                        case "Easy":
+                            this.difficulty = Difficulty.ENDLESS_EASY;
+                        case "Normal":
+                            this.difficulty = Difficulty.ENDLESS_NORMAL;
+                            break;
+                        case "Hard":
+                            this.difficulty = Difficulty.ENDLESS_HARD;
+                            break;
+                    }
+                    break;
+                case "Player":
+                    Float x = Float.parseFloat(vars[1]);
+                    Float y = Float.parseFloat(vars[2]);
 
-                if (player_counter < 2) {
-                    Entity player = data.get("players").get(player_counter);
-                    Body body = Mappers.b2body.get(player).body;
-                    body.setTransform(x, y, 0);;
-                } else {
-                    factory.createCook(Math.round(x), Math.round(y));
-                }
+                    if (player_counter < 2) {
+                        Entity player = data.get("players").get(player_counter);
+                        Body body = Mappers.b2body.get(player).body;
+                        body.setTransform(x, y, 0);
+                        ;
+                    } else {
+                        factory.createCook(Math.round(x), Math.round(y));
+                    }
 
-                player_counter += 1;
-                break;
-            case "Inventory":
-                Entity guy = data.get("players").get(inventory_counter);
-                FoodStack foodStack = Mappers.controllable.get(guy).currentFood;
+                    player_counter += 1;
+                    break;
+                case "Inventory":
+                    Entity guy = data.get("players").get(inventory_counter);
+                    FoodStack foodStack = Mappers.controllable.get(guy).currentFood;
 
-                for (int i = 1; i < vars.length; i++) {
-                    String food_name = vars[i];
-                    Entity food = this.factory.createFood(FoodComponent.getFood(food_name));
-                    foodStack.pushItem(food, guy);
-                }
+                    for (int i = 1; i < vars.length; i++) {
+                        String food_name = vars[i];
+                        Entity food = this.factory.createFood(FoodComponent.getFood(food_name));
+                        foodStack.pushItem(food, guy);
+                    }
 
-                inventory_counter = (inventory_counter + 1) % 2;
-                break;
-            case "Order":
-                /*
-                FoodType dish = FoodComponent.getFood(vars[1]);
-                int time = Integer.parseInt(vars[2]);
+                    inventory_counter = (inventory_counter + 1) % 2;
+                    break;
+                case "Order":
+                    /*
+                     * FoodType dish = FoodComponent.getFood(vars[1]);
+                     * int time = Integer.parseInt(vars[2]);
+                     * 
+                     * Entity customer = factory.createCustomer(new Vector2(100 - customer_count*10,
+                     * 25));
+                     * CustomerComponent component = Mappers.customer.get(customer);
+                     * component.order = dish;
+                     * component.setTimer(time);
+                     */
 
-                Entity customer = factory.createCustomer(new Vector2(100 - customer_count*10, 25));
-                CustomerComponent component = Mappers.customer.get(customer);
-                component.order = dish;
-                component.setTimer(time);
-                */
-
-                customer_count++;
-                break;
-            case "CuttingBoard":
-                break;
-            case "Oven":
-                break;
-            case "Grill":
-                break;
-            default:
-                break;
-          }
+                    customer_count++;
+                    break;
+                case "CuttingBoard":
+                    break;
+                case "Oven":
+                    break;
+                case "Grill":
+                    break;
+                default:
+                    break;
+            }
         }
         scanner.close();
     }
-    
+
     private HashMap<String, List<Entity>> select() {
         List<Entity> players = new ArrayList<>();
         List<Entity> inventory = new ArrayList<>();

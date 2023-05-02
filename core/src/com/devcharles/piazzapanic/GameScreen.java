@@ -23,10 +23,9 @@ import com.devcharles.piazzapanic.componentsystems.PowerUpSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.AudioSystem;
 import com.devcharles.piazzapanic.utility.Difficulty;
 import com.devcharles.piazzapanic.utility.MapLoader;
-import com.devcharles.piazzapanic.utility.AudioSystem;
-import com.devcharles.piazzapanic.utility.SaveLoad;
 import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 import com.devcharles.piazzapanic.scene2d.Hud;
@@ -56,8 +55,8 @@ public class GameScreen implements Screen {
     private WorldTilemapRenderer mapRenderer;
 
     private Integer[] reputationPoints = { 3 };
-    private Float[] tillBalance = {0f};
-    private Integer[] timer = {0};
+    private Float[] tillBalance = { 0f };
+    private Integer[] timer = { 0 };
 
     private Integer[] customersServed = { 0 };
 
@@ -89,9 +88,10 @@ public class GameScreen implements Screen {
 
         SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
         if (!this.game.TESTMODE) {
-            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, timer, saveLoad, factory);
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, timer,
+                    saveLoad, factory);
         }
-      
+
         mapLoader = new MapLoader(null, null, factory);
         mapLoader.buildCollisions(world);
 
@@ -99,21 +99,22 @@ public class GameScreen implements Screen {
             mapLoader.buildFromObjects(engine, rayhandler);
         }
         mapLoader.buildStations(engine, world);
-        mapRenderer = new WorldTilemapRenderer(mapLoader.map,camera,game.batch);
+        mapRenderer = new WorldTilemapRenderer(mapLoader.map, camera, game.batch);
         engine.addSystem(new PhysicsSystem(world));
-        engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera,mapRenderer));
+        engine.addSystem(new RenderingSystem(mapLoader.map, game.batch, camera, mapRenderer));
         engine.addSystem(new LightingSystem(rayhandler, camera));
         // This can be commented in during debugging.
         // engine.addSystem(new DebugRendererSystem(world, camera));
         engine.addSystem(new PlayerControlSystem(kbInput));
-        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,numOfCustomers,difficulty,tillBalance,customersServed, this));
-        engine.addSystem(new StationSystem(kbInput, factory,mapRenderer,tillBalance,hud,difficulty,this));
+        engine.addSystem(new CustomerAISystem(mapLoader.getObjectives(), world, factory, hud, reputationPoints,
+                numOfCustomers, difficulty, tillBalance, customersServed, this));
+        engine.addSystem(new StationSystem(kbInput, factory, mapRenderer, tillBalance, hud, difficulty, this));
         engine.addSystem(new CarryItemsSystem());
         engine.addSystem(new InventoryUpdateSystem(hud));
         engine.addSystem(new PowerUpSystem(engine, this));
 
         world.setContactListener(new WorldContactListener());
-        
+
         audio.playBgm();
 
         // set the input processor
@@ -123,14 +124,15 @@ public class GameScreen implements Screen {
             multiplexer.addProcessor(hud.stage);
         }
 
-
         // Attempt to load save data if it exists
         if (loadSave) {
             try {
                 String saveData = new String(Files.readAllBytes(Paths.get("./save.csv")));
                 saveLoad.load(saveData);
-                System.out.println("Save data loaded"); 
-            } catch (IOException e) { System.out.println("No save data to load"); }
+                System.out.println("Save data loaded");
+            } catch (IOException e) {
+                System.out.println("No save data to load");
+            }
 
         }
     }
@@ -187,44 +189,44 @@ public class GameScreen implements Screen {
         world.dispose();
     }
 
-    public void SpeedActive(){
+    public void SpeedActive() {
         SpeedBoost = true;
     }
 
-    public void InstaActive(){
+    public void InstaActive() {
         InstaCook = true;
     }
 
-    public void BinActive(){
+    public void BinActive() {
         BinACustomer = true;
     }
 
-    public void TimeActive(){
+    public void TimeActive() {
         TimeFreeze = true;
     }
 
-    public void DoubleActive(){
+    public void DoubleActive() {
         DoubleRep = true;
     }
 
-    public void SpeedOff(){
+    public void SpeedOff() {
         SpeedBoost = false;
     }
 
-    public void InstaOff(){
+    public void InstaOff() {
         InstaCook = false;
     }
 
-    public void BinOff(){
+    public void BinOff() {
         BinACustomer = false;
         System.out.println("BinACustomer is off");
     }
 
-    public void TimeOff(){
+    public void TimeOff() {
         TimeFreeze = false;
     }
 
-    public void DoubleOff(){
+    public void DoubleOff() {
         DoubleRep = false;
     }
 }
