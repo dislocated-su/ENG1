@@ -205,6 +205,14 @@ public class Hud extends ApplicationAdapter {
         tableTop.add(reputationLabel).expandX();
         tableTop.add(tillBalanceLabel).expandX();
         tableTop.add(difficultyLabel).expandX();
+
+        TextButton muteButton = new TextButton("Mute", skin);
+        muteButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                gameScreen.audio.toggleMute();
+            }
+        });
+        tableTop.add(muteButton).width(80);
         
         // add the powerUps on the hud
         if(difficulty != Difficulty.SCENARIO){
@@ -214,8 +222,7 @@ public class Hud extends ApplicationAdapter {
     
             powerInv = new Label("PowerUps", hudLabelStyle);
             powerInv.setFontScale(fontScale);
-            
-    
+
             Texture speedTexture =  new Texture(Gdx.files.internal("speed_boost32.png"));
             Texture speedPressedTexture = new Texture(Gdx.files.internal("speed_boost32_pressed.png"));
             // Texture speedRejectTexutre =  new Texture(Gdx.files.internal("speed_boost32_x.png"));
@@ -386,11 +393,6 @@ public class Hud extends ApplicationAdapter {
             tableLeft.add(chefButton);
             tableLeft.add().row();
             tableLeft.add(chefCost);
-
-
-
-
-
         }
         
         tableBottomLabel = new Table();

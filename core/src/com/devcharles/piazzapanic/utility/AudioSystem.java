@@ -15,7 +15,7 @@ public class AudioSystem {
     
     private boolean muted = false;
     
-    public void toggle_mute() {
+    public void toggleMute() {
         if (muted) {
             muted = false;
             bgm.play();
@@ -56,11 +56,13 @@ public class AudioSystem {
     }
 
     public void playThanks() {
+        if (muted) { return; }
         Sound sfx = Gdx.audio.newSound(Gdx.files.internal(thanksSfx));
         sfx.play();
     }
 
     public void playSigh() {
+        if (muted) { return; }
         Sound sfx = Gdx.audio.newSound(Gdx.files.internal(sighSfx));
         sfx.play();
     }
