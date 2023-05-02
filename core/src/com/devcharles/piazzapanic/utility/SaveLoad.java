@@ -127,14 +127,18 @@ public class SaveLoad {
                 }
                 break;
             case "Player":
-                Entity player = data.get("players").get(player_counter);
                 Float x = Float.parseFloat(vars[1]);
                 Float y = Float.parseFloat(vars[2]);
 
-                Body body = Mappers.b2body.get(player).body;
-                body.setTransform(x, y, 0);;
+                if (player_counter < 2) {
+                    Entity player = data.get("players").get(player_counter);
+                    Body body = Mappers.b2body.get(player).body;
+                    body.setTransform(x, y, 0);;
+                } else {
+                    factory.createCook(Math.round(x), Math.round(y));
+                }
 
-                player_counter = (player_counter + 1) % 2;
+                player_counter += 1;
                 break;
             case "Inventory":
                 Entity guy = data.get("players").get(inventory_counter);
