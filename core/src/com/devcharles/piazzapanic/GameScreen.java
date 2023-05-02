@@ -1,5 +1,9 @@
 package com.devcharles.piazzapanic;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -19,7 +23,10 @@ import com.devcharles.piazzapanic.componentsystems.PowerUpSystem;
 import com.devcharles.piazzapanic.componentsystems.RenderingSystem;
 import com.devcharles.piazzapanic.input.KeyboardInput;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.Difficulty;
 import com.devcharles.piazzapanic.utility.MapLoader;
+import com.devcharles.piazzapanic.utility.AudioSystem;
+import com.devcharles.piazzapanic.utility.SaveLoad;
 import com.devcharles.piazzapanic.utility.WorldTilemapRenderer;
 import com.devcharles.piazzapanic.utility.box2d.WorldContactListener;
 import com.devcharles.piazzapanic.scene2d.Hud;
@@ -39,6 +46,8 @@ public class GameScreen implements Screen {
 
     private Hud hud;
 
+    public AudioSystem audio = new AudioSystem();
+
     private InputMultiplexer multiplexer;
 
     private RayHandler rayhandler;
@@ -48,38 +57,17 @@ public class GameScreen implements Screen {
 
     private Integer[] reputationPoints = { 3 };
     private Float[] tillBalance = {0f};
+    private Integer[] timer = {0};
 
     private Integer[] customersServed = { 0 };
 
     public Boolean SpeedBoost = false;
-
     public Boolean InstaCook = false;
-
     public Boolean BinACustomer = false;
-
     public Boolean TimeFreeze = false;
-    
     public Boolean DoubleRep = false;
 
-    public enum Difficulty {
-        SCENARIO("Scenario",30000),
-        ENDLESS_EASY("Endless - Easy",120000),
-        ENDLESS_NORMAL("Endless - Normal",60000),
-        ENDLESS_HARD("Endless - Hard",30000);
-
-        private String displayName;
-        private int spawnFrequency;
-        Difficulty(String displayName, int spawnFrequency){
-            this.displayName=displayName;
-            this.spawnFrequency=spawnFrequency;
-        }
-        public String getDisplayName(){
-            return this.displayName;
-        }
-        public int getSpawnFrequency(){ return this.spawnFrequency;}
-    }
-
-    public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty) {
+    public GameScreen(PiazzaPanic game, int numOfCustomers, Difficulty difficulty, boolean loadSave) {
         this.game = game;
         kbInput = new KeyboardInput();
 
@@ -99,12 +87,9 @@ public class GameScreen implements Screen {
         EntityFactory factory = new EntityFactory(engine, world);
         EntityFactory.cutFood(null);
 
+        SaveLoad saveLoad = new SaveLoad(engine, world, tillBalance, reputationPoints, difficulty, timer);
         if (!this.game.TESTMODE) {
-
-            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, this, factory);
-
-            
-
+            hud = new Hud(game.batch, this, game, reputationPoints, difficulty, tillBalance, customersServed, timer, saveLoad, factory);
         }
       
         mapLoader = new MapLoader(null, null, factory);
@@ -128,13 +113,25 @@ public class GameScreen implements Screen {
         engine.addSystem(new PowerUpSystem(engine, this));
 
         world.setContactListener(new WorldContactListener());
+        
+        audio.playBgm();
 
         // set the input processor
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(kbInput);
-
         if (!this.game.TESTMODE) {
             multiplexer.addProcessor(hud.stage);
+        }
+
+
+        // Attempt to load save data if it exists
+        if (loadSave) {
+            try {
+                String saveData = new String(Files.readAllBytes(Paths.get("./save.csv")));
+                saveLoad.load(saveData);
+                System.out.println("Save data loaded"); 
+            } catch (IOException e) { System.out.println("No save data to load"); }
+
         }
     }
 

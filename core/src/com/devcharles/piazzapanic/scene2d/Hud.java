@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.ai.utils.SimpleNonBlockingSemaphore.Factory;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,10 +27,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.MainMenuScreen;
 import com.devcharles.piazzapanic.PiazzaPanic;
-import com.devcharles.piazzapanic.GameScreen.Difficulty;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.utility.EntityFactory;
 import com.devcharles.piazzapanic.utility.GdxTimer;
+import com.devcharles.piazzapanic.utility.SaveLoad;
+import com.devcharles.piazzapanic.utility.Difficulty;
 
 /**
  * HUD user interface rendering for the game, also includes the win screen.
@@ -37,12 +39,13 @@ import com.devcharles.piazzapanic.utility.GdxTimer;
 public class Hud extends ApplicationAdapter {
     public Stage stage;
     private Viewport viewport;
-    private Integer customerTimer = 000;
+    private Integer[] customerTimer;
     private float timeCounter = 0;
     private Integer[] reputation;
     private Float[] tillBalance;
     private Integer[] customersServed;
     private Skin skin;
+    private SaveLoad saveLoad;
 
     private final float fontScale = 0.6f;
 
@@ -90,7 +93,7 @@ public class Hud extends ApplicationAdapter {
     private Image photo;
 
     private Game game;
-    private GameScreen.Difficulty difficulty;
+    private Difficulty difficulty;
     private Table tableBottom, tableRight, tableTop, tableLeft, tablePause, tableBottomLabel, infoTable;
 
     private boolean pauseToggled = false;
@@ -106,15 +109,16 @@ public class Hud extends ApplicationAdapter {
      * @param game {@link PiazzaPanic} instance for switching screens.
      * @param reputationPoints Must be an object to pass by reference, see https://stackoverflow.com/questions/3326112/java-best-way-to-pass-int-by-reference
      */
-    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, GameScreen.Difficulty difficulty, Float[] tillBalance, Integer[] customersServed,
-        GameScreen Gamescreen, EntityFactory factory) {
+    public Hud(SpriteBatch spriteBatch, final GameScreen savedGame, final Game game, Integer[] reputationPoints, Difficulty difficulty, Float[] tillBalance, Integer[] customersServed, Integer[] customerTimer, SaveLoad saveLoad, EntityFactory factory) {
         this.game = game;
         this.reputation = reputationPoints;
         this.gameScreen = savedGame;
-        this.difficulty=difficulty;
-        this.tillBalance=tillBalance;
-        this.customersServed=customersServed;
-        this.powerUps = Gamescreen;
+        this.difficulty = difficulty;
+        this.tillBalance = tillBalance;
+        this.customerTimer = customerTimer;
+        this.customersServed = customersServed;
+        this.powerUps = savedGame;
+        this.saveLoad = saveLoad;
         this.factory = factory;
 
         // Setup the viewport
@@ -165,7 +169,7 @@ public class Hud extends ApplicationAdapter {
 
     private void createTables() {
 
-        timerLabel = new Label(String.format("%03d", customerTimer), hudLabelStyle);
+        timerLabel = new Label(String.format("%03d", customerTimer[0]), hudLabelStyle);
         reputationLabel = new Label(String.format("%01d", reputation[0]), hudLabelStyle);
         difficultyLabel = new Label(difficulty.getDisplayName(),hudLabelStyle);
         timeNameLabel = new Label("Time", hudLabelStyle);
@@ -419,12 +423,28 @@ public class Hud extends ApplicationAdapter {
         tutorialButton.addListener(createListener(new Slideshow(game, Slideshow.Type.tutorial, gameScreen)));
 
         tablePause.add(resumeButton).width(240).height(70).padBottom(30);
-
         tablePause.row();
-
         tablePause.add(recipeBookButton).width(240).height(70).padBottom(30);
         tablePause.row();
-        tablePause.add(tutorialButton).width(240).height(70);
+        tablePause.add(tutorialButton).width(240).height(70).padBottom(30);
+        tablePause.row();
+
+        if (difficulty != Difficulty.SCENARIO) {
+            TextButton saveButton = new TextButton("Save Game", skin);
+
+            saveButton.addListener(new ClickListener() {
+                public void clicked(InputEvent event, float x, float y) {
+                    saveLoad.save();
+                    System.out.println("Saved game data");
+
+                    pauseToggled = true;
+                }
+            });
+
+            tablePause.add(saveButton).width(240).height(70);
+            tablePause.row();
+        }
+
 
         this.tableRight = new Table();
         this.tableBottom = new Table();
@@ -521,13 +541,13 @@ public class Hud extends ApplicationAdapter {
         // Staggered once per second using timeCounter makes it way faster
         if (timeCounter >= 1) {
             if(!FreezeActive){
-                customerTimer++;
-                timerLabel.setText(String.format("%03d", customerTimer));
+                customerTimer[0]++;
+                timerLabel.setText(String.format("%03d", customerTimer[0]));
                 reputationLabel.setText(reputation[0]);
                 tillBalanceLabel.setText(Float.toString(tillBalance[0]));
                 tillBalanceLabel.setStyle(tillBalance[0]>0 ? hudGreenLabelStyle : hudRedLabelStyle);
             }
-            timerLabel.setText(String.format("%03d", customerTimer));
+            timerLabel.setText(String.format("%03d", customerTimer[0]));
             reputationLabel.setText(reputation[0]);
             tillBalanceLabel.setText(Float.toString(tillBalance[0]));
             tillBalanceLabel.setStyle(tillBalance[0]>0 ? hudGreenLabelStyle : hudRedLabelStyle);
@@ -543,43 +563,43 @@ public class Hud extends ApplicationAdapter {
 
             timeCounter -= 1;
 
-            // adjust the timers for the powerups
-            if(SpeedCounter == 0){
-                SpeedActive = false;
-                speedBoostTimer.setText("");
-                SpeedCounter = 30;
+                // adjust the timers for the powerups
+            if (difficulty != Difficulty.SCENARIO) {
+                if(SpeedCounter == 0){
+                    SpeedActive = false;
+                    speedBoostTimer.setText("");
+                    SpeedCounter = 30;
+                }
+
+                if(InstaCounter == 0){
+                    InstaActive = false;
+                    InstaCookTimer.setText("");
+                    InstaCounter= 20;
+                }
+
+                if(DoubleCounter == 0){
+                    DoubleActive = false;
+                    DoublePointsTimer.setText("");
+                    DoubleCounter = 30;
+                }
+
+                if(FreezeCounter == 0){
+                    FreezeActive = false;
+                    TimeFreezeTimer.setText("");
+                    FreezeCounter = 30;
+                }
+
+                if(SpeedActive){speedBoostTimer.setText(String.format("%01d", SpeedCounter));}
+
+                if(InstaActive){InstaCookTimer.setText(String.format("%01d", InstaCounter));}
+
+                if(DoubleActive){DoublePointsTimer.setText(String.format("%01d", DoubleCounter));}
+                
+                if(FreezeActive){TimeFreezeTimer.setText(String.format("%01d", FreezeCounter));}
+                
+
+                SpeedCounter--; InstaCounter--; DoubleCounter--; FreezeCounter--;
             }
-
-            if(InstaCounter == 0){
-                InstaActive = false;
-                InstaCookTimer.setText("");
-                InstaCounter= 20;
-            }
-
-            if(DoubleCounter == 0){
-                DoubleActive = false;
-                DoublePointsTimer.setText("");
-                DoubleCounter = 30;
-            }
-
-            if(FreezeCounter == 0){
-                FreezeActive = false;
-                TimeFreezeTimer.setText("");
-                FreezeCounter = 30;
-            }
-
-            if(SpeedActive){speedBoostTimer.setText(String.format("%01d", SpeedCounter));}
-
-            if(InstaActive){InstaCookTimer.setText(String.format("%01d", InstaCounter));}
-
-            if(DoubleActive){DoublePointsTimer.setText(String.format("%01d", DoubleCounter));}
-            
-            if(FreezeActive){TimeFreezeTimer.setText(String.format("%01d", FreezeCounter));}
-            
-
-            SpeedCounter--; InstaCounter--; DoubleCounter--; FreezeCounter--;
-            
-
         }
 
         stage.act();

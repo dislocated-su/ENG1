@@ -78,4 +78,118 @@ public class FoodComponent implements Component{
             return _map.get(value);
         }
     }
+
+    static public FoodType getFood(String name) {
+        switch (name) {
+            case "UnformedPatty":
+                return FoodType.unformedPatty;
+            case "FormedPatty":
+                return FoodType.formedPatty;
+            case "GrilledPatty":
+                return FoodType.grilledPatty;
+            case "Buns":
+                return FoodType.buns;
+            case "ToastedBuns":
+                return FoodType.toastedBuns;
+            case "Burger":
+                return FoodType.burger;
+            case "Lettuce":
+                return FoodType.lettuce;
+            case "SlicedLettuce":
+                return FoodType.slicedLettuce;
+            case "Tomato":
+                return FoodType.tomato;
+            case "SlicedTomato":
+                return FoodType.slicedTomato;
+            case "Onion":
+                return FoodType.onion;
+            case "SlicedOnion":
+                return FoodType.slicedOnion;
+            case "Salad":
+                return FoodType.salad;
+            case "Potato":
+                return FoodType.potato;
+            case "ButterlessJacketPotato":
+                return FoodType.butterlessJacketPotato;
+            case "JacketPotato":
+                return FoodType.jacketPotato;
+            case "Butter":
+                return FoodType.butter;
+            case "Dough":
+                return FoodType.dough;
+            case "RolledDough":
+                return FoodType.rolledDough;
+            case "TomatoDough":
+                return FoodType.tomatoDough;
+            case "TomatoCheeseDough":
+                return FoodType.tomatoCheeseDough;
+            case "Pizza":
+                return FoodType.pizza;
+            case "TomatoPaste":
+                return FoodType.tomatoPaste;
+            case "Cheese":
+                return FoodType.cheese;
+            case "GratedCheese":
+                return FoodType.gratedCheese;
+        }
+
+        return FoodType.dough;
+    }
+
+    static public String toString(FoodType food) {
+        switch (food) {
+            case unformedPatty:
+                return "UnformedPatty";
+            case formedPatty:
+                return "FormedPatty";
+            case grilledPatty:
+                return "GrilledPatty";
+            case buns:
+                return "Buns";
+            case toastedBuns:
+                return "ToastedBuns";
+            case burger:
+                return "Burger";
+            case lettuce:
+                return "Lettuce";
+            case slicedLettuce:
+                return "SlicedLettuce";
+            case tomato:
+                return "Tomato";
+            case slicedTomato:
+                return "SlicedTomato";
+            case onion:
+                return "Onion";
+            case slicedOnion:
+                return "SlicedOnion";
+            case salad:
+                return "Salad";
+            case potato:
+                return "Potato";
+            case butterlessJacketPotato:
+                return "ButterlessJacketPotato";
+            case jacketPotato:
+                return "JacketPotato";
+            case butter:
+                return "Butter";
+            case dough:
+                return "Dough";
+            case rolledDough:
+                return "RolledDough";
+            case tomatoDough:
+                return "TomatoDough";
+            case tomatoCheeseDough:
+                return "TomatoCheeseDough";
+            case pizza:
+                return "Pizza";
+            case tomatoPaste:
+                return "TomatoPaste";
+            case cheese:
+                return "Cheese";
+            case gratedCheese:
+                return "GratedCheese";
+            default:
+                return "?";
+        }
+    }
 }

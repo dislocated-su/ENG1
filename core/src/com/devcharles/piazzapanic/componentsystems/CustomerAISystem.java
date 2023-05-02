@@ -19,7 +19,9 @@ import com.devcharles.piazzapanic.GameScreen;
 import com.devcharles.piazzapanic.components.*;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.scene2d.Hud;
+import com.devcharles.piazzapanic.utility.AudioSystem;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.Difficulty;
 import com.devcharles.piazzapanic.utility.GdxTimer;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.box2d.Box2dLocation;
@@ -38,7 +40,7 @@ public class CustomerAISystem extends IteratingSystem {
     private final EntityFactory factory;
     private int numOfCustomerTotal = 0;
     private final Hud hud;
-    private final GameScreen.Difficulty difficulty;
+    private final Difficulty difficulty;
     private final Integer[] reputationPoints;
     private final Float[] tillBalance;
     private final Integer[] customersServed;
@@ -77,7 +79,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @param reputationPoints array-wrapped integer reputation passed by-reference See {@link Hud}
      */
     public CustomerAISystem(Map<Integer, Box2dLocation> objectives, World world, EntityFactory factory, Hud hud,
-            Integer[] reputationPoints, int customer, GameScreen.Difficulty difficulty, Float[] tillBalance, Integer[] customersServed, GameScreen gameScreen) {
+            Integer[] reputationPoints, int customer, Difficulty difficulty, Float[] tillBalance, Integer[] customersServed, GameScreen gameScreen) {
         super(Family.all(AIAgentComponent.class, CustomerComponent.class).get());
 
         this.CUSTOMER=customer;
@@ -130,7 +132,7 @@ public class CustomerAISystem extends IteratingSystem {
             // If endless mode then decrease customer spawn frequency by one second every time a customer is served.
             // Result is customers will arrive more often over time in endless mode.
             // If the time freeze powerup has been purchased pause the spawn timer until the powerup time has passed.
-            if(firstSpawn==false && difficulty != GameScreen.Difficulty.SCENARIO){
+            if(firstSpawn==false && difficulty != Difficulty.SCENARIO){
                 if(gameScreen.TimeFreeze){
                     if(timeFrozen <= 0){
                         spawnTimer.start();
@@ -182,7 +184,7 @@ public class CustomerAISystem extends IteratingSystem {
         // Lower reputation points only in endless if they have waited longer than time alloted.
         if (customer.timer.tick(deltaTime)) {
             if (reputationPoints[0] > 0) {
-                if(difficulty!= GameScreen.Difficulty.SCENARIO){
+                if(difficulty != Difficulty.SCENARIO){
                     reputationPoints[0]--;
                 }
             }
@@ -235,9 +237,10 @@ public class CustomerAISystem extends IteratingSystem {
                 // Fulfill order
                 Gdx.app.log("Order success", customer.order.name());
                 fulfillOrder(entity, customer, food, gameScreen.BinACustomer, gameScreen.DoubleRep);
-
+                gameScreen.audio.playThanks();
             } else {
                 getEngine().removeEntity(food);
+                gameScreen.audio.playSigh();
             }
 
         }
@@ -357,7 +360,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @return groupSize
      */
     private int getRandomCustomerGroupSize(){
-        if (difficulty== GameScreen.Difficulty.SCENARIO){return 1;}
+        if (difficulty == Difficulty.SCENARIO){return 1;}
         double x = Math.random();
         if(x<0.7){return 1;}
         if(x>=0.7 && x < 0.9){return 2;}
@@ -374,7 +377,7 @@ public class CustomerAISystem extends IteratingSystem {
      * @return The calculated tip.
      */
     private int getRandomCustomerTip(float dishPrice){
-        if (difficulty== GameScreen.Difficulty.SCENARIO){return 0;}
+        if (difficulty == Difficulty.SCENARIO){return 0;}
         double x = Math.random();
         if(x>0.8){
             x = (1 + Math.random());

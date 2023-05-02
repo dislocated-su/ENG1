@@ -19,8 +19,10 @@ import com.devcharles.piazzapanic.components.TintComponent;
 import com.devcharles.piazzapanic.components.CookingComponent;
 import com.devcharles.piazzapanic.components.FoodComponent.FoodType;
 import com.devcharles.piazzapanic.input.KeyboardInput;
+import com.devcharles.piazzapanic.utility.AudioSystem;
 import com.devcharles.piazzapanic.scene2d.Hud;
 import com.devcharles.piazzapanic.utility.EntityFactory;
+import com.devcharles.piazzapanic.utility.Difficulty;
 import com.devcharles.piazzapanic.utility.Mappers;
 import com.devcharles.piazzapanic.utility.Station;
 import com.devcharles.piazzapanic.utility.Station.StationType;
@@ -41,13 +43,14 @@ public class StationSystem extends IteratingSystem {
     WorldTilemapRenderer mapRenderer;
     Hud hud;
 
-    private GameScreen InstaCook;
+    private GameScreen gameScreen;
     private TintComponent readyTint;
     private float tickAccumulator = 0;
     private final Float[] tillBalance;
-    private GameScreen.Difficulty difficulty;
+    private Difficulty difficulty;
     public Integer timer = 15;
-    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, GameScreen.Difficulty difficulty, GameScreen InstaACook) {
+
+    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, Difficulty difficulty, GameScreen gameScreen) {
         super(Family.all(StationComponent.class).get());
         this.input = input;
         this.factory = factory;
@@ -55,7 +58,7 @@ public class StationSystem extends IteratingSystem {
         this.tillBalance=tillBalance;
         this.hud=hud;
         this.difficulty=difficulty;
-        this.InstaCook = InstaACook;
+        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -175,7 +178,7 @@ public class StationSystem extends IteratingSystem {
         cooking.timer.start();
 
         // Flag the food as processed if InstaCook is active
-        if(InstaCook.InstaCook){
+        if(gameScreen.InstaCook){
             cooking.processed = true;
 
         }
@@ -209,7 +212,7 @@ public class StationSystem extends IteratingSystem {
             boolean ready = cooking.timer.tick(0);
             
             // Make the food ready if the InstaCook powerup is active
-            if(InstaCook.InstaCook){
+            if(gameScreen.InstaCook){
                 ready = true;
                 return;
             }
@@ -327,13 +330,33 @@ public class StationSystem extends IteratingSystem {
             CookingComponent cooking = Mappers.cooking.get(foodEntity);
 
             boolean ready = cooking.timer.tick(deltaTime);
-            if(InstaCook.InstaCook){
+            if(gameScreen.InstaCook){
                 ready = true;
             }
 
             if (ready && cooking.processed) {
                 cooking.timer.stop();
                 cooking.timer.reset();
+
+                switch (station.type) {
+                    case cutting_board:
+                        gameScreen.audio.playChop();
+                        break;
+                    case grill:
+                        gameScreen.audio.playSizzle();
+                        break;
+                    case oven:
+                        gameScreen.audio.playDing();
+                        break;
+                    case ingredient:
+                        gameScreen.audio.playTap();
+                        break;
+                    case serve:
+                        gameScreen.audio.playTap();
+                        break;
+                    default:
+                        break;
+                }
 
                 FoodComponent food = Mappers.food.get(foodEntity);
                 // Process the food into its next form
@@ -370,7 +393,7 @@ public class StationSystem extends IteratingSystem {
     public void tryBuy(StationComponent station){
         // TODO sound effect for success or failure.
         // TODO set price for new stations.
-        if(difficulty== GameScreen.Difficulty.SCENARIO){
+        if(difficulty == Difficulty.SCENARIO){
             hud.displayInfoMessage("You can only unlock new stations in endless mode");
             return;
         }
