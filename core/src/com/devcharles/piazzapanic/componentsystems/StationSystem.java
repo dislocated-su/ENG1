@@ -43,13 +43,14 @@ public class StationSystem extends IteratingSystem {
     WorldTilemapRenderer mapRenderer;
     Hud hud;
 
-    private GameScreen InstaCook;
+    private GameScreen gameScreen;
     private TintComponent readyTint;
     private float tickAccumulator = 0;
     private final Float[] tillBalance;
     private Difficulty difficulty;
     public Integer timer = 15;
-    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, Difficulty difficulty, GameScreen InstaACook) {
+
+    public StationSystem(KeyboardInput input, EntityFactory factory, WorldTilemapRenderer mapRenderer, Float[] tillBalance, Hud hud, Difficulty difficulty, GameScreen gameScreen) {
         super(Family.all(StationComponent.class).get());
         this.input = input;
         this.factory = factory;
@@ -57,7 +58,7 @@ public class StationSystem extends IteratingSystem {
         this.tillBalance=tillBalance;
         this.hud=hud;
         this.difficulty=difficulty;
-        this.InstaCook = InstaACook;
+        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -177,7 +178,7 @@ public class StationSystem extends IteratingSystem {
         cooking.timer.start();
 
         // Flag the food as processed if InstaCook is active
-        if(InstaCook.InstaCook){
+        if(gameScreen.InstaCook){
             cooking.processed = true;
 
         }
@@ -211,7 +212,7 @@ public class StationSystem extends IteratingSystem {
             boolean ready = cooking.timer.tick(0);
             
             // Make the food ready if the InstaCook powerup is active
-            if(InstaCook.InstaCook){
+            if(gameScreen.InstaCook){
                 ready = true;
                 return;
             }
@@ -329,7 +330,7 @@ public class StationSystem extends IteratingSystem {
             CookingComponent cooking = Mappers.cooking.get(foodEntity);
 
             boolean ready = cooking.timer.tick(deltaTime);
-            if(InstaCook.InstaCook){
+            if(gameScreen.InstaCook){
                 ready = true;
             }
 
@@ -337,22 +338,21 @@ public class StationSystem extends IteratingSystem {
                 cooking.timer.stop();
                 cooking.timer.reset();
 
-                AudioSystem audio = new AudioSystem();
                 switch (station.type) {
                     case cutting_board:
-                        audio.playChop();
+                        gameScreen.audio.playChop();
                         break;
                     case grill:
-                        audio.playSizzle();
+                        gameScreen.audio.playSizzle();
                         break;
                     case oven:
-                        audio.playDing();
+                        gameScreen.audio.playDing();
                         break;
                     case ingredient:
-                        audio.playTap();
+                        gameScreen.audio.playTap();
                         break;
                     case serve:
-                        audio.playTap();
+                        gameScreen.audio.playTap();
                         break;
                     default:
                         break;

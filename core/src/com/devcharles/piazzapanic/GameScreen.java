@@ -46,7 +46,7 @@ public class GameScreen implements Screen {
 
     private Hud hud;
 
-    private AudioSystem audio = new AudioSystem();
+    public AudioSystem audio = new AudioSystem();
 
     private InputMultiplexer multiplexer;
 
